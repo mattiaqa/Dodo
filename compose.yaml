@@ -1,0 +1,19 @@
+version: "3.1"
+
+services:
+  db:
+    container_name: DodoReads_db
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/var/mongo/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=DodoReads
+
+volumes:  
+  mongo_data:
+    driver: local
