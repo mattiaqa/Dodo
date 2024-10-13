@@ -6,13 +6,14 @@
   "author": "Mattia Quagliotto & Albert Alibeaj",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd --respawn src/app.ts" 
+    "dev": "tsnd --respawn src/app.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "config": "^3.3.12",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",

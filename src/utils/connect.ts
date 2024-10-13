@@ -8,8 +8,8 @@ async function connect_db() {
     try {
         await mongoose.connect(db_url);
         logger.info('Connected to mongoDB')
-    } catch (error) {
-        logger.error('Unable to connect to mongoDB');
+    } catch (error: any) {
+        logger.error(`Unable to connect to mongoDB: ${error.message}`);
         process.exit(1);
     }
 }
