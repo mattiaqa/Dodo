@@ -9,6 +9,7 @@ const requireUser = (req: Request, res: Response, next: NextFunction) => {
     }
 
     next();
+    return;
 }
 
 export default requireUser;
