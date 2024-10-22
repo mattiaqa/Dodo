@@ -1,7 +1,6 @@
-import { describe } from "node:test";
 import { object, string, TypeOf, number } from "zod";
 
-export const createAuctionSchema = object({
+export const payload = ({
     body: object({
         title: string({
             required_error: "Name is required",
@@ -14,8 +13,34 @@ export const createAuctionSchema = object({
         }),
         condition: string({
             required_error: "condition is required",
+        }),
+        image: string({
+            required_error: "image is required",
         })
     })
 });
 
+const params = {
+    body: object({
+      auctionId: string({
+        required_error: "auctionId is required",
+      }),
+    }),
+};
+
+export const createAuctionSchema = object({
+    ...payload,
+});
+
+export const getAuctionSchema = object({
+    ...params,
+});
+
+export const updateAuctionSchema = object({
+    ...payload,
+    ...params,
+});
+
 export type CreateAuctionInput = TypeOf<typeof createAuctionSchema>;
+export type UpdateAuctionInput = TypeOf<typeof updateAuctionSchema>;
+export type GetAuctionInput = TypeOf<typeof getAuctionSchema>;

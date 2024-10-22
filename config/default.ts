@@ -3,7 +3,7 @@ import doetenv from 'dotenv';
 doetenv.config();
 
 export default {
-    port: 1337,
+    port: 1338,
     db_url: process.env.DB_URL,
     saltWorkFactor: 10,
     accessTokenTTL: '3h',
