@@ -21,7 +21,8 @@ export async function findAuction(query: FilterQuery<AuctionDocument>, options: 
 
 export async function findAllAuction(options: QueryOptions = {lean: true}) {
   try {
-    return await AuctionModel.find({}, {}, options);
+    const currentDate = new Date();
+    return await AuctionModel.find({ expireDate: { $gte: currentDate } }, {}, options);
   } catch(e: any) {
     throw new Error(e);
   }

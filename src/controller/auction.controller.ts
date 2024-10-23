@@ -45,12 +45,21 @@ export async function getAllAuctionHandler(req: Request, res: Response){
 
 export async function deleteAuctionHandler(req: Request<GetAuctionInput['body']>, res: Response){
   const auctionId = req.body.auctionId;
-  const auction = await deleteAuction({ auctionId });
+  const userId = res.locals.user._id;
+
+  const auction = await findAuction({ auctionId });
 
   if (!auction) {
     res.sendStatus(404);
     return;
+  } 
+
+  if(auction.seller != userId) {
+    res.sendStatus(403);
+    return;
   }
 
-  res.send(auction);
+  const deletedAuction = await deleteAuction({ auctionId });
+
+  res.send(deletedAuction);
 };

@@ -1,6 +1,7 @@
 import { FilterQuery } from "mongoose";
 import { omit } from "lodash";
 import UserModel, { UserDocument, UserInput } from "../models/user.model";
+import AuctionModel, { AuctionDocument } from "../models/auction.model";
 
 export async function createUser(input: UserInput) {
   try {
@@ -34,4 +35,8 @@ export async function validatePassword({
 
 export async function findUser(query: FilterQuery<UserDocument>) {
   return UserModel.findOne(query).lean();
+}
+
+export async function getUserAuctions(query: FilterQuery<AuctionDocument>) {
+  return AuctionModel.find(query).lean();
 }

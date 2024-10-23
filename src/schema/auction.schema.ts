@@ -1,4 +1,4 @@
-import { object, string, TypeOf, number } from "zod";
+import { object, string, TypeOf, number, preprocess, date } from "zod";
 
 export const payload = ({
     body: object({
@@ -14,9 +14,19 @@ export const payload = ({
         condition: string({
             required_error: "condition is required",
         }),
-        image: string({
-            required_error: "image is required",
-        })
+        country: string({
+            required_error: "country is required",
+        }),
+        province: string({
+            required_error: "province is required",
+        }),
+        expireDate: preprocess((arg) => {
+            if (typeof arg === "string" || arg instanceof Date) {
+                return new Date(arg);
+            }
+        }, date({
+            required_error: "date is required",
+        })),
     })
 });
 

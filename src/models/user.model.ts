@@ -8,17 +8,21 @@ export interface UserInput {
   password: string;
 }
 
-export interface UserDocument extends UserInput, mongoose.Document {
+export interface UserDocument extends mongoose.Document, UserInput {
   createdAt: Date;
   updatedAt: Date;
-  comparePassword(candidatePassword: string): Promise<Boolean>;
+  savedAuctions: mongoose.Schema.Types.ObjectId[];
+  isAdmin: Boolean;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema<UserDocument>(
   {
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
+    savedAuctions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Auction", required: false }],
+    isAdmin: {type: Boolean, required: true, default: false},
   },
   {
     timestamps: true,
@@ -26,26 +30,24 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  let user = this as UserDocument;
+  const user = this as UserDocument;
 
   if (!user.isModified("password")) {
     return next();
   }
 
   const salt = await bcrypt.genSalt(config.get<number>("saltWorkFactor"));
-
-  const hash = await bcrypt.hashSync(user.password, salt);
+  const hash = await bcrypt.hash(user.password, salt);
 
   user.password = hash;
 
-  return next();
+  next();
 });
 
 userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   const user = this as UserDocument;
-
   return bcrypt.compare(candidatePassword, user.password).catch((e) => false);
 };
 
