@@ -13,6 +13,13 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
         const userId = res.locals.user._id;
         const body = req.body;
 
+        const userData = await findUser({ _id: userId });
+
+        if(userData?.isAdmin) {
+            res.sendStatus(403);
+            return;
+        }
+
         const auction = await findAuction({ auctionId });
 
         if (!auction) {

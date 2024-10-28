@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { CreateUserInput } from "../schema/user.schema";
-import { createUser, getUserAuctions } from "../service/user.service";
+import { CreateUserInput, GetUserInput } from "../schema/user.schema";
+import { createUser, findUser, getUserAuctions, deleteUser } from "../service/user.service";
 import logger from "../utils/logger";
+import { omit } from "lodash";
 
 export async function createUserHandler(
   req: Request<{}, {}, CreateUserInput["body"]>,
@@ -33,3 +34,18 @@ export async function getUserAuctionsHandler(req: Request, res: Response) {
     res.status(409).send(e.message);
   }
 }
+
+export async function deleteUserHandler(req: Request<GetUserInput['body']>, res: Response){
+  const userId = res.locals.user._id;
+
+  const user = await findUser({ _id: userId });
+
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  } 
+
+  const deletedUser = await deleteUser({ _id: userId });
+
+  res.send(omit(deletedUser, 'password'));
+};

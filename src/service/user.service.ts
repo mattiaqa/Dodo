@@ -40,3 +40,11 @@ export async function findUser(query: FilterQuery<UserDocument>) {
 export async function getUserAuctions(query: FilterQuery<AuctionDocument>) {
   return AuctionModel.find(query).lean();
 }
+
+export async function deleteUser(query: FilterQuery<UserDocument>) {
+  try {
+    return await UserModel.deleteOne(query);
+  } catch(e: any) {
+    throw new Error(e);
+  }
+}
