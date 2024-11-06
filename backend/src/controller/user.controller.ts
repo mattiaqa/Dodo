@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { CreateUserInput, GetUserInput } from "../schema/user.schema";
 import { createUser, findUser, getUserAuctions, deleteUser } from "../service/user.service";
 import logger from "../utils/logger";
+import { scanFile } from "../utils/clamAV";
 import { omit } from "lodash";
 
 export async function createUserHandler(
@@ -49,3 +50,25 @@ export async function deleteUserHandler(req: Request<GetUserInput['body']>, res:
 
   res.send(omit(deletedUser, 'password'));
 };
+
+export async function uploadAvatarHandler(req: Request<GetUserInput['body']>, res: Response) {
+  const file = req.file;
+  const userId = res.locals.user._id;
+
+  const user = await findUser({ _id: userId });
+
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  } 
+
+  const { isInfected, viruses } = await scanFile(file?.path); 
+  
+  if(isInfected) {
+    res.sendStatus(400);
+    return;
+  }
+
+  res.send({'error':'none'});
+
+}

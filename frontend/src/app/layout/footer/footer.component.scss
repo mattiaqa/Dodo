@@ -1,0 +1,26 @@
+.footer {
+  background-color: #f9fafb; /* Soft light gray background for a clean look */
+  color: #4a5568; /* Darker gray for text */
+  font-size: 0.875rem; /* Slightly smaller text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem; /* Spacing around the footer */
+  border-top: 1px solid #e2e8f0; /* Light top border for separation */
+}
+
+.footer-divider {
+  color: #cbd5e0; /* Softer gray for the divider */
+  font-size: 1rem; /* Adjusted to better match text */
+  margin: 0 0.5rem;
+}
+
+.footer-link {
+  color: #4a5568; /* Darker gray */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #2b6cb0; /* Soft blue on hover */
+}

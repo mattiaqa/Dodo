@@ -16,6 +16,8 @@ app.use(cors());
 
 app.use(deserializeUser);
 
+app.use('/public/uploads', express.static('uploads'));
+
 app.listen(port, () => {
     logger.info(`App is running at http://localhost:${port}`);
 

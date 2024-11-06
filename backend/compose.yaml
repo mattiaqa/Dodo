@@ -22,3 +22,12 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
+    
+  clamav:
+    image: clamav/clamav-debian:1.3.2
+    environment:
+      CLAMD_CONF_MaxFileSize: 250M
+      CLAMD_CONF_MaxScanSize: 250M
+    restart: always
+    ports:
+      - "3310:3310"
