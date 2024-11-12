@@ -1,6 +1,8 @@
 import multer from 'multer';
 import path from 'path';
 
+const allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(__dirname, '../../public/uploads/'));
@@ -14,18 +16,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    fileFilter: function (req, filePath, callback) {
-        const ext = path.extname(filePath.originalname);
-        /*if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg' && ext !== '.txt') {
-            return callback(new Error('Only images are allowed!'));
-        }*/
-
-        /*const acceptedTypes = filePath.mimetype.split('/');
-        if (acceptedTypes[0] !== 'image') {
-            return callback(new Error('Only images are allowed!'));
-        }*/
+    fileFilter: async function (req, file, callback) {
+        const ext = path.extname(file.originalname);
         
-        callback(null, true)},
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg' && ext !== '.txt') {
+            return callback(new Error('Only images are allowed!'));
+        }
+
+        if (!allowedFileTypes.includes(file.mimetype)) {
+            return callback(new Error('Only images are allowed!'));
+        }
+        
+        callback(null, true);
+    },
     limits:{
         fileSize: 1024 * 1024
     }

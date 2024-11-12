@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
 import { omit } from "lodash";
 import UserModel, { UserDocument, UserInput } from "../models/user.model";
 import AuctionModel, { AuctionDocument } from "../models/auction.model";
@@ -47,4 +47,8 @@ export async function deleteUser(query: FilterQuery<UserDocument>) {
   } catch(e: any) {
     throw new Error(e);
   }
+}
+
+export async function updateUser(query: FilterQuery<UserDocument>, update: UpdateQuery<UserDocument>) {
+  return UserModel.findOneAndUpdate(query, update, { new: true });
 }

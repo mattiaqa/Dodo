@@ -13,6 +13,7 @@ export interface UserDocument extends mongoose.Document, UserInput {
   updatedAt: Date;
   savedAuctions: mongoose.Schema.Types.ObjectId[];
   isAdmin: Boolean;
+  avatar?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -23,6 +24,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
     password: { type: String, required: true },
     savedAuctions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Auction", required: false }],
     isAdmin: {type: Boolean, required: true, default: false},
+    avatar: {type: String, required: false},
   },
   {
     timestamps: true,
