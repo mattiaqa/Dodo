@@ -1,8 +1,8 @@
 import NodeClam from 'clamscan';
+import internal from 'stream';
+import log from './logger';
 
 export async function scanFile(filePath: string | undefined) {
-    console.log(`Attempting virus scan for ${filePath}`);
-  
     const clamscan = await new NodeClam().init({
       removeInfected: true,
       debugMode: false,
@@ -18,7 +18,9 @@ export async function scanFile(filePath: string | undefined) {
         bypassTest: true, // Don't check to see if socket is available. You should probably never set this to true.
       }
     });
+    
     const { isInfected, viruses } = await clamscan.isInfected(filePath);
-  
+    
     return { isInfected, viruses };
+
   };

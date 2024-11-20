@@ -4,3 +4,4 @@ build
 private.pem
 public.pem
 .env
+public/
