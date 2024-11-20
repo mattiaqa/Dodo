@@ -38,6 +38,17 @@ const params = {
     }),
 };
 
+const searchParams = {
+    body: object({
+        query: string({
+          required_error: "Query is required",
+        }),
+      }),
+}
+export const searchAuctionSchema = object({
+    ...searchParams,
+});
+
 export const createAuctionSchema = object({
     ...payload,
 });
@@ -51,6 +62,8 @@ export const updateAuctionSchema = object({
     ...params,
 });
 
+
 export type CreateAuctionInput = TypeOf<typeof createAuctionSchema>;
 export type UpdateAuctionInput = TypeOf<typeof updateAuctionSchema>;
 export type GetAuctionInput = TypeOf<typeof getAuctionSchema>;
+export type SearchAuctionInput = TypeOf<typeof searchAuctionSchema>;

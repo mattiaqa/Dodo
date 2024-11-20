@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { CreateAuctionInput, UpdateAuctionInput, GetAuctionInput } from "../schema/auction.schema";
-import { createAuction, findAuction, findAllAuction, deleteAuction } from "../service/auction.service";
+import { CreateAuctionInput, UpdateAuctionInput, GetAuctionInput, SearchAuctionInput } from "../schema/auction.schema";
+import { createAuction, findAuctionById, findAllAuction, deleteAuction, searchAuction } from "../service/auction.service";
 
 import logger from "../utils/logger";
 
@@ -22,7 +22,7 @@ export async function createAuctionHandler(
 
 export async function getAuctionHandler(req: Request<GetAuctionInput['body']>, res: Response){
   const auctionId = req.body.auctionId;
-  const auction = await findAuction({ auctionId });
+  const auction = await findAuctionById({ auctionId });
 
   if (!auction) {
     res.sendStatus(404);
@@ -47,7 +47,7 @@ export async function deleteAuctionHandler(req: Request<GetAuctionInput['body']>
   const auctionId = req.body.auctionId;
   const userId = res.locals.user._id;
 
-  const auction = await findAuction({ auctionId });
+  const auction = await findAuctionById({ auctionId });
 
   if (!auction) {
     res.sendStatus(404);
@@ -63,3 +63,15 @@ export async function deleteAuctionHandler(req: Request<GetAuctionInput['body']>
 
   res.send(deletedAuction);
 };
+
+export async function searchAuctionHandler(req: Request<SearchAuctionInput['body']>, res: Response) {
+  const query = req.body.query;
+  const auction = await searchAuction({title: { $regex: `.*${query}.*` }});
+  
+  if(!auction) {
+    res.sendStatus(404);
+    return;
+  }
+
+  res.send(auction);
+}

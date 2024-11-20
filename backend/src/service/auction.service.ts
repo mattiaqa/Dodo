@@ -11,7 +11,7 @@ export async function createAuction(input: AuctionInput) {
   }
 }
 
-export async function findAuction(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
+export async function findAuctionById(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
   try {
     return await AuctionModel.findOne(query, {}, options);
   } catch(e: any) {
@@ -32,6 +32,14 @@ export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
   try {
     return await AuctionModel.deleteOne(query);
   } catch(e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function searchAuction(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
+  try {
+    return await AuctionModel.find(query, {}, options);
+  } catch (e:any) {
     throw new Error(e);
   }
 }

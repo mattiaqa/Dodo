@@ -2,7 +2,7 @@ import { Express, Request, Response } from "express";
 
 import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler } from "./controller/user.controller";
 import { createSessionHandler, getUserSessionHandler, deleteSessionHandler } from "./controller/session.controller";
-import { createAuctionHandler, getAuctionHandler, getAllAuctionHandler, deleteAuctionHandler } from "./controller/auction.controller";
+import { createAuctionHandler, getAuctionHandler, getAllAuctionHandler, deleteAuctionHandler, searchAuctionHandler } from "./controller/auction.controller";
 import { getBidsHandler, placeBidHandler } from "./controller/bid.controller";
 
 import validateResource from './middleware/validateResource';
@@ -11,7 +11,7 @@ import requireAdmin from "./middleware/requireAdmin";
 
 import { createUserSchema, getUserSchema } from "./schema/user.schema";
 import { createSessionSchema } from "./schema/session.schema";
-import { createAuctionSchema, getAuctionSchema } from "./schema/auction.schema";
+import { createAuctionSchema, getAuctionSchema, searchAuctionSchema } from "./schema/auction.schema";
 import { placeBidSchema, getBidsSchema } from './schema/bid.schema';
 
 import upload from "./utils/multer";
@@ -37,6 +37,8 @@ function routes(app: Express) {
 
     app.post('/api/bid', [requireUser, validateResource(placeBidSchema)], placeBidHandler);
     app.get('/api/bid', [requireUser, validateResource(getBidsSchema)], getBidsHandler);
+
+    app.post('/api/auction/search', [validateResource(searchAuctionSchema)], searchAuctionHandler);
 }
 
 export default routes;
