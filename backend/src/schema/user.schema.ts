@@ -1,6 +1,5 @@
 import { object, string, TypeOf } from "zod";
 
-
 export const createUserSchema = object({
   body: object({
     name: string({
@@ -21,20 +20,18 @@ export const createUserSchema = object({
   }),
 });
 
-const params = {
+const userParams = {
   body: object({
     userId: string({
       required_error: "userId is required",
-    })
-  })
-}
+    }),
+  }),
+};
 
-export type CreateUserInput = Omit<
-  TypeOf<typeof createUserSchema>,
-  "body.passwordConfirmation">;
+export type CreateUserInput = Omit<TypeOf<typeof createUserSchema>, "body.passwordConfirmation">;
 
 export const getUserSchema = object({
-    ...params,
+  ...userParams,
 });
 
 export type GetUserInput = TypeOf<typeof getUserSchema>;

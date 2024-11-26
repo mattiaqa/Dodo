@@ -10,4 +10,5 @@ export default {
     refreshTokenTTL: '12h',
     publicKey: process.env.PUBLIC_KEY,
     privateKey: process.env.PRIVATE_KEY,
+    googleBooksApiKey: process.env.GOOGLE_BOOKS_API_KEY,
 };

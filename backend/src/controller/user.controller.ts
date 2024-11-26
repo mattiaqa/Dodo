@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { CreateUserInput, GetUserInput } from "../schema/user.schema";
 import { createUser, findUser, getUserAuctions, deleteUser, updateUser } from "../service/user.service";
-import logger from "../utils/logger";
 import { omit } from "lodash";
 import { scanFile } from "../utils/clamAV";
 import { unlink } from "fs";
+
+import logger from "../utils/logger";
 
 export async function createUserHandler(
   req: Request<{}, {}, CreateUserInput["body"]>,

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { GetBidsInput, PlaceBidInput } from '../schema/bid.schema'
-import { findAuction } from '../service/auction.service'
+import {searchAuctionById, searchAuctions} from '../service/auction.service'
 import { placeBid, getBids } from '../service/bid.service'
 import { findUser } from "../service/user.service";
 
@@ -20,17 +20,17 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
             return;
         }
 
-        const auction = await findAuction({ auctionId });
+        const auction = await searchAuctionById({ auctionId: auctionId });
 
         if (!auction) {
             res.sendStatus(404);
             return;
         } 
     
-        /*if(auction.seller == userId) {
+        if(auction.seller == userId) {
             res.sendStatus(403);
             return;
-        }*/
+        }
         
         const bid = await placeBid({...body, auctionId, buyer: userId});
         res.send(bid);
@@ -45,7 +45,7 @@ export async function getBidsHandler(req: Request<GetBidsInput['body']>, res: Re
     try {
         const auctionId = req.body.auctionId;
 
-        const auction = await findAuction({ auctionId });
+        const auction = await searchAuctionById({ auctionId });
 
         if (!auction) {
             res.sendStatus(404);
