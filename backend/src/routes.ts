@@ -1,6 +1,6 @@
 import { Express, Request, Response } from "express";
 
-import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler } from "./controller/user.controller";
+import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler, inviteUserHandler } from "./controller/user.controller";
 import { createSessionHandler, getUserSessionHandler, deleteSessionHandler } from "./controller/session.controller";
 import { createAuctionHandler, getAuctionHandler, getAllAuctionHandler, deleteAuctionHandler, searchAuctionHandler } from "./controller/auction.controller";
 import { getBidsHandler, placeBidHandler } from "./controller/bid.controller";
@@ -22,6 +22,7 @@ function routes(app: Express) {
     });
 
     app.post('/api/user', validateResource(createUserSchema), createUserHandler);
+
     app.get('/api/user/auctions', requireUser, getUserAuctionsHandler);
     app.delete('/api/user', [requireAdmin, validateResource(getUserSchema)], deleteUserHandler);
     app.post('/api/user/avatar', requireUser, upload.single('avatar'), uploadAvatarHandler);
@@ -39,6 +40,8 @@ function routes(app: Express) {
     app.get('/api/bid', [requireUser, validateResource(getBidsSchema)], getBidsHandler);
 
     app.post('/api/auction/search', [validateResource(searchAuctionSchema)], searchAuctionHandler);
+
+    app.post('/api/user/invite', requireAdmin, inviteUserHandler);
 }
 
 export default routes;
