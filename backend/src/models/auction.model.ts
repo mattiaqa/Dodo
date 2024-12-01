@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
 import { UserDocument } from "./user.model";
 import crypto from 'crypto';
+import {BookDocument} from "./book.model";
 
 export interface AuctionInput {
-    title: string;
+    book: BookDocument['_id'];
     price: number;
     condition: string;
     description: string;
-    seller: UserDocument['_id'];
     country: string;
     province: string;
     expireDate: Date;
+    seller: UserDocument['_id'];
   }
   
 export interface AuctionDocument extends AuctionInput, mongoose.Document {
@@ -27,7 +28,7 @@ const auctionSchema = new mongoose.Schema(
             unique: true,
             default: () => `${crypto.randomUUID()}`
         },
-        title: { type: String, required: true },
+        book: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
         price: { type: Number, required: true },
         condition: { type: String, required: true },
         description: { type: String, required: false },

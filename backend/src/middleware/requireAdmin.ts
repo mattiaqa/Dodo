@@ -12,9 +12,7 @@ const requireAdmin = async (req: Request, res: Response, next: NextFunction) => 
         return;
     }
 
-    user = user._id
-
-    const userData = await findUser({ _id: user });
+    const userData = await findUser({ _id: user._id });
 
     if(!userData?.isAdmin) {
         //res.sendStatus(403);
@@ -22,7 +20,8 @@ const requireAdmin = async (req: Request, res: Response, next: NextFunction) => 
         return;
     }
 
-    next()
+    next();
 }
 
+export default requireAdmin;
 export default requireAdmin;

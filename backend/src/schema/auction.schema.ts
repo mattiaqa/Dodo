@@ -1,69 +1,56 @@
 import { object, string, TypeOf, number, preprocess, date } from "zod";
+import {bookBaseFields} from "./book.schema";
 
-export const payload = ({
-    body: object({
-        title: string({
-            required_error: "Name is required",
-        }),
-        price: number({
-            required_error: "price is required",
-        }),
-        description: string({
-            required_error: "description is required",
-        }),
-        condition: string({
-            required_error: "condition is required",
-        }),
-        country: string({
-            required_error: "country is required",
-        }),
-        province: string({
-            required_error: "province is required",
-        }),
-        expireDate: preprocess((arg) => {
-            if (typeof arg === "string" || arg instanceof Date) {
-                return new Date(arg);
-            }
-        }, date({
-            required_error: "date is required",
-        })),
-    })
-});
-
-const params = {
-    body: object({
-      auctionId: string({
-        required_error: "auctionId is required",
-      }),
+const auctionBaseFields = {
+    title: string({
+        required_error: "Name is required!",
     }),
+    book: object(bookBaseFields),
+    price: number({
+        required_error: "Price is required!",
+    }),
+    description: string({
+        required_error: "Description is required!",
+    }),
+    condition: string({
+        required_error: "Condition is required!",
+    }),
+    country: string({
+        required_error: "Country is required!",
+    }),
+    province: string({
+        required_error: "Province is required!",
+    }),
+    expireDate: preprocess((arg) => {
+        if (typeof arg === "string" || arg instanceof Date) {
+            return new Date(arg);
+        }
+    }, date({
+        required_error: "Expire date is required!",
+    })),
 };
 
-const searchParams = {
+const searchQuerySchema = object({
     body: object({
         query: string({
-          required_error: "Query is required",
+            required_error: "Query is required!",
         }),
-      }),
-}
-export const searchAuctionSchema = object({
-    ...searchParams,
+    }),
 });
 
-export const createAuctionSchema = object({
-    ...payload,
+const auctionSchema = object({
+    body: object({
+        ...auctionBaseFields,
+    }),
 });
 
-export const getAuctionSchema = object({
-    ...params,
-});
-
-export const updateAuctionSchema = object({
-    ...payload,
-    ...params,
-});
-
+export const createAuctionSchema = auctionSchema;
+export const updateAuctionSchema = auctionSchema;
+export const getAuctionSchema = searchQuerySchema;
+export const searchAuctionSchema = searchQuerySchema;
 
 export type CreateAuctionInput = TypeOf<typeof createAuctionSchema>;
 export type UpdateAuctionInput = TypeOf<typeof updateAuctionSchema>;
 export type GetAuctionInput = TypeOf<typeof getAuctionSchema>;
-export type SearchAuctionInput = TypeOf<typeof searchAuctionSchema>;
+export type SearchAuctionInput = TypeOf<typeof getAuctionSchema>;
+export type DeleteAuctionInput = TypeOf<typeof getAuctionSchema>;

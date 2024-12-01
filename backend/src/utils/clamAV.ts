@@ -23,4 +23,4 @@ export async function scanFile(filePath: string | undefined) {
     
     return { isInfected, viruses };
 
-  };
+  }

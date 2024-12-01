@@ -4,7 +4,6 @@ import connect_db from './utils/connect';
 import logger from './utils/logger';
 import routes from './routes';
 import cors from 'cors';
-
 import deserializeUser from './middleware/deserializeUser';
 
 const port = config.get<number>('port');
