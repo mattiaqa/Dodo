@@ -1,6 +1,6 @@
 import { Express, Request, Response } from "express";
 
-import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler, inviteUserHandler } from "./controller/user.controller";
+import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler, inviteUserHandler, acceptInviteHandler } from "./controller/user.controller";
 import { createSessionHandler, getUserSessionHandler, deleteSessionHandler } from "./controller/session.controller";
 import { createAuctionHandler, getAuctionHandler, getAllAuctionHandler, deleteAuctionHandler, searchAuctionHandler } from "./controller/auction.controller";
 import { getBookInfoHandler } from "./controller/book.controller"
@@ -43,7 +43,8 @@ function routes(app: Express) {
 
     app.post('/api/auction/search', [validateResource(searchAuctionSchema)], searchAuctionHandler);
 
-    app.post('/api/user/invite', requireAdmin, inviteUserHandler);
+    app.post('/api/user/invitation/invite', requireAdmin, inviteUserHandler);
+    app.get('/api/user/invitation/accept/:token', requireUser, acceptInviteHandler);
 
     app.get('/api/book/info', [requireUser], getBookInfoHandler);
 }
