@@ -3,7 +3,6 @@ import AuctionModel, { AuctionDocument, AuctionInput } from "../models/auction.m
 import logger from "../utils/logger";
 
 import sanitize from "mongo-sanitize";
-import BookModel from "../models/book.model";
 
 export async function createAuction(newAuction: AuctionInput): Promise<AuctionDocument | undefined> {
   try {

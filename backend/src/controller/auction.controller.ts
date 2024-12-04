@@ -21,6 +21,7 @@ export async function createAuctionHandler( req: Request<{}, {}, CreateAuctionIn
     let book = await searchBookByISBN(inputBook.ISBN);
 
     if (!book) {
+      // TODO: fix this
       await createBook(inputBook);
     }
 
