@@ -4,7 +4,6 @@ import { createUser, findUser, getUserAuctions, deleteUser, updateUser } from ".
 import { omit } from "lodash";
 import { scanFile } from "../utils/clamAV";
 import { unlink } from "fs";
-import { Console } from "console";
 import { signJwt, verifyJwt } from "../utils/jwt.utils";
 import Invitation, { IInvitation } from '../models/invitations.model';
 import config from 'config';
