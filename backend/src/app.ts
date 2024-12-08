@@ -1,6 +1,6 @@
 import express from 'express';
 import config from 'config';
-import connect_db from './utils/connect';
+import connect_db from './utils/mongodb';
 import logger from './utils/logger';
 import routes from './routes';
 import cors from 'cors';

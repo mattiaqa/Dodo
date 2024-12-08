@@ -11,4 +11,5 @@ export default {
     publicKey: process.env.PUBLIC_KEY,
     privateKey: process.env.PRIVATE_KEY,
     googleBooksApiKey: process.env.GOOGLE_BOOKS_API_KEY,
+    redis_url: 'redis://redis:6379/'
 };

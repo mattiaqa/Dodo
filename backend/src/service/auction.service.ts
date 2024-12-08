@@ -1,14 +1,26 @@
 import { FilterQuery, QueryOptions } from "mongoose";
 import AuctionModel, { AuctionDocument, AuctionInput } from "../models/auction.model";
 import logger from "../utils/logger";
+import {Task, scheduler} from "../utils/scheduler"
 
 import sanitize from "mongo-sanitize";
+import crypto from "crypto";
 
 export async function createAuction(newAuction: AuctionInput): Promise<AuctionDocument | undefined> {
   try {
     const newAuctionSanitized = sanitize(newAuction);
 
     const auction = await AuctionModel.create(newAuctionSanitized);
+
+      if (auction) {
+          const task: Task = {
+              task_id: `SCHEDS:${auction.auctionId}`,
+              auctionId: auction.auctionId,
+              expiration: auction.expireDate,
+          };
+
+          await scheduler.scheduleTask(task);
+      }
 
     return auction.toJSON();
   } catch (e: any) {

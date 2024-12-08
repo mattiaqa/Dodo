@@ -54,7 +54,7 @@ export async function deleteUserHandler(req: Request<GetUserInput['body']>, res:
   const deletedUser = await deleteUser({ _id: userId });
 
   res.send(omit(deletedUser, 'password'));
-};
+}
 
 export async function uploadAvatarHandler(req: Request<GetUserInput['body']>, res: Response) {
   if(!req.file) {
