@@ -22,3 +22,20 @@ export async function getBids(query: FilterQuery<BidDocument>, options: QueryOpt
     throw new Error(e);
   }
 }
+
+export async function getWinner(auctionId: String): Promise<BidDocument | null> {
+  try {
+    const auctionIdSanitized = sanitize(auctionId);
+
+    const bids = await BidModel.find({auctionId: auctionIdSanitized});
+
+    if(bids.length == 0)
+      return null;
+
+    return bids.reduce((maxBid, currentBid) => {
+      return currentBid.price > maxBid.price ? currentBid : maxBid;
+    });
+  } catch(e: any) {
+    throw new Error(e);
+  }
+}

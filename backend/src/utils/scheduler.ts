@@ -1,5 +1,7 @@
-import { getFromRedis, setInRedis } from './redis'
+import { setInRedis } from './redis'
 import logger from './logger';
+import {getWinner} from "../service/bid.service";
+import {setWinner} from "../service/auction.service";
 
 export interface Task {
     task_id: string;
@@ -9,7 +11,16 @@ export interface Task {
 
 export class Scheduler {
     private async closeAuction(auctionId: string): Promise<void> {
-        logger.info(`Closing auction ${auctionId}`)
+        const winner = await getWinner(auctionId);
+
+        if(!winner) {
+            //send email
+            return;
+        }
+
+        await setWinner(winner);
+
+        // send email
     }
 
     async runScheduler(key: string) {

@@ -18,6 +18,7 @@ export interface AuctionDocument extends AuctionInput, mongoose.Document {
     auctionId: string;
     createdAt: Date;
     updatedAt: Date;
+    winner: UserDocument['_id'];
 }
 
 const auctionSchema = new mongoose.Schema(

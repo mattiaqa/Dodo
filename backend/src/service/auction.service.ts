@@ -5,6 +5,7 @@ import {Task, scheduler} from "../utils/scheduler"
 
 import sanitize from "mongo-sanitize";
 import crypto from "crypto";
+import {BidDocument} from "../models/bid.model";
 
 export async function createAuction(newAuction: AuctionInput): Promise<AuctionDocument | undefined> {
   try {
@@ -69,4 +70,16 @@ export async function searchAuctions(query: FilterQuery<AuctionDocument>, option
   } catch (e:any) {
     logger.error(e);
   }
+}
+
+export async function setWinner(winner: BidDocument) {
+    try {
+        const updatedAuction = await AuctionModel.findOneAndUpdate(
+        { auctionId: winner.auctionId },
+        { winner: winner.buyer },
+        { new: true }
+    ).exec();
+    } catch (e:any) {
+        logger.error(e);
+    }
 }
