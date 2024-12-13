@@ -5,6 +5,7 @@ import logger from './utils/logger';
 import routes from './routes';
 import cors from 'cors';
 import deserializeUser from './middleware/deserializeUser';
+import sgMail from '@sendgrid/mail';
 
 const port = config.get<number>('port');
 
@@ -24,3 +25,6 @@ app.listen(port, () => {
 
     routes(app);
 });
+
+// Imposta la chiave API di SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string); // Assicurati che SENDGRID_API_KEY sia definito

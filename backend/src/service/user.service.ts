@@ -30,7 +30,7 @@ export async function validatePassword({
 
   if (!isValid) return null;
 
-  return omit(user.toJSON(), "password");
+  return omit(user.toJSON(), "password", "__v", "email", "name", "savedAuctions", "isAdmin", "createdAt", "updatedAt");
 }
 
 export async function findUser(query: FilterQuery<UserDocument>) {

@@ -1,10 +1,11 @@
 import { Express, Request, Response } from "express";
 
-import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler, inviteUserHandler, acceptInviteHandler } from "./controller/user.controller";
+import { createUserHandler, getUserAuctionsHandler, deleteUserHandler, uploadAvatarHandler} from "./controller/user.controller";
 import { createSessionHandler, getUserSessionHandler, deleteSessionHandler } from "./controller/session.controller";
 import { createAuctionHandler, getAuctionHandler, getAllAuctionHandler, deleteAuctionHandler, searchAuctionHandler } from "./controller/auction.controller";
 import { getBookInfoHandler } from "./controller/book.controller"
 import { getBidsHandler, placeBidHandler } from "./controller/bid.controller";
+import { inviteUserHandler, acceptInviteHandler } from "./controller/invitation.controller";
 
 import validateResource from './middleware/validateResource';
 import requireUser from "./middleware/requireUser";
@@ -14,11 +15,14 @@ import { createUserSchema, getUserSchema } from "./schema/user.schema";
 import { createSessionSchema } from "./schema/session.schema";
 import { createAuctionSchema, getAuctionSchema, searchAuctionSchema } from "./schema/auction.schema";
 import { placeBidSchema, getBidsSchema } from './schema/bid.schema';
+import { InvitationInputSchema } from "./schema/invitation.schema";
 
 import upload from "./utils/multer";
 import {getChatSchema} from "./schema/chat.schema";
 import {getChatHandler, getUserChatHandler, sendMessageHandler} from "./controller/chat.controller";
 import {sendMessageSchema} from "./schema/message.schema";
+import { createCommentSchema } from "./schema/comment.schema";
+import { addCommentHandler, getCommentsHandler } from "./controller/comment.controller";
 
 function routes(app: Express) {
     app.get('/health', (req: Request, res: Response) => {
@@ -39,6 +43,9 @@ function routes(app: Express) {
     app.get('/api/auction/all', getAllAuctionHandler);
     app.delete('/api/auction', [requireAdmin, validateResource(getAuctionSchema)], deleteAuctionHandler);
     app.post('/api/auction/search', [validateResource(searchAuctionSchema)], searchAuctionHandler);
+    app.post('/api/auction/:auctionId/comment', [requireUser, validateResource(createCommentSchema)], addCommentHandler);
+    app.get('/api/auction/:aucttionId/comments', getCommentsHandler);
+
 
     app.post('/api/bid', [requireUser, validateResource(placeBidSchema)], placeBidHandler);
     app.get('/api/bid', [requireUser, validateResource(getBidsSchema)], getBidsHandler);
@@ -46,7 +53,7 @@ function routes(app: Express) {
 
     app.post('/api/auction/search', [validateResource(searchAuctionSchema)], searchAuctionHandler);
 
-    app.post('/api/user/invitation/invite', requireAdmin, inviteUserHandler);
+    app.post('/api/user/invitation/invite', [requireAdmin, validateResource(InvitationInputSchema)], inviteUserHandler);
     app.get('/api/user/invitation/accept/:token', requireUser, acceptInviteHandler);
 
     app.get('/api/book/info', [requireUser], getBookInfoHandler);
