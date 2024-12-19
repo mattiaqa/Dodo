@@ -11,6 +11,7 @@ export interface UserInput {
 export interface UserDocument extends mongoose.Document, UserInput {
   createdAt: Date;
   updatedAt: Date;
+  verified: boolean;
   savedAuctions: mongoose.Schema.Types.ObjectId[];
   isAdmin: Boolean;
   avatar?: string;
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
+    verified: {type: Boolean, required: true, default: false},
     savedAuctions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Auction", required: false }],
     isAdmin: {type: Boolean, required: true, default: false},
     avatar: {type: String, required: false},
@@ -30,6 +32,9 @@ const userSchema = new mongoose.Schema<UserDocument>(
     timestamps: true,
   }
 );
+
+//elimina il record se dopo 3 ore non è stato verificato, altrimenti tienilo
+userSchema.index({createdAt: 1}, {expireAfterSeconds: 3 * 60 * 60, partialFilterExpression: {verified: false}})
 
 userSchema.pre("save", async function (next) {
   const user = this as UserDocument;

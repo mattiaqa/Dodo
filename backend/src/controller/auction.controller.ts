@@ -1,10 +1,7 @@
 import {Request, Response} from "express";
-import {createAuction, deleteAuction, searchAuctionById, searchAuctions} from "../service/auction.service";
-
+import {createAuction, deleteAuction, searchAuctionById, searchAuctions, getUserAuctions} from "../service/auction.service";
 import logger from "../utils/logger";
-
 import {CreateAuctionInput, DeleteAuctionInput, GetAuctionInput, SearchAuctionInput} from "../schema/auction.schema";
-
 import {createBook, searchBookByISBN} from "../service/book.service";
 
 export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInput["body"]>, res: Response) {
@@ -27,6 +24,24 @@ export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInp
     } catch (e: any) {
         logger.error(e);
         res.sendStatus(409);
+    }
+}
+
+export async function getUserAuctionsHandler(req: Request, res: Response) {
+    const seller = res.locals.user._id;
+  
+    try {
+      const auctions = await getUserAuctions({ seller });
+  
+      if(!auctions) {
+        res.sendStatus(404);
+        return;
+      }
+  
+      res.send(auctions);
+    } catch (e: any) {
+      logger.error(e);
+      res.status(409).send(e.message);
     }
 }
 

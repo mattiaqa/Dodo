@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { findUser, updateUser } from "../service/user.service";
 import { signJwt, verifyJwt } from "../utils/jwt.utils";
-import Invitation, { IInvitation } from '../models/invitation.model';
-import sgMail from '@sendgrid/mail';
+import Invitation from '../models/invitation.model';
 import { checkAlreadyInvited, createInvitationLink, sendInviteEmail } from "../service/invitation.service";
 
 
@@ -48,12 +47,11 @@ export async function inviteUserHandler(req: Request, res: Response)
     expireDate.setDate(expireDate.getDate() + 10);
 
     const link = await createInvitationLink(email, token, expireDate);
-
-    sendInviteEmail(email, link, admin.name, user.name);
+    await sendInviteEmail(email, link, admin.name, user.name);
 
     res.status(201).send({
        message: 'Link di invito generato con successo!',
-       link: link,
+       link,
     });
 
     return;
