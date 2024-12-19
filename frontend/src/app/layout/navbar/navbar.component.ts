@@ -1,48 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { AvatarComponent } from './avatar/avatar.component';
-import { ButtonModule } from 'primeng/button';
-import { ToolbarModule } from 'primeng/toolbar';
-import { MenuModule } from 'primeng/menu';
-import {MenuItem} from "primeng/api";
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { DialogService } from 'primeng/dynamicdialog';
+import { Component } from '@angular/core';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {NgOptimizedImage} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
   imports: [
-    AvatarComponent,
-    ButtonModule,
-    FontAwesomeModule,
-    MenuModule,
-    ToolbarModule
+    FaIconComponent,
+    NgOptimizedImage,
+    RouterLink
   ],
-  providers: [DialogService],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent implements OnInit{
-  
-  location: string = "Anywhere";
-  
-  //login () => this.authService.login();
-  //logout () => this.authService.logout();
+export class NavbarComponent {
 
-  currentMenuItems: MenuItem[] | undefined = [];
-
-  ngOnInit(): void {
-    this.fetchMenu();
-  }
-
-  private fetchMenu() {
-    return [
-      {
-        label: "Sign up",
-        styleClass: "font-bold"
-      },
-      {
-        label: "Log in",
-      }
-    ]
-  }
 }

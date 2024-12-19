@@ -1,31 +1,28 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { fontAwesomeIcons } from '../shared/font-awesome-icons';
-import { NavbarComponent } from "./layout/navbar/navbar.component";
-import { FooterComponent } from "./layout/footer/footer.component";
+import {Component, inject, OnInit} from '@angular/core';
+import { fontAwesomeIcons } from './shared/font-awesome-icons';
+import {
+  FaConfig,
+  FaIconLibrary,
+} from '@fortawesome/angular-fontawesome';
+import {NavbarComponent} from './layout/navbar/navbar.component';
+import {FooterComponent} from './layout/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,  
-    FontAwesomeModule, 
-    NavbarComponent, 
-    FooterComponent
-  ],
+  imports: [NavbarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-
-export class AppComponent implements OnInit{
-  faIconLibrary = inject(FaIconLibrary);
+export class AppComponent implements OnInit {
+  private faIconLibrary = inject(FaIconLibrary);
+  private faConfig = inject(FaConfig);
 
   ngOnInit(): void {
     this.initFontAwesome();
   }
-  
+
   private initFontAwesome() {
+    this.faConfig.defaultPrefix = 'far';
     this.faIconLibrary.addIcons(...fontAwesomeIcons);
   }
 }
