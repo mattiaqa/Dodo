@@ -4,7 +4,6 @@ import logger from "../utils/logger";
 import {Task, scheduler} from "../utils/scheduler"
 
 import sanitize from "mongo-sanitize";
-import crypto from "crypto";
 import {BidDocument} from "../models/bid.model";
 
 export async function createAuction(newAuction: AuctionInput): Promise<AuctionDocument | undefined> {
@@ -29,6 +28,10 @@ export async function createAuction(newAuction: AuctionInput): Promise<AuctionDo
   }
 }
 
+export async function getUserAuctions(query: FilterQuery<AuctionDocument>) {
+  return AuctionModel.find(query).lean();
+}
+
 export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
   try {
     const sanitizedQuery = sanitize(query);
@@ -38,10 +41,10 @@ export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
   }
 }
 
-export async function searchAuctionById(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
+export async function searchAuctionById(id: string, options: QueryOptions = {lean: true}) {
   try {
-    const sanitizedQuery = sanitize(query);
-    return await AuctionModel.findOne(sanitizedQuery, {}, options)
+
+    return await AuctionModel.findOne({auctionId: id}, {}, options)
         .populate({
           path: "book",
           select: {"_id":0, "__v": 0}
@@ -51,7 +54,8 @@ export async function searchAuctionById(query: FilterQuery<AuctionDocument>, opt
           select: {"email":1, "_id":1}
         });
   } catch (e:any) {
-    logger.error(e);
+    logger.error(`Failed to find auction by ID: ${e.message}`);
+    throw new Error("Error retrieving auction");
   }
 }
 
