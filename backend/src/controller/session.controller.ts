@@ -94,6 +94,8 @@ export async function createSessionHandler(req: Request, res: Response): Promise
         { expiresIn: config.get('refreshTokenTTL') },
     );
 
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+
     res.send({ accessToken, refreshToken });
 }
 

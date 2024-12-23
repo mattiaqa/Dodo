@@ -4,12 +4,11 @@ import {
   FaConfig,
   FaIconLibrary,
 } from '@fortawesome/angular-fontawesome';
-import {NavbarComponent} from './layout/navbar/navbar.component';
-import {FooterComponent} from './layout/footer/footer.component';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [NavbarComponent, FooterComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
