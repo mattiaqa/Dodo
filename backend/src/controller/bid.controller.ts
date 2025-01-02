@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { GetBidsInput, PlaceBidInput } from '../schema/bid.schema'
-import {searchAuctionById, searchAuctions} from '../service/auction.service'
+import {searchAuctionById, updateAuction} from '../service/auction.service'
 import { placeBid, getBids } from '../service/bid.service'
 import { findUser } from "../service/user.service";
 
@@ -8,44 +8,56 @@ import { omit } from "lodash";
 import logger from "../utils/logger";
 
 export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]>, res: Response) {
-    try{
+    try {
         const auctionId = req.body.auctionId;
         const userId = res.locals.user._id;
         const body = req.body;
 
         const userData = await findUser({ _id: userId });
 
-        if(userData?.isAdmin) {
+        if (userData?.isAdmin) {
             res.sendStatus(403);
             return;
         }
 
-        const auction = await searchAuctionById({ auctionId: auctionId });
+        const auction = await searchAuctionById({auctionId: auctionId});
 
         if (!auction) {
             res.sendStatus(404);
             return;
-        } 
-    
-        if(auction.seller == userId) {
+        }
+
+        if (auction.seller == userId) {
             res.sendStatus(403);
             return;
         }
-        
-        const bid = await placeBid({...body, auctionId, buyer: userId});
+
+        const newBidAmount = body.amount;
+
+        if (newBidAmount <= auction.lastBid) {
+            res.status(400).send("Bid must be greater than the current highest bid.");
+            return;
+        }
+
+        const bid = await placeBid({ ...body, auctionId, buyer: userId });
+
+        await updateAuction(auctionId, {
+            lastBid: newBidAmount
+        });
+
         res.send(bid);
-        
+
     } catch (e: any) {
         logger.error(e);
         res.status(409).send(e.message);
-      }
+    }
 }
 
 export async function getBidsHandler(req: Request<GetBidsInput['body']>, res: Response) {
     try {
         const auctionId = req.body.auctionId;
 
-        const auction = await searchAuctionById({ auctionId });
+        const auction = await searchAuctionById({auctionId});
 
         if (!auction) {
             res.sendStatus(404);

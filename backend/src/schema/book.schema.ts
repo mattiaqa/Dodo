@@ -20,6 +20,9 @@ export const bookBaseFields = {
     language: string({
         required_error: "ISBN is required!",
     }),
+    description: string({
+        required_error: "Description is required!",
+    }),
 };
 
 const bookInfoSchema = object({

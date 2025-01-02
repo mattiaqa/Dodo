@@ -28,7 +28,7 @@ export async function getChatHandler(req: Request<GetChatInput['body']>, res: Re
         const auctionId = req.body.auctionId;
         const userId = res.locals.user._id;
 
-        const auction = await searchAuctionById({ auctionId });
+        const auction = await searchAuctionById({auctionId});
 
         let chat = await searchChat({
             auctionId,

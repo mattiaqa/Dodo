@@ -4,6 +4,7 @@ import { findUser, updateUser } from "../service/user.service";
 import { scanFile } from "../utils/clamAV";
 import { unlink } from "fs";
 import logger from "../utils/logger";
+import {omit} from "lodash";
 
 
 export async function uploadAvatarHandler(req: Request<GetUserInput['body']>, res: Response) {
@@ -43,4 +44,17 @@ export async function uploadAvatarHandler(req: Request<GetUserInput['body']>, re
   }
 
   res.send({"avatar": updatedUser.avatar});
+}
+
+export async function getUserInfo(req: Request, res: Response) {
+  const userId = res.locals.user._id;
+
+  const user = await findUser({ _id: userId });
+
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+
+  res.send(omit(user, 'password', 'isAdmin', 'verified', 'updatedAt', '__v'));
 }

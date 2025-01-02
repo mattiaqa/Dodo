@@ -1,16 +1,29 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NavbarComponent} from '../../layout/navbar/navbar.component';
 import {FooterComponent} from '../../layout/footer/footer.component';
+import {CardComponent} from './components/card/card.component';
+import {NgForOf} from '@angular/common';
+import {AuctionModel} from '../../models/auction.model';
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-home',
-  imports: [
-    NavbarComponent,
-    FooterComponent
-  ],
+    imports: [
+        NavbarComponent,
+        FooterComponent,
+        CardComponent,
+        NgForOf
+    ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  auctions: any[] = [];
+  constructor(private auctionModel: AuctionModel) {}
 
+  ngOnInit() {
+    this.auctionModel.getAllAuction().subscribe(auctions => {
+      this.auctions = auctions;
+    });
+  }
 }

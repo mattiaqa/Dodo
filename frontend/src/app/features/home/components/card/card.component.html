@@ -1,0 +1,53 @@
+ <div class="card card-compact bg-base-100 w-80 shadow-sm">
+    <figure>
+      <div class="carousel w-full relative group">
+        <div id="slide1" class="carousel-item relative w-full">
+          <img
+            src="https://picsum.photos/600/200"
+            alt="Image 1" />
+          <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <a href="#slide4" class="btn btn-circle btn-sm">❮</a>
+            <a href="#slide2" class="btn btn-circle btn-sm">❯</a>
+          </div>
+        </div>
+        <div id="slide2" class="carousel-item relative w-full">
+          <img
+            src="https://picsum.photos/600/200"
+            alt="Image 2" />
+          <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <a href="#slide1" class="btn btn-circle btn-sm">❮</a>
+            <a href="#slide3" class="btn btn-circle btn-sm">❯</a>
+          </div>
+        </div>
+      </div>
+    </figure>
+   <a [routerLink]="'/auction/' + auction?.auctionId" class="block">
+     <div class="card-body relative">
+       <h3 class="card-title text-lg font-bold">{{ auction?.book?.title || 'Title not available' }}</h3>
+       <p class="text-sm text-gray-600">
+         <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+          Condition: <span class="font-semibold">{{ auction?.condition || 'Undefined' }}</span>
+       </p>
+       <p class="text-sm text-gray-600">
+         <fa-icon [icon]="['fas', 'money-bill-1']"></fa-icon>
+         Current Bid: <span class="font-semibold">{{ auction?.lastBid + '€' || 'Undefined' }}</span>
+       </p>
+       <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+         <div
+           class="progressBar h-2 rounded-full"
+           [style.width.%]="timeLeftPercentage">
+         </div>
+       </div>
+       <div class="flex justify-between items-center text-xs text-gray-500 mt-2">
+         <p>
+           <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-0"></fa-icon>
+           {{ auction?.country + ', ' + auction?.province || 'Location not available' }}
+         </p>
+         <p class="absolute right-5">
+           <fa-icon [icon]="['fas', 'clock']" class="mr-0"></fa-icon>
+           Time left: {{ timeLeft }}
+         </p>
+       </div>
+     </div>
+   </a>
+  </div>

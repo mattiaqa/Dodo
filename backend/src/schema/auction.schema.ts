@@ -6,8 +6,8 @@ const auctionBaseFields = {
         required_error: "Name is required!",
     }),
     book: object(bookBaseFields),
-    price: number({
-        required_error: "Price is required!",
+    lastBid: number({
+        required_error: "lastBid is required!",
     }),
     description: string({
         required_error: "Description is required!",
@@ -32,9 +32,15 @@ const auctionBaseFields = {
 
 const searchQuerySchema = object({
     body: object({
-        query: string({
-            required_error: "Query is required!",
+        where: string({
+            required_error: "Where is required!",
         }),
+        ISBN: string({
+            required_error: "ISBN is required!",
+        }),
+        budget: number({
+            required_error: "Budget is required!",
+        })
     }),
 });
 

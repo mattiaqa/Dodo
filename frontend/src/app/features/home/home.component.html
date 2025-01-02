@@ -1,2 +1,7 @@
 <app-navbar></app-navbar>
+
+<div class="card-container">
+  <app-card *ngFor="let auction of auctions" [auction]="auction"></app-card>
+</div>
+
 <app-footer></app-footer>

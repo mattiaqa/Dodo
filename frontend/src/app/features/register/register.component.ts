@@ -12,8 +12,7 @@ import {StorageService} from '../../storage/storage.service';
         FaIconComponent,
         FormsModule,
         NgIf,
-        ReactiveFormsModule,
-        RouterLink
+        ReactiveFormsModule
     ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'

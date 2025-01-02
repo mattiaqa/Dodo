@@ -23,7 +23,6 @@ export async function createUserHandler(
     } catch (e: any) {
         logger.error(e);
 
-        // Controllo se l'errore è dovuto a una chiave duplicata
         if (e.code === 11000) {
         res.status(409).send({
             message: 'User already exists with this email. Please log in or check your email to activate the account',
@@ -31,7 +30,6 @@ export async function createUserHandler(
         return;
         }
 
-        // Altri tipi di errori
         res.status(500).send({
         message: 'An unexpected error occurred during the registration process',
         error: e.message,
@@ -112,8 +110,6 @@ export async function deleteSessionHandler(req: Request, res: Response) {
 
     await updateSession({_id: sessionId}, {valid: false});
 
-    res.send({
-        accessToken: null,
-        refreshToken: null
-    });
+    res.cookie('accessToken', '', { httpOnly: true });
+    res.sendStatus(200);
 }

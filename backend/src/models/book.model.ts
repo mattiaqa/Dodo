@@ -7,6 +7,7 @@ export interface BookInput {
     publishedDate: string;
     language: string;
     ISBN: string;
+    description: string;
 }
 
 export interface BookDocument extends BookInput, mongoose.Document {
@@ -21,6 +22,7 @@ const bookSchema = new mongoose.Schema(
         publisher: { type: String, required: true},
         language: { type: String, required: true },
         ISBN: { type: String, required: true, unique: true },
+        description: { type: String, required: true, default: "" },
     },
     {
         timestamps: true,

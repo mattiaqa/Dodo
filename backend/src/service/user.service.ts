@@ -50,6 +50,7 @@ export async function updateUser(query: FilterQuery<UserDocument>, update: Updat
 export async function confirmUser(token: string)
 {
   try {
+    console.log('entered');
     // Decodifica del token JWT
     const payload = verifyJwt(token).decoded;
 
@@ -82,11 +83,11 @@ export async function confirmUser(token: string)
 
 export async function createConfirmationLink(email: string)
 {
-  const port = config.get<number>('port');
+  const port = config.get<number>('frontend_port');
   const hostname = config.get('hostname');
   const token = signJwt({email},{expiresIn: '3h'});
 
-  const link = `http://${hostname}:${port}/api/register/${token}/confirm`;
+  const link = `http://${hostname}:${port}/register/${token}/confirm`;
   return link;
 }
 

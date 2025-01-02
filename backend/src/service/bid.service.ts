@@ -33,7 +33,7 @@ export async function getWinner(auctionId: String): Promise<BidDocument | null> 
       return null;
 
     return bids.reduce((maxBid, currentBid) => {
-      return currentBid.price > maxBid.price ? currentBid : maxBid;
+      return currentBid.amount > maxBid.amount ? currentBid : maxBid;
     });
   } catch(e: any) {
     throw new Error(e);

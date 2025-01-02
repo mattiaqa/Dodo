@@ -1,7 +1,7 @@
 <div class="navbar bg-base-100">
-  <div class="navbar-start">
-    <div class="flex items-center space-x-2" routerLink="/">
-      <img ngSrc="assets/images/logo.png" alt="dodò" height="80" width="80">
+  <div class="navbar-start clickable" routerLink="/">
+    <div class="flex items-center space-x-2">
+      <img alt="dodò" class="logo" height="80" ngSrc="assets/images/logo.png" width="80">
       <span class="logo-style">dodò</span>
     </div>
   </div>
@@ -11,17 +11,17 @@
       <div class="input-container">
         <div class="input-group">
           <span class="input-label">Where</span>
-          <input type="text" placeholder="Everywhere" class="search-input">
+          <input class="search-input" placeholder="Everywhere" type="text">
         </div>
         <hr class="vertical-line">
         <div class="input-group">
           <span class="input-label">ISBN</span>
-          <input type="text" placeholder="978-3-16-148410-0" class="search-input">
+          <input class="search-input" placeholder="978-3-16-148410-0" type="text">
         </div>
         <hr class="vertical-line">
         <div class="input-group">
           <span class="input-label">Your Budget</span>
-          <input type="text" placeholder="€10-€70" class="search-input">
+          <input class="search-input" placeholder="€10-€70" type="text">
         </div>
         <fa-icon [icon]="['fas', 'search']" class="search-icon"></fa-icon>
       </div>
@@ -30,10 +30,44 @@
 
   <div class="navbar-end pe-4 flex align-items-center">
     <div class="dropdown dropdown-end pe-4">
-      <div tabindex="0" role="button" class="icon-container">
+      <div class="icon-container" role="button" tabindex="0">
         <fa-icon [icon]="['fas', 'bars']" class="menu-icon"></fa-icon>
         <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>
       </div>
+
+      <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10">
+        <li *ngIf="isLoggedIn">
+          <a href="/profile">
+            <fa-icon [icon]="['fas', 'user']" class="mr-2"></fa-icon>
+            Profile
+          </a>
+        </li>
+        <li *ngIf="isLoggedIn">
+          <a href="/myauction">
+            <fa-icon [icon]="['fas', 'gavel']" class="mr-2"></fa-icon>
+            My Auction
+          </a>
+        </li>
+        <li *ngIf="isLoggedIn">
+          <a href="/settings">
+            <fa-icon [icon]="['fas', 'cogs']" class="mr-2"></fa-icon>
+            Settings
+          </a>
+        </li>
+        <li *ngIf="isLoggedIn">
+          <button (click)="logout()" class="w-full text-left">
+            <fa-icon [icon]="['fas', 'arrow-right-from-bracket']" class="mr-2"></fa-icon>
+            Logout
+          </button>
+        </li>
+        <li *ngIf="!isLoggedIn">
+          <a href="/login">
+            <fa-icon [icon]="['fas', 'sign-in-alt']" class="mr-2"></fa-icon>
+            Login
+          </a>
+        </li>
+      </ul>
     </div>
   </div>
+
 </div>

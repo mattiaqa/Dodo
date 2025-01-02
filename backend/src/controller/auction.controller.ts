@@ -3,6 +3,8 @@ import {createAuction, deleteAuction, searchAuctionById, searchAuctions, getUser
 import logger from "../utils/logger";
 import {CreateAuctionInput, DeleteAuctionInput, GetAuctionInput, SearchAuctionInput} from "../schema/auction.schema";
 import {createBook, searchBookByISBN} from "../service/book.service";
+import {omit} from "lodash";
+import sanitize from "mongo-sanitize";
 
 export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInput["body"]>, res: Response) {
     try {
@@ -45,8 +47,8 @@ export async function getUserAuctionsHandler(req: Request, res: Response) {
     }
 }
 
-export async function getAuctionHandler(req: Request<GetAuctionInput['body']>, res: Response) {
-    const auctionId = req.body.auctionId;
+export async function getAuctionHandler(req: Request, res: Response) {
+    const auctionId = req.params.auctionId;
     const auction = await searchAuctionById({auctionId: auctionId});
 
     if (!auction) {
@@ -58,14 +60,25 @@ export async function getAuctionHandler(req: Request<GetAuctionInput['body']>, r
 }
 
 export async function getAllAuctionHandler(req: Request, res: Response) {
+    const now = new Date();
     const auctions = await searchAuctions({});
 
-    if (!auctions) {
+    const validAuctions = auctions!.filter(auction => {
+        const expirationDate = new Date(auction.expireDate);
+        return expirationDate > now;
+    });
+
+
+    if (!validAuctions || validAuctions.length === 0) {
         res.sendStatus(404);
         return;
     }
 
-    res.send(auctions);
+    const filteredAuctions = validAuctions.map(auction =>
+        omit(auction, ["_id", "__v", "updatedAt", "seller", "description"])
+    );
+
+    res.send(filteredAuctions);
 }
 
 export async function deleteAuctionHandler(req: Request<DeleteAuctionInput['body']>, res: Response) {
@@ -90,13 +103,36 @@ export async function deleteAuctionHandler(req: Request<DeleteAuctionInput['body
 }
 
 export async function searchAuctionHandler(req: Request<SearchAuctionInput['body']>, res: Response) {
-    const query = req.body.query;
-    const auction = await searchAuctions({title: {$regex: `.*${query}.*`}});
+    const { where, ISBN, budget } = req.body;
 
-    if (!auction) {
-        res.sendStatus(404);
-        return;
+    let conditions: any[] = [];
+
+    if (where) {
+        conditions.push({ country: { $regex: `.*${sanitize(where)}.*`, $options: 'i' } });
     }
+    if (ISBN) {
+        conditions.push({ ISBN: sanitize(ISBN) });
+    }
+    if (budget) {
+        const budgetNumber = Number(budget);
+        if (!isNaN(budgetNumber)) {
+            conditions.push({ lastBid: { $lte: budgetNumber } });
+        }
+    }
+    const query: any = conditions.length > 0 ? { $and: conditions } : {};
 
-    res.send(auction);
+    try {
+        const auctions = await searchAuctions(
+            query
+        );
+
+        if (!auctions || auctions.length === 0) {
+            res.sendStatus(404);
+            return;
+        }
+
+        res.send(auctions);
+    } catch (error) {
+        res.sendStatus(500)
+    }
 }

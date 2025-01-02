@@ -41,6 +41,6 @@ export class AuthService {
   }
 
   confirmRegistration(token: string): Observable<any> {
-    return this.http.get(AUTH_API + 'register/' + token + '/confirm', {});
+    return this.http.get(AUTH_API + 'register/' + token + '/confirm');
   }
 }

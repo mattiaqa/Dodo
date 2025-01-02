@@ -3,7 +3,7 @@ import { UserDocument } from "./user.model";
 import { AuctionDocument } from "./auction.model";
 
 export interface BidInput {
-    price: number;
+    amount: number;
     auctionId: AuctionDocument['auctionId'];
     buyer: UserDocument['_id'];
 }
@@ -17,7 +17,7 @@ const bidSchema = new mongoose.Schema(
     {
         buyer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         auctionId: { type: String, ref: "Auction" },
-        price: {type: Number, required: true}
+        amount: {type: Number, required: true}
     },
     {
         timestamps: true,

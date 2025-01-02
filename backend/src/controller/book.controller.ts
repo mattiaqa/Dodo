@@ -24,7 +24,8 @@ export async function getBookInfoHandler (req: Request<GetBookInfoInput['body']>
                 authors: item.volumeInfo.authors || [],
                 publisher: item.volumeInfo.publisher || 'Unknown',
                 publishedDate: item.volumeInfo.publishedDate || 'Unknown',
-                language: item.volumeInfo.language || 'Unknown'
+                language: item.volumeInfo.language || 'Unknown',
+                description: item.volumeInfo.description || 'Unknown',
             }));
             res.send(filteredData);
         })

@@ -6,6 +6,7 @@ doetenv.config();
 export default {
     hostname: 'localhost',
     port: 1338,
+    frontend_port: 4200,
     db_url: process.env.DB_URL,
     saltWorkFactor: 10,
     accessTokenTTL: '3h',

@@ -2,7 +2,7 @@ import { number, string, object, TypeOf } from "zod";
 
 const bidBaseFields = object({
     body: object({
-        price: number({ required_error: "price is required" }),
+        amount: number({ required_error: "amount is required" }),
         auctionId: string({ required_error: "auctionId is required" }),
     }),
 });
