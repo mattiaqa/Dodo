@@ -6,3 +6,5 @@ public.pem
 .env
 public/
 .idea/
+gmailAPI/credentials.json
+gmailAPI/token.json
