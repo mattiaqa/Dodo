@@ -32,7 +32,6 @@ export async function createUserHandler(
 
         res.status(500).send({
         message: 'An unexpected error occurred during the registration process',
-        error: e.message,
         });
         return;
     }
@@ -46,7 +45,8 @@ export async function confirmUserHandler(req: Request, res: Response)
       await confirmUser(token);
       res.status(200).send({ message: 'User verified successfully' });
   } catch (error: any) {
-      res.status(400).send(error.message);
+      logger.error(error);
+      res.status(500).send({message: "Internal Server Error"});
   }
 }
 
@@ -68,48 +68,63 @@ export async function deleteUserHandler(req: Request<GetUserInput['body']>, res:
 
 
 export async function createSessionHandler(req: Request, res: Response): Promise<void> {
-    const user = await validatePassword(req.body);
+    try {
+        const user = await validatePassword(req.body);
 
-    if (!user) {
-        res.status(401).send("Invalid email or password");
-        return;
+        if (!user) {
+            res.status(401).send("Invalid email or password");
+            return;
+        }
+        if(!user.verified)
+        {
+            res.status(403).send({error: 'Your account is not activated. Please check your email'});
+            return;
+        }
+
+        const session = await createSession(String(user._id), req.get("user-agent") || "");
+
+        const accessToken = signJwt(
+            { ...user, session: session._id },
+            { expiresIn: config.get('accessTokenTTL') },
+        );
+
+        const refreshToken = signJwt(
+            { ...user, session: session._id },
+            { expiresIn: config.get('refreshTokenTTL') },
+        );
+
+        res.cookie('accessToken', accessToken, { httpOnly: true });
+
+        res.send({ accessToken, refreshToken });
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
-    if(!user.verified)
-    {
-        res.status(403).send({error: 'Your account is not activated. Please check your email'});
-        return;
-    }
-
-    const session = await createSession(String(user._id), req.get("user-agent") || "");
-
-    const accessToken = signJwt(
-        { ...user, session: session._id },
-        { expiresIn: config.get('accessTokenTTL') },
-    );
-
-    const refreshToken = signJwt(
-        { ...user, session: session._id },
-        { expiresIn: config.get('refreshTokenTTL') },
-    );
-
-    res.cookie('accessToken', accessToken, { httpOnly: true });
-
-    res.send({ accessToken, refreshToken });
 }
 
 export async function getUserSessionHandler(req: Request, res: Response) {
-    const userId = res.locals.user._id;
+    try {
+        const userId = res.locals.user._id;
 
-    const sessions = await findSession({user: userId, valid: true});
+        const sessions = await findSession({user: userId, valid: true});
 
-    res.send(sessions);
+        res.send(sessions);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
+    }
 }
 
 export async function deleteSessionHandler(req: Request, res: Response) {
-    const sessionId = res.locals.user.session;
+    try {
+        const sessionId = res.locals.user.session;
 
-    await updateSession({_id: sessionId}, {valid: false});
+        await updateSession({_id: sessionId}, {valid: false});
 
-    res.cookie('accessToken', '', { httpOnly: true });
-    res.sendStatus(200);
+        res.clearCookie('accessToken');
+        res.send({});
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
+    }
 }

@@ -1,0 +1,8 @@
+<app-navbar></app-navbar>
+
+<h3 class="text-3xl font-bold text-primary-600 primary-color text-center">My Auctions</h3>
+<div class="card-container">
+  <app-card *ngFor="let auction of auctions" [auction]="auction"></app-card>
+</div>
+
+<app-footer></app-footer>

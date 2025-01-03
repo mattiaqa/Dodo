@@ -6,6 +6,7 @@ import ChatRoutes from './chat';
 
 import { getBookInfoHandler } from "../controller/book.controller";
 import requireUser from "../middleware/requireUser";
+import DownloadRoutes from "./download/routes/download.routes";
 
 function routes(app: Express) {
     app.get('/health', (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ function routes(app: Express) {
     app.use('/api/user', UserRoutes);
     app.use('/api/auction', AuctionRoutes);
     app.use('/api/chat', ChatRoutes);
-    
+    app.use('/api/download', DownloadRoutes);
     app.get('/api/book/info', [requireUser], getBookInfoHandler);
 }
 

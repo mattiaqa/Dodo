@@ -1,0 +1,36 @@
+<div class="comments-section bg-white mt-10">
+  <h2 class="text-2xl font-semibold text-primary-700 mb-4">Comments</h2>
+
+  <!-- Comment Input Form -->
+  <div class="mb-6">
+    <p class="text-gray-600 font-medium mb-2">Leave a comment:</p>
+    <div class="flex items-start space-x-4">
+    <textarea
+      id="commentInput"
+      [(ngModel)]="commentInputBox"
+      rows="3"
+      class="input input-bordered w-full max-w-md"
+      placeholder="Write your comment...">
+    </textarea>
+      <button class="btn primary-color" (click)="submitComment()">Submit Comment</button>
+    </div>
+  </div>
+
+  <!-- Display Comments -->
+  <div class="space-y-6">
+    <div *ngFor="let comment of comments" class="flex items-start space-x-4">
+      <!-- Profile Picture -->
+      <img
+        [src]="comment?.profilePicture || 'https://via.placeholder.com/40'"
+        alt="Profile Picture"
+        class="w-10 h-10 rounded-full shadow-md">
+
+      <!-- Comment Content -->
+      <div class="bg-gray-100 p-4 rounded-lg shadow-sm w-full">
+        <p class="text-gray-700 font-medium">{{ comment?.username }}</p>
+        <p class="text-gray-600 mt-1">{{ comment?.comment }}</p>
+        <span class="text-sm text-gray-400 mt-2 block">{{ comment?.createdAt | date:'short' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

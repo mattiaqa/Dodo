@@ -5,7 +5,7 @@ import { searchAuctionSchema } from '../../../schema/auction.schema';
 
 const router = express.Router();
 
-router.get('/all', AuctionController.getAllAuctionHandler);
+router.get('/', AuctionController.getAllAuctionHandler);
 router.post('/search', [validateResource(searchAuctionSchema)], AuctionController.searchAuctionHandler);
 router.get('/:auctionId', AuctionController.getAuctionHandler);
 

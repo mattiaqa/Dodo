@@ -38,7 +38,10 @@ const auctionSchema = new mongoose.Schema(
         province: { type: String, required: true },
         images: [{ type: String, required: false }],
         expireDate: {type: Date, required: true},
-        winner: { type: String, required: false}
+        winner: { type: String, required: false},
+        likes: { type: Number, required: false, default: 0 },
+        interactions: { type: Number, required: false, default: 0 },
+        views: { type: Number, required: false, default: 0 },
     },
     {
         timestamps: true,

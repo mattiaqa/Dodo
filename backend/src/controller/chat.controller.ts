@@ -19,7 +19,7 @@ export async function sendMessageHandler(req: Request<SendMessageInput["body"]>,
         res.send(omit(message, "__v", "sender", "_id", "createdAt", "updatedAt"));
     } catch (e: any) {
         logger.error(e);
-        res.sendStatus(409);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -50,7 +50,7 @@ export async function getChatHandler(req: Request<GetChatInput['body']>, res: Re
         });
     } catch (e: any) {
         logger.error(e);
-        res.sendStatus(409);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -62,6 +62,6 @@ export async function getUserChatHandler(req: Request, res: Response) {
         res.send(chats);
     } catch (e: any) {
         logger.error(e);
-        res.sendStatus(409);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }

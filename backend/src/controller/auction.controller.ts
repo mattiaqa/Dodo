@@ -1,5 +1,12 @@
 import {Request, Response} from "express";
-import {createAuction, deleteAuction, searchAuctionById, searchAuctions, getUserAuctions} from "../service/auction.service";
+import {
+    createAuction,
+    deleteAuction,
+    searchAuctionById,
+    searchAuctions,
+    getUserAuctions,
+    updateAuction, incrementInteraction, incrementViews
+} from "../service/auction.service";
 import logger from "../utils/logger";
 import {CreateAuctionInput, DeleteAuctionInput, GetAuctionInput, SearchAuctionInput} from "../schema/auction.schema";
 import {createBook, searchBookByISBN} from "../service/book.service";
@@ -25,7 +32,7 @@ export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInp
         res.send(auction);
     } catch (e: any) {
         logger.error(e);
-        res.sendStatus(409);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -36,70 +43,82 @@ export async function getUserAuctionsHandler(req: Request, res: Response) {
       const auctions = await getUserAuctions({ seller });
   
       if(!auctions) {
-        res.sendStatus(404);
+        res.status(404).send({"Error": "The user has not yet created any auctions"});
         return;
       }
   
       res.send(auctions);
     } catch (e: any) {
       logger.error(e);
-      res.status(409).send(e.message);
+      res.status(500).send({message: "Internal Server Error"});
     }
 }
 
 export async function getAuctionHandler(req: Request, res: Response) {
-    const auctionId = req.params.auctionId;
-    const auction = await searchAuctionById({auctionId: auctionId});
+    try {
+        const auctionId = req.params.auctionId;
+        const auction = await searchAuctionById({auctionId: auctionId});
 
-    if (!auction) {
-        res.sendStatus(404);
-        return;
+        if (!auction) {
+            res.status(404).send({"Error": "No auction found"});
+            return;
+        }
+
+        await incrementInteraction(auctionId);
+
+        res.send(auction);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
-
-    res.send(auction);
 }
 
 export async function getAllAuctionHandler(req: Request, res: Response) {
-    const now = new Date();
-    const auctions = await searchAuctions({});
+    try {
+        const now = new Date();
+        const auctions = await searchAuctions({});
 
-    const validAuctions = auctions!.filter(auction => {
-        const expirationDate = new Date(auction.expireDate);
-        return expirationDate > now;
-    });
+        const validAuctions = auctions!.filter(auction => {
+            const expirationDate = new Date(auction.expireDate);
+            return expirationDate > now;
+        });
 
 
-    if (!validAuctions || validAuctions.length === 0) {
-        res.sendStatus(404);
-        return;
+        if (!validAuctions || validAuctions.length === 0) {
+            res.status(404).send({"Error": "There are no auctions yet"});
+            return;
+        }
+
+        const filteredAuctions = validAuctions.map(auction => {
+            incrementViews(auction.auctionId);
+            return omit(auction, ["_id", "__v", "updatedAt", "seller", "description"]);
+        });
+
+        res.send(filteredAuctions);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
-
-    const filteredAuctions = validAuctions.map(auction =>
-        omit(auction, ["_id", "__v", "updatedAt", "seller", "description"])
-    );
-
-    res.send(filteredAuctions);
 }
 
 export async function deleteAuctionHandler(req: Request<DeleteAuctionInput['body']>, res: Response) {
-    const auctionId = req.body.auctionId;
-    const userId = res.locals.user._id;
+    try {
+        const auctionId = req.body.auctionId;
 
-    const auction = await searchAuctionById({auctionId: auctionId});
+        const auction = await searchAuctionById({auctionId: auctionId});
 
-    if (!auction) {
-        res.sendStatus(404);
-        return;
+        if (!auction) {
+            res.status(404).send({message: "No auction found"});
+            return;
+        }
+
+        const deletedAuction = await deleteAuction({auctionId});
+
+        res.send(deletedAuction);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
-
-    if (auction.seller != userId) {
-        res.sendStatus(403);
-        return;
-    }
-
-    const deletedAuction = await deleteAuction({auctionId});
-
-    res.send(deletedAuction);
 }
 
 export async function searchAuctionHandler(req: Request<SearchAuctionInput['body']>, res: Response) {
@@ -122,17 +141,25 @@ export async function searchAuctionHandler(req: Request<SearchAuctionInput['body
     const query: any = conditions.length > 0 ? { $and: conditions } : {};
 
     try {
+        const now = new Date();
+
         const auctions = await searchAuctions(
             query
         );
 
         if (!auctions || auctions.length === 0) {
-            res.sendStatus(404);
+            res.status(404).send({message: "No auction found"});
             return;
         }
 
-        res.send(auctions);
-    } catch (error) {
-        res.sendStatus(500)
+        const validAuctions = auctions!.filter(auction => {
+            const expirationDate = new Date(auction.expireDate);
+            return expirationDate > now;
+        });
+
+        res.send(validAuctions);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }

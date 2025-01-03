@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {NgIf, NgOptimizedImage} from '@angular/common';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {Router, RouterLink} from '@angular/router';
-import {UserModel} from '../../models/user.model';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   isLoginFailed: boolean = false;
   errorMessage: string = '';
 
-  constructor(private  authService: AuthService, private router: Router, private storageService: StorageService, private userModel: UserModel) { }
+  constructor(private  authService: AuthService, private router: Router, private storageService: StorageService, private userModel: UserService) { }
 
   ngOnInit() {
     if(this.storageService.isLoggedIn()) {
@@ -51,7 +51,6 @@ export class LoginComponent implements OnInit {
     });
 
     this.userModel.getUserInfo().subscribe(user => {
-      console.log(user);
       this.storageService.saveUser(user);
 
       this.router.navigate(['/']);

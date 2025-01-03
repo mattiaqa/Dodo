@@ -16,9 +16,7 @@ export async function addComment(input: CommentInput) {
 export async function getComments(query: FilterQuery<CommentDocument>, options: QueryOptions = {lean: true}) {
   try {
     const sanitizedQuery = sanitize(query);
-    return await CommentModel.find(sanitizedQuery, {}, options).sort({ createdAt: -1 }).populate({
-        path: "auction"
-    });
+    return await CommentModel.find(query, {}, options).sort({ createdAt: -1 });
   } catch(e: any) {
     throw new Error(e);
   }

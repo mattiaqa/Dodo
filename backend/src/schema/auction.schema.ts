@@ -38,7 +38,7 @@ const searchQuerySchema = object({
         ISBN: string({
             required_error: "ISBN is required!",
         }),
-        budget: number({
+        budget: string({
             required_error: "Budget is required!",
         })
     }),

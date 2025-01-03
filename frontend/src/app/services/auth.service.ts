@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.http.post(AUTH_API + 'logout', {}, httpOptions);
+    return this.http.delete(AUTH_API + 'logout', { withCredentials: true });
   }
 
   confirmRegistration(token: string): Observable<any> {

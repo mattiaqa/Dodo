@@ -25,7 +25,7 @@ export async function createAuction(newAuction: AuctionInput): Promise<AuctionDo
 
     return auction.toJSON();
   } catch (e: any) {
-    logger.error(e);
+      throw new Error(e.message);
   }
 }
 
@@ -43,12 +43,48 @@ export async function updateAuction(auctionId: string, updateFields: any) {
 
         return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
     } catch (e: any) {
-        throw new Error(e.message); // Handle errors
+        throw new Error(e.message);
+    }
+}
+
+export async function incrementInteraction(auctionId: string) {
+    try {
+        const updatedAuction = await AuctionModel.findOneAndUpdate(
+            { auctionId: auctionId },
+            { $inc: {interactions: 1} },
+            { new: true }
+        );
+
+        if (!updatedAuction) {
+            throw new Error("Auction not found.");
+        }
+
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+    } catch (e: any) {
+        throw new Error(e.message);
+    }
+}
+
+export async function incrementViews(auctionId: string) {
+    try {
+        const updatedAuction = await AuctionModel.findOneAndUpdate(
+            { auctionId: auctionId },
+            { $inc: {views: 1} },
+            { new: true }
+        );
+
+        if (!updatedAuction) {
+            throw new Error("Auction not found.");
+        }
+
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+    } catch (e: any) {
+        throw new Error(e.message);
     }
 }
 
 export async function getUserAuctions(query: FilterQuery<AuctionDocument>) {
-  return AuctionModel.find(query).lean();
+  return AuctionModel.find(query).populate("book");
 }
 
 export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
@@ -56,7 +92,7 @@ export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
     const sanitizedQuery = sanitize(query);
     return await AuctionModel.deleteOne(sanitizedQuery);
   } catch (e: any) {
-    logger.error(e);
+      throw new Error(e.message);
   }
 }
 
@@ -73,8 +109,7 @@ export async function searchAuctionById(query: FilterQuery<AuctionDocument>, opt
           select: {"email":1, "_id":1}
         });
   } catch (e:any) {
-    logger.error(`Failed to find auction by ID: ${e.message}`);
-    throw new Error("Error retrieving auction");
+      throw new Error(e.message);
   }
 }
 
@@ -86,18 +121,18 @@ export async function searchAuctions(query: FilterQuery<AuctionDocument>, option
           select: {"title": 1, "ISBN": 1, "_id": 0}
         })
   } catch (e:any) {
-    logger.error(e);
+      throw new Error(e.message);
   }
 }
 
 export async function setWinner(winner: BidDocument) {
     try {
         const updatedAuction = await AuctionModel.findOneAndUpdate(
-        { auctionId: winner.auctionId },
-        { winner: winner.buyer },
-        { new: true }
-    ).exec();
+            { auctionId: winner.auctionId },
+            { winner: winner.buyer },
+            { new: true }
+        ).exec();
     } catch (e:any) {
-        logger.error(e);
+        throw new Error(e.message);
     }
 }

@@ -23,7 +23,7 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
         const auction = await searchAuctionById({auctionId: auctionId});
 
         if (!auction) {
-            res.sendStatus(404);
+            res.status(404).send({"Error": "No auction found"});
             return;
         }
 
@@ -49,7 +49,7 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
 
     } catch (e: any) {
         logger.error(e);
-        res.status(409).send(e.message);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -60,7 +60,7 @@ export async function getBidsHandler(req: Request<GetBidsInput['body']>, res: Re
         const auction = await searchAuctionById({auctionId});
 
         if (!auction) {
-            res.sendStatus(404);
+            res.status(404).send({"Error": "No auction found"});
             return;
         }
 
@@ -70,7 +70,7 @@ export async function getBidsHandler(req: Request<GetBidsInput['body']>, res: Re
             const buyer = await findUser({ _id: bid.buyer }); 
             
             if (!auction) {
-                res.sendStatus(404);
+                res.status(404).send({"Error": "No auction found"});
                 return;
             }
 
@@ -84,6 +84,6 @@ export async function getBidsHandler(req: Request<GetBidsInput['body']>, res: Re
 
     } catch (e: any) {
         logger.error(e);
-        res.status(409).send(e.message);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
