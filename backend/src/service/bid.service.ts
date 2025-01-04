@@ -23,11 +23,11 @@ export async function getBids(query: FilterQuery<BidDocument>, options: QueryOpt
   }
 }
 
-export async function getWinner(auctionId: String): Promise<BidDocument | null> {
+export async function getWinner(query: FilterQuery<BidDocument>): Promise<BidDocument | null> {
   try {
-    const auctionIdSanitized = sanitize(auctionId);
+    //const auctionIdSanitized = sanitize(auctionId);
 
-    const bids = await BidModel.find({auctionId: auctionIdSanitized});
+    const bids = await BidModel.find(query);
 
     if(bids.length == 0)
       return null;

@@ -5,7 +5,7 @@ import {
     searchAuctionById,
     searchAuctions,
     getUserAuctions,
-    updateAuction, incrementInteraction, incrementViews
+    incrementInteraction, incrementViews
 } from "../service/auction.service";
 import logger from "../utils/logger";
 import {CreateAuctionInput, DeleteAuctionInput, GetAuctionInput, SearchAuctionInput} from "../schema/auction.schema";

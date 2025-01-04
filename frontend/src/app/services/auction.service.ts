@@ -29,4 +29,8 @@ export class AuctionService {
   submitComment(auctionId: string, comment: string): Observable<any> {
     return this.http.post(API_URL + auctionId + '/comment', {"comment": comment}, { withCredentials: true });
   }
+
+  placeBid(auctionId: string, bid: number): Observable<any> {
+    return this.http.post(API_URL + '/bid', {auctionId: auctionId, amount: bid}, { withCredentials: true });
+  }
 }

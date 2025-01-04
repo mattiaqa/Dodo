@@ -1,12 +1,13 @@
-import { redisClient } from './redis';
+import { redisClient } from '../utils/redis';
 import { scheduler } from './scheduler';
-import logger from './logger';
+import logger from '../utils/logger';
+import connect_db from "./connection";
 
 (async () => {
     const client = await redisClient();
 
     await client.configSet('notify-keyspace-events', 'Ex');
-
+    await connect_db();
     const sub = client.duplicate();
     await sub.connect();
     const expired_subKey = '__keyevent@0__:expired';

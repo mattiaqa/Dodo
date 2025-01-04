@@ -4,7 +4,7 @@
   <!-- Title Section -->
   <h1 class="text-3xl font-bold text-primary-600 primary-color text-center">{{ data?.book?.title || 'Title not available' }}</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 bg-base-200 p-6 rounded-lg">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 bg-base-300 p-6 rounded-lg">
 
     <!-- Carousel Section -->
     <div class="relative w-full">
@@ -28,16 +28,16 @@
         <div class="mb-2 mt-4">
           <span class="text-gray-600">Suggested Bids:</span>
           <div class="flex space-x-4 mt-2">
-            <button class="btn btn-sm btn-outline primary-color btn-primary ">€{{ data?.lastBid + 10 || 'undefined' }}</button>
-            <button class="btn btn-sm btn-outline primary-color btn-primary">€{{ data?.lastBid + 20 || 'undefined' }}</button>
-            <button class="btn btn-sm btn-outline primary-color btn-primary">€{{ data?.lastBid + 50 || 'undefined' }}</button>
+            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 10 || 'undefined' }}</button>
+            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 20 || 'undefined' }}</button>
+            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 50 || 'undefined' }}</button>
           </div>
         </div>
 
         <div class="flex items-center space-x-4 mt-2">
           <div class="flex-1">
             <label for="bidInput" class="text-gray-600">Place your bid:</label>
-            <input id="bidInput" type="number" class="input input-bordered w-full mt-2" placeholder="Enter your bid amount"/>
+            <input id="bidInput" type="number" class="input input-bordered w-full mt-2" placeholder="Enter your bid amount" [(ngModel)]="bidAmount"/>
           </div>
           <button class="btn button-color mt-8 w-40" (click)="placeBid()">Place Bid</button>
         </div>

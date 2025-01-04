@@ -8,6 +8,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {AuctionService} from '../../services/auction.service';
 import {SharedDataService} from '../../shared/shared-data';
 import {catchError, of} from 'rxjs';
+import {NotificationComponent} from './components/notification/notification.component';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +17,8 @@ import {catchError, of} from 'rxjs';
     NgOptimizedImage,
     RouterLink,
     NgIf,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NotificationComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'

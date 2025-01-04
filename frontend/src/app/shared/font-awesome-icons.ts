@@ -1,7 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import {
   faArrowRightFromBracket,
-  faBars,
+  faBars, faBell,
   faBook, faChartSimple,
   faCircleCheck,
   faClock,
@@ -48,5 +48,6 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faComments,
   faHeart,
   faChartSimple,
-  faDollarSign
+  faDollarSign,
+  faBell
 ];

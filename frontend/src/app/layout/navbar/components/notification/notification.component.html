@@ -1,0 +1,30 @@
+<div class="dropdown dropdown-end">
+  <label tabindex="0" class="menu-icon mr-5 notification-icon cursor-pointer relative">
+    <div class="indicator">
+      <span class="indicator-item badge badge-secondary">{{notifications.length}}</span>
+      <fa-icon [icon]="['fas', 'bell']"></fa-icon>
+    </div>
+
+  </label>
+
+  <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-96">
+    <ng-container *ngIf="notifications.length > 0; else noNotifications">
+      <li *ngFor="let notification of notifications">
+        <div class="card card-compact bg-base-100 shadow-md p-4 flex items-center gap-4">
+          <div>
+            <h3 class="font-bold text-lg">{{ notification.title }}</h3>
+            <p>{{ notification.text }}</p>
+          </div>
+          <fa-icon [icon]="notification.icon" [ngClass]="notification.iconColor" class="text-2xl"></fa-icon>
+        </div>
+      </li>
+    </ng-container>
+
+    <ng-template #noNotifications>
+      <li>
+        <div class="p-4 text-center text-gray-500">No new notifications</div>
+      </li>
+    </ng-template>
+
+  </ul>
+</div>

@@ -3,7 +3,6 @@ import {NavbarComponent} from '../../layout/navbar/navbar.component';
 import {FooterComponent} from '../../layout/footer/footer.component';
 import {AuctionService} from '../../services/auction.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {AuthService} from '../../services/auth.service';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {FormsModule} from '@angular/forms';
 import {StorageService} from '../../storage/storage.service';
@@ -45,7 +44,7 @@ export class AuctionComponent implements OnInit {
     createdAt: string;
   } | undefined;
 
-  newBid: number = 0;
+  bidAmount: number = 0;
 
   ngOnInit() {
     this.auctionId = this.route.snapshot.paramMap.get('auctionId') || '';
@@ -58,9 +57,9 @@ export class AuctionComponent implements OnInit {
     if(!this.storageService.isLoggedIn()) {
       this.router.navigate(['login']);
     } else {
-      if (this.newBid > this.data.lastBid) {
-        this.data.lastBid = this.newBid;
-        this.newBid = 0;
+      if (this.bidAmount > this.data.lastBid) {
+        this.data.lastBid = this.bidAmount;
+        this.auctionModel.placeBid(this.auctionId, this.bidAmount).subscribe();
       } else {
         alert('Your bid must be higher than the last bid!');
       }

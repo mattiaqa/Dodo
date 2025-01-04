@@ -37,14 +37,12 @@
 
   <div class="navbar-end pe-4 flex align-items-center">
     @if (isLoggedIn) {
-      <button class="btn mr-5 new-auction-button">
-        <span class="button-label">New Auction</span>
-      </button>
+      <app-notification></app-notification>
     }
     <div class="dropdown dropdown-end pe-2">
       <div class="icon-container" role="button" tabindex="0">
         <fa-icon [icon]="['fas', 'bars']" class="menu-icon"></fa-icon>
-        @if (this.avatar_url != '') {
+        @if (isLoggedIn) {
           <img [src]=this.avatar_url alt="Avatar" class="avatar-image" />
         } @else {
           <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>

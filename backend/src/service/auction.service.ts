@@ -1,7 +1,7 @@
 import { FilterQuery, QueryOptions } from "mongoose";
 import AuctionModel, { AuctionDocument, AuctionInput } from "../models/auction.model";
 import logger from "../utils/logger";
-import {Task, scheduler} from "../utils/scheduler"
+import {Task, scheduler} from "../scheduler/scheduler"
 
 import sanitize from "mongo-sanitize";
 import {BidDocument} from "../models/bid.model";

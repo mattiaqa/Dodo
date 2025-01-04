@@ -6,7 +6,7 @@
   "author": "Mattia Quagliotto & Albert Alibeaj",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"tsnd --respawn --transpile-only src/app.ts\" \" tsnd src/utils/listener.ts \""
+    "dev": "concurrently \"tsnd --respawn --transpile-only src/app.ts\" \" tsnd src/scheduler/listener.ts \""
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
