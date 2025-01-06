@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import {UserDocument} from "./user.model";
+import {boolean} from "zod";
 
 export interface NotificationInput {
     userId: UserDocument["_id"];
@@ -20,6 +21,7 @@ const NotificationSchema = new mongoose.Schema({
         },
         title: {type: String, required: true},
         text: {type: String, required: true},
+        read: {type: Boolean, required: true, default: false},
     },
     {
         timestamps: true,

@@ -13,7 +13,7 @@ import {
   faMoneyBill1,
   faPencil,
   faPlus,
-  faSearch, faSignInAlt,
+  faSearch, faSignInAlt, faTrash,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -49,5 +49,6 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faHeart,
   faChartSimple,
   faDollarSign,
-  faBell
+  faBell,
+  faTrash
 ];

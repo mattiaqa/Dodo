@@ -1,3 +1,31 @@
 .notification-icon {
   font-size: 21px;
 }
+
+.card, .trash-icon {
+  outline: none;
+  border: none;
+}
+
+.notification-box {
+  width: 430px;
+
+  .card {
+    position: relative;
+    transition: all 0.3s ease-in-out;
+
+    .trash-icon {
+      font-size: 21px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    &:hover {
+      .trash-icon {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+  }
+}

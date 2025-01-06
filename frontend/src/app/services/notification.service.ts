@@ -13,4 +13,8 @@ export class NotificationService {
   getUserNotifications(): Observable<any> {
     return this.http.get(API_URL, { withCredentials: true });
   }
+
+  readNotification(notificationId: string): Observable<any> {
+    return this.http.post(API_URL + 'read', {notificationId: notificationId}, { withCredentials: true });
+  }
 }

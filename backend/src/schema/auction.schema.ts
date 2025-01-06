@@ -3,7 +3,7 @@ import {bookBaseFields} from "./book.schema";
 
 const auctionBaseFields = {
     title: string({
-        required_error: "Name is required!",
+        required_error: "Title is required!",
     }),
     book: object(bookBaseFields),
     lastBid: number({

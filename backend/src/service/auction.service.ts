@@ -127,10 +127,9 @@ export async function searchAuctions(query: FilterQuery<AuctionDocument>, option
 
 export async function setWinner(winner: BidDocument) {
     try {
-        const updatedAuction = await AuctionModel.findOneAndUpdate(
+         await AuctionModel.findOneAndUpdate(
             { auctionId: winner.auctionId },
-            { winner: winner.buyer },
-            { new: true }
+            { winner: winner.buyer }
         ).exec();
     } catch (e:any) {
         throw new Error(e.message);

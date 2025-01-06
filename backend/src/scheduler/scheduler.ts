@@ -1,9 +1,9 @@
 import { setInRedis } from '../utils/redis'
 import logger from '../utils/logger';
 import {getWinner} from "../service/bid.service";
-import {setWinner} from "../service/auction.service";
+import {searchAuctionById, setWinner} from "../service/auction.service";
 import {notifyUser} from "../service/notification.service";
-import connect_db from "./connection";
+import {getBookById} from "../service/book.service"
 
 export interface Task {
     task_id: string;
@@ -14,21 +14,21 @@ export interface Task {
 export class Scheduler {
     private async closeAuction(auctionId: string): Promise<void> {
         const winner = await getWinner({auctionId: auctionId});
-
+        const auction = await searchAuctionById({auctionId: auctionId});
+        console.log(auction);
+        //const book = await getBookById(auction!.book);
         if(!winner) {
             //send email
             return;
         }
-
-        logger.info('Starting notification process for user' + winner.buyer);
 
         await setWinner(winner);
 
         await notifyUser({
             userId: winner.buyer,
             title: "🎉 Congratulations! You've Won the Auction!",
-            text: "Great news! You've just won the auction for [Item Name]! 🏆\n" +
-                "Your winning bid of [Winning Bid Amount] has secured this item. Please proceed to complete your payment and finalize the transaction."
+            text: `Great news! You've just won the auction for }! 🏆\n` +
+                "Please proceed to complete your payment and finalize the transaction."
         });
 
         logger.info('Finished notification process');
@@ -36,7 +36,6 @@ export class Scheduler {
 
     async runScheduler(key: string) {
         const auctionId = key.split(':')[1]
-        console.log(key);
         if(!auctionId) {
             logger.error(`No task with id ${key}`);
         } else {

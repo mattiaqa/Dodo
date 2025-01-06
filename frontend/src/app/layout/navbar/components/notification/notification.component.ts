@@ -1,14 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {NotificationService} from '../../../../services/notification.service';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-notification',
   imports: [
     FaIconComponent,
     NgIf,
-    NgClass,
     NgForOf
   ],
   templateUrl: './notification.component.html',
@@ -24,5 +23,11 @@ export class NotificationComponent implements OnInit {
         this.notifications = notifications;
       }
     )
+  }
+
+  deleteNotification(notification: any) {
+    this.notificationService.readNotification(notification._id).subscribe(notification => {
+      window.location.reload();
+    });
   }
 }
