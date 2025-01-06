@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { AuctionDocument } from "./auction.model";
 
 export interface CommentInput {
-    auction: AuctionDocument['_id'];
+    auction: AuctionDocument['auctionId'];
     username: string;
     profileImage: string;
     comment: string;
@@ -15,7 +15,7 @@ export interface CommentDocument extends CommentInput, mongoose.Document {
 
 const commentSchema = new mongoose.Schema(
     {
-        auction: { type: mongoose.Schema.Types.ObjectId, ref: "Auction", required: true },
+        auction: { type: String, ref: "Auction", required: true },
         username: { type: String, required: true },
         profileImage: { type: String, required: false },
         comment: { type: String, required: true },

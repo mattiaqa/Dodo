@@ -1,7 +1,7 @@
 import { FilterQuery, QueryOptions } from "mongoose";
 import AuctionModel, { AuctionDocument, AuctionInput } from "../models/auction.model";
 import logger from "../utils/logger";
-import {Task, scheduler} from "../utils/scheduler"
+import {Task, scheduler} from "../scheduler/scheduler"
 
 import sanitize from "mongo-sanitize";
 import {BidDocument} from "../models/bid.model";
@@ -25,7 +25,7 @@ export async function createAuction(newAuction: AuctionInput): Promise<AuctionDo
 
     return auction.toJSON();
   } catch (e: any) {
-    logger.error(e);
+      throw new Error(e.message);
   }
 }
 
@@ -43,12 +43,48 @@ export async function updateAuction(auctionId: string, updateFields: any) {
 
         return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
     } catch (e: any) {
-        throw new Error(e.message); // Handle errors
+        throw new Error(e.message);
+    }
+}
+
+export async function incrementInteraction(auctionId: string) {
+    try {
+        const updatedAuction = await AuctionModel.findOneAndUpdate(
+            { auctionId: auctionId },
+            { $inc: {interactions: 1} },
+            { new: true }
+        );
+
+        if (!updatedAuction) {
+            throw new Error("Auction not found.");
+        }
+
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+    } catch (e: any) {
+        throw new Error(e.message);
+    }
+}
+
+export async function incrementViews(auctionId: string) {
+    try {
+        const updatedAuction = await AuctionModel.findOneAndUpdate(
+            { auctionId: auctionId },
+            { $inc: {views: 1} },
+            { new: true }
+        );
+
+        if (!updatedAuction) {
+            throw new Error("Auction not found.");
+        }
+
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+    } catch (e: any) {
+        throw new Error(e.message);
     }
 }
 
 export async function getUserAuctions(query: FilterQuery<AuctionDocument>) {
-  return AuctionModel.find(query).lean();
+  return AuctionModel.find(query).populate("book");
 }
 
 export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
@@ -56,11 +92,31 @@ export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
     const sanitizedQuery = sanitize(query);
     return await AuctionModel.deleteOne(sanitizedQuery);
   } catch (e: any) {
-    logger.error(e);
+      throw new Error(e.message);
   }
 }
 
-export async function searchAuctionById(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
+export async function searchAuctionById(id: string)
+{
+  try {
+    const query: FilterQuery<AuctionDocument> = { auctionId: id };
+    const sanitizedQuery = sanitize(query);
+    return await AuctionModel.findOne(sanitizedQuery)
+      .populate({
+        path: "book",
+        select: {"_id":0, "__v": 0}
+      })
+      .populate({
+        path: "seller",
+        select: {"email":1, "_id":1}
+      });
+  } catch (e:any) {
+    logger.error(`Failed to find auction by ID: ${e.message}`);
+    throw new Error("Error retrieving auction");
+  }
+}
+
+export async function searchAuctionByQuery(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
   try {
       const sanitizedQuery = sanitize(query);
     return await AuctionModel.findOne(sanitizedQuery, {}, options)
@@ -73,8 +129,7 @@ export async function searchAuctionById(query: FilterQuery<AuctionDocument>, opt
           select: {"email":1, "_id":1}
         });
   } catch (e:any) {
-    logger.error(`Failed to find auction by ID: ${e.message}`);
-    throw new Error("Error retrieving auction");
+      throw new Error(e.message);
   }
 }
 
@@ -86,18 +141,17 @@ export async function searchAuctions(query: FilterQuery<AuctionDocument>, option
           select: {"title": 1, "ISBN": 1, "_id": 0}
         })
   } catch (e:any) {
-    logger.error(e);
+      throw new Error(e.message);
   }
 }
 
 export async function setWinner(winner: BidDocument) {
     try {
-        const updatedAuction = await AuctionModel.findOneAndUpdate(
-        { auctionId: winner.auctionId },
-        { winner: winner.buyer },
-        { new: true }
-    ).exec();
+         await AuctionModel.findOneAndUpdate(
+            { auctionId: winner.auctionId },
+            { winner: winner.buyer }
+        ).exec();
     } catch (e:any) {
-        logger.error(e);
+        throw new Error(e.message);
     }
 }

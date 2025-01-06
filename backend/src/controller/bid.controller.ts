@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { GetBidsInput, PlaceBidInput } from '../schema/bid.schema'
 import {searchAuctionById, updateAuction} from '../service/auction.service'
 import { placeBid, getBids } from '../service/bid.service'
-import { findUser } from "../service/user.service";
+import { findUser, findUsers } from "../service/user.service";
 
-import { omit } from "lodash";
+import { omit, pick } from "lodash";
 import logger from "../utils/logger";
+import moment from "moment-timezone";
 
 export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]>, res: Response) {
     try {
@@ -14,28 +15,35 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
         const body = req.body;
 
         const userData = await findUser({ _id: userId });
-
-        if (userData?.isAdmin) {
-            res.sendStatus(403);
+        if(!userData)
+        {
+            res.status(404).send({message: 'User not found'});
             return;
         }
 
-        const auction = await searchAuctionById({auctionId: auctionId});
+        /* //An admin cannot place a bid
+        if (userData.isAdmin) {
+            res.sendStatus(403);
+            return;
+        }
+        */
+
+        const auction = await searchAuctionById(auctionId);
 
         if (!auction) {
-            res.sendStatus(404);
+            res.status(404).send({"Error": "No auction found"});
             return;
         }
 
         if (auction.seller == userId) {
-            res.sendStatus(403);
+            res.status(403).send({message: 'You cannot place a bid on your auction'});
             return;
         }
 
         const newBidAmount = body.amount;
 
         if (newBidAmount <= auction.lastBid) {
-            res.status(400).send("Bid must be greater than the current highest bid.");
+            res.status(400).send("Bid must be greater than the current highest bid");
             return;
         }
 
@@ -49,41 +57,59 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
 
     } catch (e: any) {
         logger.error(e);
-        res.status(409).send(e.message);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
 
-export async function getBidsHandler(req: Request<GetBidsInput['body']>, res: Response) {
+
+export async function getBidsHandler(req: Request, res: Response) {
     try {
-        const auctionId = req.body.auctionId;
-
-        const auction = await searchAuctionById({auctionId});
-
-        if (!auction) {
-            res.sendStatus(404);
+        const auctionId = req.params.auctionId;
+        if(!auctionId){
+            res.status(400).send({message: 'You need to specify an auction'})
             return;
         }
 
+        // Verifica se l'asta esiste
+        const auction = await searchAuctionById(auctionId);
+        if (!auction) {
+            res.status(404).send({ "Error": "No auction found" });
+            return;
+        }
+
+        // Recupera le offerte relative all'asta
         const bids = await getBids({ auctionId });
 
-        const bidsWithBuyer = await Promise.all(bids.map(async (bid) => {
-            const buyer = await findUser({ _id: bid.buyer }); 
-            
-            if (!auction) {
-                res.sendStatus(404);
-                return;
+        if (!bids || bids.length === 0) {
+            res.status(200).send([]); // Nessuna offerta trovata
+            return;
+        }
+
+        // Ottieni gli ID dei compratori
+        const buyerIds = bids.map(bid => bid.buyer);
+
+        // Recupera tutti i compratori in un'unica query
+        const buyers = await findUsers({ _id: { $in: buyerIds } });
+
+        // Crea una mappa degli utenti per accesso rapido
+        const buyerMap = buyers.reduce((result, buyer) => {
+            result[buyer._id.toString()] = pick(buyer, ["name", '_id']);
+            return result;
+        }, {} as Record<string, any>);
+
+        // Arricchisci le offerte con i dettagli dei compratori
+        const bidsWithBuyer = bids.map(bid => {
+            const createdAtRome = moment(bid.createdAt).tz("Europe/Rome").format("YYYY-MM-DD HH:mm:ss");
+
+            return {
+                ...pick(bid, ["amount", "createdAt"]),
+                buyer: buyerMap[(bid.buyer as string)] || null, // Aggiungi i dettagli del compratore, oppure `null` se non trovato
             }
+        });
 
-            return omit({
-                ...bid,
-                buyer: omit(buyer, "password", "_id", "createdAt", "updatedAt", "__v", "email"),  
-            }, "auctionId");
-        }));
-
-        res.send(bidsWithBuyer);
-
+        res.status(200).send(bidsWithBuyer);
     } catch (e: any) {
         logger.error(e);
-        res.status(409).send(e.message);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }

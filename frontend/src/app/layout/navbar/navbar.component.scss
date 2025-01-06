@@ -16,7 +16,7 @@ span.logo-style {
   cursor: pointer;
   transition: background-color 0.3s;
   width: 80px;
-  gap: 16px;
+  gap: 14px;
 }
 
 .search-bar {
@@ -30,7 +30,7 @@ span.logo-style {
   align-items: center;
   border: 1px solid #ccc;
   background-color: #FFFFFF;
-  padding: 5px;
+  padding: 4px;
   border-radius: 200px;
   width: auto;
 }
@@ -101,3 +101,22 @@ span.logo-style {
   transform: scale(0.9);
 }
 
+.new-auction-button {
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #D7AE95;
+  color: #1E1E1E;
+  border: none;
+  transition: width 0.8s ease, padding 0.8s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.avatar-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}

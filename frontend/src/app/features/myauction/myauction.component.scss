@@ -1,0 +1,31 @@
+.card-container {
+  display: flex;               /* Disposizione orizzontale dei card */
+  flex-wrap: wrap;             /* I card vanno a capo se necessario */
+  gap: 16px;                   /* Spaziatura tra i card */
+  justify-content: center;     /* Centra i card orizzontalmente */
+  padding: 20px;               /* Distanza dai bordi del contenitore */
+}
+
+app-card {
+  width: 1000px;                /* Larghezza del singolo card */
+  height: 250px;               /* Altezza del singolo card */
+  background-color: #f4f4f4;   /* Colore di sfondo dei card */
+  border-radius: 8px;          /* Angoli arrotondati */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità */
+  overflow: hidden;            /* Nasconde il contenuto che esce dai bordi */
+  display: flex;
+  flex-direction: column;      /* Disposizione verticale del contenuto del card */
+}
+
+@media (max-width: 768px) {
+  app-card {
+    width: 100%;               /* I card si espandono per occupare tutta la larghezza disponibile sui dispositivi mobili */
+    height: auto;              /* Altezza automatica per una visualizzazione più flessibile */
+  }
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    gap: 10px;                 /* Riduce la spaziatura tra i card su schermi più piccoli */
+  }
+}

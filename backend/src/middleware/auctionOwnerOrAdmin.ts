@@ -14,7 +14,7 @@ const requireAuctionOwnerOrAdmin = async (req: Request, res: Response, next: Nex
     const { auctionId } = req.params;
 
     // Recupera i dettagli dell'asta
-    const auction = await searchAuctionById({auctionId: auctionId});
+    const auction = await searchAuctionById(auctionId);
 
     if (!auction) {
       res.status(404).json({ message: 'Auction not found' });

@@ -35,6 +35,10 @@ export async function findUser(query: FilterQuery<UserDocument>) {
   return UserModel.findOne(query).lean();
 }
 
+export async function findUsers(query: FilterQuery<UserDocument>) {
+  return UserModel.find(query).lean(); // find() restituisce un array di documenti
+}
+
 export async function deleteUser(query: FilterQuery<UserDocument>) {
   try {
     return await UserModel.deleteOne(query);

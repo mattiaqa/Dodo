@@ -7,6 +7,6 @@ import { createCommentSchema } from '../../../schema/comment.schema';
 const router = express.Router();
 
 router.post('/:auctionId/comment', requireUser, validateResource(createCommentSchema), Controller.addCommentHandler);
-router.get('/:auctionId/comments', Controller.getCommentsHandler);
+router.get('/:auctionId/comment', Controller.getCommentsHandler);
 
 export default router;

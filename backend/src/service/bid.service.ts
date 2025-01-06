@@ -14,7 +14,8 @@ export async function placeBid(input: BidInput) {
   }
 }
 
-export async function getBids(query: FilterQuery<BidDocument>, options: QueryOptions = {lean: true}) {
+export async function getBids(query: FilterQuery<BidDocument>, options: QueryOptions = {lean: true}) : 
+  Promise<BidDocument[]> {
   try {
     const sanitizedQuery = sanitize(query);
     return await BidModel.find(sanitizedQuery, {}, options);
@@ -23,11 +24,11 @@ export async function getBids(query: FilterQuery<BidDocument>, options: QueryOpt
   }
 }
 
-export async function getWinner(auctionId: String): Promise<BidDocument | null> {
+export async function getWinner(query: FilterQuery<BidDocument>): Promise<BidDocument | null> {
   try {
-    const auctionIdSanitized = sanitize(auctionId);
+    //const auctionIdSanitized = sanitize(auctionId);
 
-    const bids = await BidModel.find({auctionId: auctionIdSanitized});
+    const bids = await BidModel.find(query);
 
     if(bids.length == 0)
       return null;

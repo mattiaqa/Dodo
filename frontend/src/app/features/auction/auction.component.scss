@@ -9,6 +9,21 @@
   }
 }
 
-.book-title {
+.primary-color {
   color: #D7AE95;
+}
+
+.button-color {
+  background-color: #D7AE95;
+  text-decoration-color: #FFFFFF;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }

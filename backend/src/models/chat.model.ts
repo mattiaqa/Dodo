@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { UserDocument } from "./user.model";
-import { AuctionDocument } from "./auction.model";
+import {UserDocument} from "./user.model";
+import {AuctionDocument} from "./auction.model";
 
 export interface ChatInput {
     participants: UserDocument["_id"][];
@@ -21,7 +21,7 @@ const chatSchema = new mongoose.Schema(
                 required: true,
             },
         ],
-        auctionId: { type: String, ref: "Auction" },
+        auctionId: {type: String, ref: "Auction"},
     },
     {
         timestamps: true,

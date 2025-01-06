@@ -6,33 +6,47 @@
     </div>
   </div>
 
-  <div class="navbar-center pe-4 flex align-items-center">
-    <div class="search-bar">
-      <div class="input-container">
-        <div class="input-group">
-          <span class="input-label">Where</span>
-          <input class="search-input" placeholder="Everywhere" type="text">
+  <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <div class="navbar-center pe-4 flex align-items-center">
+      <div class="search-bar">
+        <div class="input-container">
+          <div class="input-group">
+            <span class="input-label">Where</span>
+            <input class="search-input" placeholder="Everywhere" type="text" formControlName="where">
+          </div>
+
+          <hr class="vertical-line">
+
+          <div class="input-group">
+            <span class="input-label">ISBN</span>
+            <input class="search-input" placeholder="978-3-16-148410-0" type="text" formControlName="ISBN">
+          </div>
+
+          <hr class="vertical-line">
+
+          <div class="input-group">
+            <span class="input-label">Your Budget</span>
+            <input class="search-input" placeholder="€10" type="number" formControlName="budget">
+          </div>
+
+          <fa-icon [icon]="['fas', 'search']" class="search-icon" (click)="onSubmit()"></fa-icon>
         </div>
-        <hr class="vertical-line">
-        <div class="input-group">
-          <span class="input-label">ISBN</span>
-          <input class="search-input" placeholder="978-3-16-148410-0" type="text">
-        </div>
-        <hr class="vertical-line">
-        <div class="input-group">
-          <span class="input-label">Your Budget</span>
-          <input class="search-input" placeholder="€10-€70" type="text">
-        </div>
-        <fa-icon [icon]="['fas', 'search']" class="search-icon"></fa-icon>
       </div>
     </div>
-  </div>
+  </form>
 
   <div class="navbar-end pe-4 flex align-items-center">
-    <div class="dropdown dropdown-end pe-4">
+    @if (isLoggedIn) {
+      <app-notification></app-notification>
+    }
+    <div class="dropdown dropdown-end pe-2">
       <div class="icon-container" role="button" tabindex="0">
         <fa-icon [icon]="['fas', 'bars']" class="menu-icon"></fa-icon>
-        <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>
+        @if (isLoggedIn) {
+          <img [src]=this.avatar_url alt="Avatar" class="avatar-image" />
+        } @else {
+          <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>
+        }
       </div>
 
       <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10">
@@ -49,15 +63,27 @@
           </a>
         </li>
         <li *ngIf="isLoggedIn">
-          <a href="/settings">
-            <fa-icon [icon]="['fas', 'cogs']" class="mr-2"></fa-icon>
-            Settings
+          <a href="/ongoing">
+            <fa-icon [icon]="['fas', 'dollar-sign']" class="mr-2"></fa-icon>
+            On Going Auctions
+          </a>
+        </li>
+        <li *ngIf="isLoggedIn">
+          <a href="/chats">
+            <fa-icon [icon]="['fas', 'message']" class="mr-2"></fa-icon>
+            Chats
+          </a>
+        </li>
+        <li *ngIf="isLoggedIn">
+          <a href="/statistics">
+            <fa-icon [icon]="['fas', 'chart-simple']" class="mr-2"></fa-icon>
+            Statistics
           </a>
         </li>
         <li *ngIf="isLoggedIn">
           <button (click)="logout()" class="w-full text-left">
             <fa-icon [icon]="['fas', 'arrow-right-from-bracket']" class="mr-2"></fa-icon>
-            Logout
+            Log out
           </button>
         </li>
         <li *ngIf="!isLoggedIn">

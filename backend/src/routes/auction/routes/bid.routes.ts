@@ -6,7 +6,8 @@ import { placeBidSchema, getBidsSchema } from '../../../schema/bid.schema';
 
 const router = express.Router();
 
-router.post('/bid', [validateResource(placeBidSchema), requireUser], Controller.placeBidHandler);
-router.get('/bid', [validateResource(getBidsSchema), requireUser], Controller.getBidsHandler);
+router.use(requireUser);
+router.post('/bid', validateResource(placeBidSchema), Controller.placeBidHandler);
+router.get('/:auctionId/bid', Controller.getBidsHandler);
 
 export default router;

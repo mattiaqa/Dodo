@@ -1,113 +1,103 @@
 <app-navbar></app-navbar>
 
 <div class="container mx-auto p-8">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-base-200 p-6">
-    <div class="carousel w-full">
-      <div class="carousel-item relative w-full" id="slide1">
-        <img alt="Carousel Image 1" class="w-full h-full object-contain rounded-lg"
-             src="https://picsum.photos/600/600"/>
-        <a class="btn btn-circle btn-sm absolute top-1/2 left-2 transform -translate-y-1/2" href="#slide3">❮</a>
-        <a class="btn btn-circle btn-sm absolute top-1/2 right-2 transform -translate-y-1/2" href="#slide2">❯</a>
+  <!-- Title Section -->
+  <h1 class="text-3xl font-bold text-primary-600 primary-color text-center">{{ data?.book?.title || 'Title not available' }}</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 bg-base-300 p-6 rounded-lg">
+
+    <!-- Carousel Section -->
+    <div class="relative w-full">
+      <div class="carousel w-full">
+        <div class="carousel-item relative w-full">
+          <img alt="Book Image" class="w-full h-96 object-cover rounded-lg shadow-lg" src="https://picsum.photos/600/600"/>
+          <a class="btn btn-circle absolute top-1/2 left-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide3">❮</a>
+          <a class="btn btn-circle absolute top-1/2 right-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide2">❯</a>
+        </div>
       </div>
     </div>
 
-    <div class="p-6 space-y-4">
-      <h1 class="book-title text-3xl font-bold">{{ data?.book?.title || 'undefined' }}</h1>
+    <!-- Auction Bid Box Section -->
+    <div class="space-y-6">
+      <div class="bg-white p-6 rounded-xl shadow-md w-full max-w-md mt-8 ml-12">
+        <h2 class="text-2xl font-semibold text-primary-700">Current Offer</h2>
+        <div class="text-3xl font-bold text-primary-600 mt-2">
+          <span>€{{ data?.lastBid || 'Not available' }}</span>
+        </div>
 
-      <hr class="my-4 border-t-2 border-gray-300">
+        <div class="mb-2 mt-4">
+          <span class="text-gray-600">Suggested Bids:</span>
+          <div class="flex space-x-4 mt-2">
+            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 10 || 'undefined' }}</button>
+            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 20 || 'undefined' }}</button>
+            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 50 || 'undefined' }}</button>
+          </div>
+        </div>
 
-      <p class="text-lg text-gray-800">
-        {{ data?.description || 'undefined' }}
-      </p>
+        <div class="flex items-center space-x-4 mt-2">
+          <div class="flex-1">
+            <label for="bidInput" class="text-gray-600">Place your bid:</label>
+            <input id="bidInput" type="number" class="input input-bordered w-full mt-2" placeholder="Enter your bid amount" [(ngModel)]="bidAmount"/>
+          </div>
+          <button class="btn button-color mt-8 w-40" (click)="placeBid()">Place Bid</button>
+        </div>
 
-      <p class="text-sm text-gray-600 flex items-center space-x-2">
-        <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
-        <span>Condition: <span class="font-semibold">{{ data?.condition || 'Undefined' }}</span></span>
-      </p>
-
-      <p class="text-sm text-gray-600 flex items-center space-x-2">
-        <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-0"></fa-icon>
-        <span>{{ data?.country + ', ' + data?.province || 'Location not available' }}</span>
-      </p>
+      </div>
     </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-    <div class="text-left">
-      <h2 class="text-2xl font-semibold">About the Book</h2>
+    <!-- About the Book Section -->
+    <div>
+      <h2 class="text-2xl font-semibold text-primary-700">About the Book</h2>
       <p class="text-md text-gray-700 mt-4">
-        {{ data?.book?.description || 'undefined'}}
+        {{ data?.book?.description || 'Description not available'}}
       </p>
+
       <p class="text-md text-gray-700 mt-4">
-        <fa-icon [icon]="['fas', 'book']" class="mr-0"></fa-icon>
-        {{'ISBN: '+ data?.book?.ISBN || 'undefined'}}
+        <fa-icon [icon]="['fas', 'book']" class="mr-2 text-primary-500"></fa-icon>
+        {{ 'ISBN: ' + (data?.book?.ISBN || 'Not available') }}
       </p>
+
       <p class="text-md text-gray-700 mt-4">
-        <fa-icon [icon]="['fas', 'pencil']" class="mr-0"></fa-icon>
-        {{ 'Authors: ' + (data?.book?.author?.join(', ') || 'undefined') }}
+        <fa-icon [icon]="['fas', 'pencil']" class="mr-2 text-primary-500"></fa-icon>
+        {{ 'Authors: ' + (data?.book?.author?.join(', ') || 'Not available') }}
       </p>
     </div>
 
-    <div class="text-left p-6 bg-white shadow-lg rounded-lg max-w-lg mx-auto">
-      <h2 class="text-3xl font-semibold text-gray-800">Current Auction</h2>
+    <!-- About the Auction Section -->
+    <div>
+      <h2 class="text-2xl font-semibold text-primary-700">About the Auction</h2>
+      <p class="text-md text-gray-700 mt-4">
+        {{ data?.description || 'Description not available'}}
+      </p>
 
-      <!-- Offerta attuale -->
-      <div class="mt-6 flex items-center justify-between">
-        <p class="text-lg text-gray-700">Last Offer:</p>
-        <span class="text-4xl text-lastBid">{{ data?.lastBid + '€' || 'No bids yet' }}</span>
-      </div>
+      <p class="text-sm text-gray-600 flex items-center space-x-2 pt-3">
+        <fa-icon [icon]="['fas', 'circle-check']" class="text-primary-500"></fa-icon>
+        <span>Condition: <span class="font-semibold text-primary-600">{{ data?.condition || 'Not available' }}</span></span>
+      </p>
 
-      <!-- Consigli per la bid -->
-      <div class="mt-6 p-4 bg-indigo-50 border-l-4 border-indigo-500 text-indigo-700 rounded-md">
-        <p class="font-semibold">Tips for Bidding:</p>
-        <ul class="list-disc ml-5">
-          <li>If you're sure, place a competitive bid to stand out.</li>
-          <li>Avoid bidding too low to increase your chances of winning!</li>
-          <li>Consider placing a higher bid if the auction is nearing its end.</li>
-        </ul>
-      </div>
-
-      <!-- Form per l'offerta -->
-      <div class="mt-6">
-        <label for="newBid" class="text-lg text-gray-700">Enter Your Bid</label>
-        <div class="flex items-center mt-2">
-          <input
-            id="newBid"
-            type="number"
-            [(ngModel)]="newBid"
-            class="input input-bordered w-full md:w-1/2 border-2 border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-            placeholder="Enter your bid"
-            [min]="lastBid ? lastBid + 1 : 1"
-            aria-label="New bid input"
-          />
-          <button
-            class="btn btn-primary ml-4 mt-2 md:mt-0 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none"
-            (click)="placeBid()"
-            [disabled]="newBid <= (lastBid || 0)"
-            aria-label="Place bid button">
-            Place Bid
-          </button>
-        </div>
-      </div>
-
-      <!-- Sezione metodi di pagamento -->
-      <div class="mt-6">
-        <h3 class="text-xl font-semibold text-gray-800">Payment Methods</h3>
-        <div class="mt-4 grid grid-cols-3 gap-4">
-          <!-- Icone dei metodi di pagamento -->
-          <div class="flex justify-center items-center">
-            <img src="assets/images/credit-card-icon.svg" alt="Credit Card" class="w-16 h-16" />
-          </div>
-          <div class="flex justify-center items-center">
-            <img src="assets/images/paypal-icon.svg" alt="PayPal" class="w-16 h-16" />
-          </div>
-          <div class="flex justify-center items-center">
-            <img src="assets/images/satispay-icon.png" alt="Bank Transfer" class="w-16 h-16" />
-          </div>
-        </div>
-      </div>
+      <p class="text-sm text-gray-600 flex items-center space-x-2">
+        <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-2 text-primary-500"></fa-icon>
+        <span>{{ data?.country + ', ' + data?.province || 'Location not available' }}</span>
+      </p>
     </div>
   </div>
+  <button class="btn">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+    Save
+  </button>
+  <app-comment></app-comment>
 </div>
-
 <app-footer></app-footer>

@@ -11,7 +11,7 @@ export class AuctionModel {
   constructor(private http: HttpClient) {}
 
   getAllAuction(): Observable<any> {
-    return this.http.get(API_URL + 'all', { withCredentials: true });
+    return this.http.get(API_URL + '', { withCredentials: true });
   }
 
   getAuctionById(auctionId: string): Observable<any> {

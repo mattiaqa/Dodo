@@ -12,6 +12,7 @@ export interface AuctionInput {
     province: string;
     expireDate: Date;
     seller: UserDocument['_id'];
+    title: string;
   }
   
 export interface AuctionDocument extends AuctionInput, mongoose.Document {
@@ -29,6 +30,7 @@ const auctionSchema = new mongoose.Schema(
             unique: true,
             default: () => `${crypto.randomUUID()}`
         },
+        title: { type: String, required: true },
         book: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
         lastBid: { type: Number, required: true, default: 0.00 },
         condition: { type: String, required: true },
@@ -38,7 +40,10 @@ const auctionSchema = new mongoose.Schema(
         province: { type: String, required: true },
         images: [{ type: String, required: false }],
         expireDate: {type: Date, required: true},
-        winner: { type: String, required: false}
+        winner: { type: String, required: false},
+        likes: { type: Number, required: false, default: 0 },
+        interactions: { type: Number, required: false, default: 0 },
+        views: { type: Number, required: false, default: 0 },
     },
     {
         timestamps: true,

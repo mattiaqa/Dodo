@@ -1,19 +1,19 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import {
   faArrowRightFromBracket,
-  faBars,
-  faBook,
+  faBars, faBell,
+  faBook, faChartSimple,
   faCircleCheck,
   faClock,
-  faCogs,
-  faEnvelope,
-  faGavel,
+  faCogs, faComments, faDollarSign,
+  faEnvelope, faEye,
+  faGavel, faHeart,
   faKey,
-  faMapMarkerAlt,
+  faMapMarkerAlt, faMessage,
   faMoneyBill1,
   faPencil,
   faPlus,
-  faSearch,
+  faSearch, faSignInAlt, faTrash,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -41,5 +41,14 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faPencil,
   faCogs,
   faGavel,
-  faArrowRightFromBracket
+  faArrowRightFromBracket,
+  faMessage,
+  faSignInAlt,
+  faEye,
+  faComments,
+  faHeart,
+  faChartSimple,
+  faDollarSign,
+  faBell,
+  faTrash
 ];

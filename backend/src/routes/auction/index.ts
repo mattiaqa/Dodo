@@ -6,9 +6,11 @@ import Inforoutes from './routes/info.routes';
 
 const router = express.Router();
 
+router.use(Inforoutes);
+
+//uses RequireUser
 router.use(Bidroutes);
 router.use(Manageroutes);
 router.use(Commentroutes);
-router.use(Inforoutes);
 
 export default router;

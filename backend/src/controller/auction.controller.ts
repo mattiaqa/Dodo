@@ -1,10 +1,19 @@
 import {Request, Response} from "express";
-import {createAuction, deleteAuction, searchAuctionById, searchAuctions, getUserAuctions} from "../service/auction.service";
+import {
+    createAuction,
+    deleteAuction,
+    searchAuctionById,
+    searchAuctions,
+    getUserAuctions,
+    incrementInteraction, incrementViews
+} from "../service/auction.service";
 import logger from "../utils/logger";
 import {CreateAuctionInput, SearchAuctionInput} from "../schema/auction.schema";
 import {createBook, searchBookByISBN} from "../service/book.service";
-import {omit} from "lodash";
+import {omit, pick} from "lodash";
 import sanitize from "mongo-sanitize";
+import mongoose, { FilterQuery } from "mongoose";
+import { AuctionDocument } from "../models/auction.model";
 
 export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInput["body"]>, res: Response) {
     try {
@@ -25,7 +34,7 @@ export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInp
         res.send(auction);
     } catch (e: any) {
         logger.error(e);
-        res.sendStatus(409);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -36,55 +45,95 @@ export async function getUserAuctionsHandler(req: Request, res: Response) {
       const auctions = await getUserAuctions({ seller });
   
       if(!auctions) {
-        res.sendStatus(404);
+        res.status(404).send({"Error": "The user has not yet created any auctions"});
         return;
       }
   
       res.send(auctions);
     } catch (e: any) {
       logger.error(e);
-      res.status(409).send(e.message);
+      res.status(500).send({message: "Internal Server Error"});
     }
 }
 
 export async function getAuctionHandler(req: Request, res: Response) {
     const auctionId = req.params.auctionId;
-    const auction = await searchAuctionById({auctionId: auctionId});
+    try{
+        const auction = await searchAuctionById(auctionId);
 
-    if (!auction) {
-        res.status(404).send({message: 'Auction not found'});
-        return;
+        if (!auction) {
+            res.status(404).send({"Error": "No auction found"});
+            return;
+        }
+
+        await incrementInteraction(auctionId);
+
+        res.send(auction);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
-
-    res.status(200).send(auction);
 }
 
 export async function getAllAuctionHandler(req: Request, res: Response) {
-    const now = new Date();
-    const auctions = await searchAuctions({});
+    try {
+        // Estrai i parametri di query
+        const { bookId, minPrice, maxPrice, sellerId, where, ISBN } = req.query;
 
-    const validAuctions = auctions!.filter(auction => {
-        const expirationDate = new Date(auction.expireDate);
-        return expirationDate > now;
-    });
+        // Costruisci la query dinamicamente
+        const query: FilterQuery<AuctionDocument> = {};
 
+        if (where) {
+            query.country = { $regex: `.*${sanitize(where)}.*`, $options: 'i' };
+        }
+        /*
+        if (ISBN) {
+            query.isbn = sanitize(ISBN);
+        }
+        */
+        if (bookId) {
+            if (mongoose.Types.ObjectId.isValid(bookId as string)) {
+                query.book = new mongoose.Types.ObjectId(bookId as string); // Converte il parametro bookId in ObjectId
+            } else {
+                res.status(400).send({ message: "Invalid book ID format" });
+                return;
+            }
+        }
+        if (minPrice) {
+            query.lastBid = { ...query.lastBid, $gte: parseFloat(minPrice as string) }; // Prezzo minimo
+        }
+        if (maxPrice) {
+            query.lastBid = { ...query.lastBid, $lte: parseFloat(maxPrice as string) }; // Prezzo massimo
+        }
+        if (sellerId) {
+            query.seller = sellerId; // Filtra per ID venditore
+        }
 
-    if (!validAuctions || validAuctions.length === 0) {
-        res.sendStatus(404);
-        return;
+        // Recupera le aste
+        const auctions = await searchAuctions(query);
+
+        if (!auctions || auctions.length == 0) {
+            res.status(404).send({ message: "No auctions found" });
+            return;
+        }
+
+        const now = new Date();
+        const validAuctions = auctions.filter(auction => {
+            const expirationDate = new Date(auction.expireDate);
+            return expirationDate > now;
+        });
+        const filteredAuctions = validAuctions.map(auction =>
+            pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid"])
+        );
+
+        res.status(200).send({ filteredAuctions });
+    } catch (error: any) {
+        res.status(500).send({ message: "Internal server error", error: error.message });
     }
-
-    const filteredAuctions = validAuctions.map(auction =>
-        omit(auction, ["_id", "__v", "updatedAt", "seller", "description"])
-    );
-
-    res.send(filteredAuctions);
 }
 
 export async function deleteAuctionHandler(req: Request<{auctionId: string}>, res: Response) {
-const { auctionId } = req.params;
-
-
+    const { auctionId } = req.params;
     const auction = await searchAuctionById(auctionId);
 
     if (!auction) {
@@ -98,6 +147,7 @@ const { auctionId } = req.params;
     return;
 }
 
+/*
 export async function searchAuctionHandler(req: Request<SearchAuctionInput['body']>, res: Response) {
     const { where, ISBN, budget } = req.body;
 
@@ -118,17 +168,26 @@ export async function searchAuctionHandler(req: Request<SearchAuctionInput['body
     const query: any = conditions.length > 0 ? { $and: conditions } : {};
 
     try {
+        const now = new Date();
+
         const auctions = await searchAuctions(
             query
         );
 
         if (!auctions || auctions.length === 0) {
-            res.sendStatus(404);
+            res.status(404).send({message: "No auction found"});
             return;
         }
 
-        res.send(auctions);
-    } catch (error) {
-        res.sendStatus(500)
+        const validAuctions = auctions!.filter(auction => {
+            const expirationDate = new Date(auction.expireDate);
+            return expirationDate > now;
+        });
+
+        res.send(validAuctions);
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }
+*/
