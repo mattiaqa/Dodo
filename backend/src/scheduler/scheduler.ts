@@ -14,7 +14,7 @@ export interface Task {
 export class Scheduler {
     private async closeAuction(auctionId: string): Promise<void> {
         const winner = await getWinner({auctionId: auctionId});
-        const auction = await searchAuctionById({auctionId: auctionId});
+        const auction = await searchAuctionById(auctionId);
         console.log(auction);
         //const book = await getBookById(auction!.book);
         if(!winner) {

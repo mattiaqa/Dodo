@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import config from 'config';
 import connect_db from './utils/mongodb';
 import logger from './utils/logger';
@@ -6,6 +6,7 @@ import routes from './routes';
 import cors, {CorsOptions} from 'cors';
 import deserializeUser from './middleware/deserializeUser';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
 
 const port = config.get<number>('port');
 const app = express();
@@ -25,6 +26,11 @@ app.use(cors(corsOptions));
 app.use(deserializeUser);
 
 app.use('/public/uploads', express.static('uploads'));
+
+app.use((err: multer.MulterError, req: Request, res: Response, next: NextFunction) => {
+    res.status(400).send({ error: err.message });
+});
+
 
 app.listen(port, () => {
     logger.info(`App is running at http://localhost:${port}`);

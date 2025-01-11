@@ -12,7 +12,7 @@ const requireAdmin = async (req: Request, res: Response, next: NextFunction) => 
         return;
     }
 
-    const userData = await findUser({ _id: user._id });
+    const userData = await findUser({ _id: user.id });
 
     if(!userData?.isAdmin) {
         //res.sendStatus(403);

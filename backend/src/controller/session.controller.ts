@@ -7,11 +7,12 @@ import { omit } from "lodash";
 import logger from "../utils/logger";
 import { signJwt } from "../utils/jwt.utils";
 import config from 'config';
-
+import { z } from "zod";
+import { loginSchema } from "../schema/session.schema";
 
 
 export async function createUserHandler(
-    req: Request<{}, {}, CreateUserInput["body"]>,
+    req: Request<{}, {}, CreateUserInput>,
     res: Response
     ) {
     try {
@@ -51,33 +52,37 @@ export async function confirmUserHandler(req: Request, res: Response)
 }
 
 
-export async function deleteUserHandler(req: Request<GetUserInput['body']>, res: Response){
-  const userId = res.locals.user._id;
+export async function deleteUserHandler(req: Request<GetUserInput>, res: Response){
+  const { userId } = req.params;
 
   const user = await findUser({ _id: userId });
 
   if (!user) {
-    res.sendStatus(404);
+    res.status(404).send({"Error": "User not found"});
     return;
   } 
 
   const deletedUser = await deleteUser({ _id: userId });
 
-  res.send(omit(deletedUser, 'password'));
+  res.status(200).send({
+    "Message": "User deleted successfully",
+    "user": omit(deletedUser, 'password')
+  });
 }
 
 
-export async function createSessionHandler(req: Request, res: Response): Promise<void> {
+export async function createSessionHandler(req: Request<{}, {}, z.infer<typeof loginSchema>>, res: Response): Promise<void> {
     try {
-        const user = await validatePassword(req.body);
+        const loginInfo = req.body;
+        const user = await validatePassword(loginInfo);
 
         if (!user) {
-            res.status(401).send("Invalid email or password");
+            res.status(401).send({"Error" : "Invalid email or password"});
             return;
         }
         if(!user.verified)
         {
-            res.status(403).send({error: 'Your account is not activated. Please check your email'});
+            res.status(403).send({"Error": 'Your account is not activated. Please check your email'});
             return;
         }
 
@@ -102,27 +107,26 @@ export async function createSessionHandler(req: Request, res: Response): Promise
     }
 }
 
-export async function getUserSessionHandler(req: Request, res: Response) {
+export async function deleteSessionHandler(req: Request, res: Response) {
     try {
-        const userId = res.locals.user._id;
+        const sessionId = res.locals.user!.session;
 
-        const sessions = await findSession({user: userId, valid: true});
+        await updateSession({_id: sessionId}, {valid: false});
 
-        res.send(sessions);
+        res.clearCookie('accessToken');
+        res.send({"Message" : "Logged out successfully"});
     } catch (e) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});
     }
 }
 
-export async function deleteSessionHandler(req: Request, res: Response) {
+export async function getUserSessionHandler(req: Request, res: Response) {
     try {
-        const sessionId = res.locals.user.session;
+        const user = res.locals.user!.id;
+        const sessions = await findSession({user, valid: true});
 
-        await updateSession({_id: sessionId}, {valid: false});
-
-        res.clearCookie('accessToken');
-        res.send({});
+        res.send(sessions);
     } catch (e) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});

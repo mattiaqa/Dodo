@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload as DefaultJwtPayload } from 'jsonwebtoken';
 import config from 'config';
 
 const privateKey = config.get<string>('privateKey');
@@ -12,9 +12,9 @@ export function signJwt(object: Object, options?: jwt.SignOptions | undefined) {
     });
 }
 
-export function verifyJwt(token: string) {
+export function verifyJwt <T extends object = DefaultJwtPayload>(token: string) {
     try {
-        const decoded = jwt.verify(token, publicKey);
+        const decoded = jwt.verify(token, publicKey) as T;
         return {
             valid: true,
             expired: false,

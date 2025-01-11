@@ -3,7 +3,6 @@ import logger from "../utils/logger";
 import { searchAuctionById } from "../service/auction.service";
 import { findUser } from "../service/user.service";
 import { addComment, getComments } from "../service/comment.service";
-import mongoose from "mongoose";
 import moment from "moment";
 import { omit } from "lodash";
 
@@ -19,7 +18,7 @@ export const addCommentHandler = async (req: Request, res: Response) => {
             return;
         }
         
-        const user = await findUser({_id: res.locals.user._id});
+        const user = await findUser({_id: res.locals.user!.id});
         if(!user)
         {
             res.status(404).send({ message: "User not found" });

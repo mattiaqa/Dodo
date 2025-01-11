@@ -2,12 +2,15 @@ import mongoose from "mongoose";
 
 export interface BookInput {
     title: string;
-    author: string[];
-    publisher: string;
+    authors: string[];
+    ISBN: string;
     publishedDate: string;
     language: string;
-    ISBN: string;
-    description: string;
+
+    publisher?: string;
+    description?: string;
+    subtitle?: string;
+    imageLinks?: {smallThumbnail?: string, thumbnail?: string};   
 }
 
 export interface BookDocument extends BookInput, mongoose.Document {
@@ -18,14 +21,22 @@ export interface BookDocument extends BookInput, mongoose.Document {
 const bookSchema = new mongoose.Schema(
     {
         title: { type: String, required: true },
-        author: [{ type: String, required: true }],
-        publisher: { type: String, required: true},
-        language: { type: String, required: true },
+        authors: [{ type: String, required: true }],
         ISBN: { type: String, required: true, unique: true },
-        description: { type: String, required: true, default: "" },
+        publishedDate: { type: String, requird: true},
+        language: { type: String, required: true },
+        
+        publisher: { type: String },
+        description: { type: String },
+        subtitle: { type: String },
+        imageLinks: {
+            smallThumbnail: { type: String },
+            thumbnail: { type: String },
+        },
     },
     {
         timestamps: true,
+        strict: true
     }
 );
 

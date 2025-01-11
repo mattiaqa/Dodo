@@ -1,5 +1,5 @@
 import { FilterQuery, UpdateQuery } from "mongoose";
-import { omit } from "lodash";
+import { omit, pick } from "lodash";
 import UserModel, { UserDocument, UserInput } from "../models/user.model";
 import AuctionModel, { AuctionDocument } from "../models/auction.model";
 import config from 'config';
@@ -28,11 +28,12 @@ export async function validatePassword({email, password}: { email: string; passw
 
   if (!isValid) return null;
 
-  return omit(user.toJSON(), "password", "__v", "email", "name", "savedAuctions", "createdAt", "updatedAt");
+  return pick(user, ["_id", "email", "verified", "isAdmin", "name"]);
 }
 
-export async function findUser(query: FilterQuery<UserDocument>) {
-  return UserModel.findOne(query).lean();
+type SafeUser = Pick<UserDocument, "_id"|"email"|"verified"|"isAdmin"|"name"|"avatar"|"createdAt"|"updatedAt"|"savedAuctions">;
+export async function findUser(query: FilterQuery<UserDocument>) : Promise<SafeUser | null> {
+  return UserModel.findOne(query).lean<SafeUser>();
 }
 
 export async function findUsers(query: FilterQuery<UserDocument>) {

@@ -11,6 +11,9 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USR}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PWD}
       MONGO_INITDB_DATABASE: Dodò
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro # Aggiungi questo per il file di inizializzazione
+
 
   mongo-express:
     image: mongo-express

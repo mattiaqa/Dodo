@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 import path from "path";
-import {DownloadImageInput} from "../schema/download.schema";
 
 export const imageDownload = async (req: Request, res: Response) => {
     const filename = req.params.filename;

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { GetBidsInput, PlaceBidInput } from '../schema/bid.schema'
+import { GetBidsInput, PlaceBidInput, placeBidSchema } from '../schema/bid.schema'
 import {searchAuctionById, updateAuction} from '../service/auction.service'
 import { placeBid, getBids } from '../service/bid.service'
 import { findUser, findUsers } from "../service/user.service";
@@ -7,19 +7,12 @@ import { findUser, findUsers } from "../service/user.service";
 import { omit, pick } from "lodash";
 import logger from "../utils/logger";
 import moment from "moment-timezone";
+import { z } from "zod";
 
-export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]>, res: Response) {
+export async function placeBidHandler(req: Request<{}, {}, z.infer<typeof placeBidSchema>>, res: Response) {
     try {
-        const auctionId = req.body.auctionId;
-        const userId = res.locals.user._id;
-        const body = req.body;
-
-        const userData = await findUser({ _id: userId });
-        if(!userData)
-        {
-            res.status(404).send({message: 'User not found'});
-            return;
-        }
+        const { auctionId, amount } = req.body;
+        const userId = res.locals.user!.id;
 
         /* //An admin cannot place a bid
         if (userData.isAdmin) {
@@ -29,42 +22,34 @@ export async function placeBidHandler(req: Request<{}, {}, PlaceBidInput["body"]
         */
 
         const auction = await searchAuctionById(auctionId);
-
         if (!auction) {
-            res.status(404).send({"Error": "No auction found"});
+            res.status(404).send({"Error": "Auction not found"});
             return;
         }
 
         if (auction.seller == userId) {
-            res.status(403).send({message: 'You cannot place a bid on your auction'});
+            res.status(403).send({"Error": 'You cannot place a bid on your auction'});
             return;
         }
 
-        const newBidAmount = body.amount;
-
-        if (newBidAmount <= auction.lastBid) {
+        if (amount <= auction.lastBid) {
             res.status(400).send("Bid must be greater than the current highest bid");
             return;
         }
 
-        const bid = await placeBid({ ...body, auctionId, buyer: userId });
-
-        await updateAuction(auctionId, {
-            lastBid: newBidAmount
-        });
-
-        res.send(bid);
+        const bid = await placeBid(userId, req.body);
+        res.send({"Message" : "Bid placed successfully", bid});
 
     } catch (e: any) {
         logger.error(e);
-        res.status(500).send({message: "Internal Server Error"});
+        res.status(500).send({"Error": "Internal Server Error"});
     }
 }
 
 
 export async function getBidsHandler(req: Request, res: Response) {
     try {
-        const auctionId = req.params.auctionId;
+        const { auctionId } = req.params;
         if(!auctionId){
             res.status(400).send({message: 'You need to specify an auction'})
             return;

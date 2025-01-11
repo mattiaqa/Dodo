@@ -2,6 +2,7 @@ import {get} from 'lodash';
 import { Request, Response, NextFunction } from "express";
 import { verifyJwt } from '../utils/jwt.utils';
 import { reIssueAccessToken } from '../service/session.service';
+import { CurrentUserType } from '../../config/express';
 
 const deserializeUser = async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = req.cookies.accessToken;
@@ -12,7 +13,7 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
         return;
     }
 
-    const {decoded, expired} = verifyJwt(accessToken);
+    const { decoded, expired } = verifyJwt<CurrentUserType>(accessToken);
 
     if(decoded) {
         res.locals.user = decoded;
@@ -28,8 +29,9 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
             res.setHeader('x-access-token', newAccessToken);
         }
 
-        const result = verifyJwt(newAccessToken as string);
-        res.locals.user = result.decoded;
+        const { decoded } = verifyJwt<CurrentUserType>(newAccessToken as string);
+        if(decoded)
+            res.locals.user = decoded;
     }
 
     next();

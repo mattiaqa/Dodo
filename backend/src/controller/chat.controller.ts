@@ -10,7 +10,7 @@ import {omit} from "lodash";
 
 export async function sendMessageHandler(req: Request<SendMessageInput["body"]>, res: Response) {
     try{
-        const sender = res.locals.user._id;
+        const sender = res.locals.user!.id;
         const content = req.body.content;
         const chatId = req.body.chatId;
 
@@ -26,9 +26,9 @@ export async function sendMessageHandler(req: Request<SendMessageInput["body"]>,
 export async function getChatHandler(req: Request<GetChatInput['body']>, res: Response) {
     try {
         const auctionId = req.body.auctionId;
-        const userId = res.locals.user._id;
+        const userId = res.locals.user!.id;
 
-        const auction = await searchAuctionById({auctionId});
+        const auction = await searchAuctionById(auctionId);
 
         let chat = await searchChat({
             auctionId,
@@ -56,7 +56,7 @@ export async function getChatHandler(req: Request<GetChatInput['body']>, res: Re
 
 export async function getUserChatHandler(req: Request, res: Response) {
     try {
-        const userId = res.locals.user._id;
+        const userId = res.locals.user!.id;
 
         const chats = await searchChatsByUser({participants: userId});
         res.send(chats);

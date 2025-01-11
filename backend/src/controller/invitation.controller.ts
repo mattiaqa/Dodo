@@ -4,31 +4,28 @@ import {signJwt, verifyJwt} from "../utils/jwt.utils";
 import Invitation from '../models/invitation.model';
 import {checkAlreadyInvited, createInvitationLink, sendInviteEmail} from "../service/invitation.service";
 import logger from "../utils/logger";
+import { z } from "zod";
+import { acceptInvitationSchema, invitationSchema } from "../schema/invitation.schema";
 
 
-export async function inviteUserHandler(req: Request, res: Response) {
-    const {email} = req.body;
-
-    const alreadyInvited = await checkAlreadyInvited(email);
-    if (alreadyInvited) {
-        res.status(401).send({message: 'You already sent an invite for this user'});
-        return;
-    }
-
+export async function inviteUserHandler(req: Request<{},{}, z.infer<typeof invitationSchema>>, res: Response) {
     try {
-        const admin = await findUser({_id: res.locals.user._id});
-        if (!admin) {
-            res.status(500).send({message: "Error getting the session"});
+        const { email } = req.body;
+    
+        const alreadyInvited = await checkAlreadyInvited(email);
+        if (alreadyInvited) {
+            res.status(401).send({ "Error": 'You already sent an invite for this user'});
             return;
         }
 
-        const user = await findUser({email: email});
+        const admin = res.locals.user!;
+        const user = await findUser({ email });
         if (!user) {
-            res.status(404).send({message: 'The email does not exist'});
+            res.status(404).send({"Error": 'The email does not exist'});
             return;
         }
         if (user.isAdmin) {
-            res.status(401).send({message: 'The user is already a moderator'});
+            res.status(401).send({"Error": 'The user is already a moderator'});
             return;
         }
 
@@ -44,7 +41,7 @@ export async function inviteUserHandler(req: Request, res: Response) {
         await sendInviteEmail(email, link, admin.name, user.name);
 
         res.status(201).send({
-            message: 'Invitation link successfully generated!',
+            "Message": 'Invitation link successfully generated!',
             link,
         });
 
@@ -53,57 +50,69 @@ export async function inviteUserHandler(req: Request, res: Response) {
     } catch (err: any) {
       logger.error(err);
       res.status(500).send({
-          message: 'Error while generating invitation link.',
+          "Error": 'Error while generating the invitation link.',
       });
       return;
     }
 }
 
-export async function acceptInviteHandler(req: Request, res: Response) {
-    const token = req.params.token;
+interface InviteTokenType
+{
+    email: string;
+}
 
-    if (!token) {
-        res.status(400).send({message: 'Token is mandatory'});
-        return;
-    }
-
+export async function acceptInviteHandler(req: Request<z.infer<typeof acceptInvitationSchema>>, res: Response) {
     try {
+        const { token } = req.params;
+
+        /*
+        if (!token) {
+            res.status(400).send({message: 'Token is mandatory'});
+            return;
+        }*/
+
         const invitation = await Invitation.findOne({token});
         if (!invitation) {
-            res.status(404).send({message: "No invitation found"});
+            res.status(404).send({"Error": "No invitation found"});
             return;
         }
 
         if (invitation.used) {
-            res.status(400).send({message: "Ghis link has already been used"});
+            res.status(400).send({"Error": "This link has already been used"});
             return;
         }
 
         if (new Date() > invitation.expiresAt) {
-            res.status(400).send({message: 'Expired link'});
+            res.status(400).send({"Error": 'Expired link'});
             return;
         }
 
-        const {email} = verifyJwt(token).decoded as { email: string };
-
-        if (email !== res.locals.user.email) {
-            res.status(403).send({message: "This is not your invite"});
+        const { decoded, valid, expired } = verifyJwt<InviteTokenType>(token);
+        if(!decoded || !valid || expired)
+        {
+            res.status(400).send({message: "Invalid Token"});
             return;
         }
 
-        const updatedUser = await updateUser({_id: res.locals.user._id}, {isAdmin: true});
+        const {email} = decoded;
+        if (email !== res.locals.user!.email) {
+            res.status(403).send({"Error": "You do not have access to this invitation"});
+            return;
+        }
+
+        const updatedUser = await updateUser({_id: res.locals.user!.id}, {isAdmin: true});
         if (!updatedUser) {
-            res.status(500).send({message: "Internal Server Error"});
+            res.status(500).send({"Error": "Internal Server Error"});
             return;
         }
 
         invitation.used = true;
         await invitation.save();
 
-        res.send({message: 'Invite accepted successfully'});
+        res.send({"Message": 'Invite accepted successfully'});
     } catch (err: any) {
-      logger.error(err);
-      res.status(500).send({message: "Internal Server Error"});
-      return;
+        logger.error(err);
+        res.status(500).send({"Error": "Internal Server Error"});
+        return;
     }
 }

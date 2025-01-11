@@ -3,6 +3,7 @@ import { Express, Request, Response } from "express";
 import UserRoutes from './user';
 import AuctionRoutes from './auction';
 import ChatRoutes from './chat';
+import BookRoutes from './book';
 
 import { getBookInfoHandler } from "../controller/book.controller";
 import requireUser from "../middleware/requireUser";
@@ -18,8 +19,8 @@ function routes(app: Express) {
     app.use('/api/auction', AuctionRoutes);
     app.use('/api/chat', ChatRoutes);
     app.use('/api/download', DownloadRoutes);
-    app.get('/api/book/info', [requireUser], getBookInfoHandler);
-    app.use('/api/notification', NotificationRoutes)
+    app.use('/api/notification', NotificationRoutes);
+    app.use('/api/book', BookRoutes);
 }
 
 export default routes;

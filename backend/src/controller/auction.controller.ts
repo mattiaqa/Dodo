@@ -5,54 +5,45 @@ import {
     searchAuctionById,
     searchAuctions,
     getUserAuctions,
-    incrementInteraction, incrementViews
+    incrementInteraction, incrementViews,
+    updateAuction
 } from "../service/auction.service";
 import logger from "../utils/logger";
-import {CreateAuctionInput, SearchAuctionInput} from "../schema/auction.schema";
-import {createBook, searchBookByISBN} from "../service/book.service";
-import {omit, pick} from "lodash";
+import { createAuctionSchema, editAuctionSchema, getAuctionSchema, SearchAuctionInput, searchAuctionSchema} from "../schema/auction.schema";
+import { pick} from "lodash";
 import sanitize from "mongo-sanitize";
 import mongoose, { FilterQuery } from "mongoose";
 import { AuctionDocument } from "../models/auction.model";
+import { z } from "zod";
+import { unlink } from "fs/promises";
+import { saveFilesToDisk } from "../utils/multer";
 
-export async function createAuctionHandler(req: Request<{}, {}, CreateAuctionInput["body"]>, res: Response) {
+export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof createAuctionSchema>>, res: Response) {
+    let uploadedImagesPaths: string[] = [];
     try {
-        const userId = res.locals.user._id;
+        const seller = res.locals.user!.id;
         const body = req.body;
-        let inputBook = body.book;
 
-        let book = await searchBookByISBN(inputBook.ISBN);
-
-        if (!book) {
-            // TODO: fix this
-            await createBook(inputBook);
-        }
-
-        book = await searchBookByISBN(inputBook.ISBN);
-
-        const auction = await createAuction({...body, seller: userId, book: book?._id});
-        res.send(auction);
+        const uploadedImages = req.files as Express.Multer.File[]; // Le immagini caricate
+        uploadedImagesPaths = await saveFilesToDisk(uploadedImages, 'auctions'); // Salva i file nel file system
+        
+        const auction = await createAuction({...body, images: uploadedImagesPaths, seller});
+        
+        res.status(200).send({
+            "Message":"The auction was created successfully",
+            "Warning":"Please consider adding a book tag, to make your auction easier to find",
+            "Result": auction
+        });
+        return;
     } catch (e: any) {
+        // Rimuovi i file salvati in caso di errore
+        if (uploadedImagesPaths.length > 0) {
+            for (const filePath of uploadedImagesPaths) {
+                await unlink(filePath).catch((err) => console.error(`Error deleting file ${filePath}:`, err));
+            }
+        }
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});
-    }
-}
-
-export async function getUserAuctionsHandler(req: Request, res: Response) {
-    const seller = res.locals.user._id;
-  
-    try {
-      const auctions = await getUserAuctions({ seller });
-  
-      if(!auctions) {
-        res.status(404).send({"Error": "The user has not yet created any auctions"});
-        return;
-      }
-  
-      res.send(auctions);
-    } catch (e: any) {
-      logger.error(e);
-      res.status(500).send({message: "Internal Server Error"});
     }
 }
 
@@ -75,10 +66,10 @@ export async function getAuctionHandler(req: Request, res: Response) {
     }
 }
 
-export async function getAllAuctionHandler(req: Request, res: Response) {
+export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof searchAuctionSchema>>, res: Response) {
     try {
         // Estrai i parametri di query
-        const { bookId, minPrice, maxPrice, sellerId, where, ISBN } = req.query;
+        const { ISBN, bookId, minPrice, maxPrice, sellerId, where } = req.query;
 
         // Costruisci la query dinamicamente
         const query: FilterQuery<AuctionDocument> = {};
@@ -132,19 +123,55 @@ export async function getAllAuctionHandler(req: Request, res: Response) {
     }
 }
 
-export async function deleteAuctionHandler(req: Request<{auctionId: string}>, res: Response) {
-    const { auctionId } = req.params;
-    const auction = await searchAuctionById(auctionId);
+export async function editAuctionHandler(req: Request<z.infer<typeof getAuctionSchema>, {}, z.infer<typeof editAuctionSchema>>, res: Response)
+{
+    try {
+        // Crea l'oggetto dei campi da aggiornare
+        const updateFields = {
+            title: req.body.title,
+            description: req.body.description,
+            book: req.body.book
+        };
 
-    if (!auction) {
-        res.sendStatus(404);
-        return;
+        // Filtra i campi undefined
+        const filteredUpdateFields = Object.fromEntries(
+            Object.entries(updateFields).filter(([_, value]) => value !== undefined)
+        );
+
+        if (Object.keys(filteredUpdateFields).length === 0) {
+            res.status(400).send({ message: "No valid fields to update." });
+            return;
+        }
+
+        // Passa i campi validi a updateAuction
+        const auction = await updateAuction(req.params.auctionId, filteredUpdateFields);
+
+        res.status(200).send({
+            message: "Auction updated successfully",
+            result: auction
+        });
+    } catch (e: any) {
+        res.status(500).send({ message: e.message || "Error updating auction" });
     }
+}
 
-    const deletedAuction = await deleteAuction({auctionId});
+export async function deleteAuctionHandler(req: Request<z.infer<typeof getAuctionSchema>>, res: Response) {
+    try{
+        const { auctionId } = req.params;
+        const auction = await searchAuctionById(auctionId);
 
-    res.status(200).send(deletedAuction);
-    return;
+        if (!auction) {
+            res.status(404).send({"Error": "Auciton not found"});
+            return;
+        }
+
+        const deletedAuction = await deleteAuction({auctionId});
+
+        res.status(200).send({"Message": "Auction deleted successfully", deletedAuction});
+        return;
+    } catch (e: any) {
+        res.status(500).send({ message: e.message || "Error deleting auction" });
+    }
 }
 
 /*
