@@ -3,10 +3,11 @@ import logger from "../utils/logger";
 import {getUserNotifications, readNotificationById} from "../service/notification.service";
 
 export async function getUserNotificationsHandler(req: Request, res: Response) {
-    const userId = res.locals.user!.id;
+    const userId = res.locals.user!._id;
 
     try {
         const notifications = await getUserNotifications({userId: userId, read: false});
+
         if(!notifications) {
             res.status(404).send("Notification not found");
         }
@@ -19,7 +20,7 @@ export async function getUserNotificationsHandler(req: Request, res: Response) {
 }
 
 export async function readNotificationsHandler(req: Request, res: Response) {
-    const userId = res.locals.user!.id;
+    const userId = res.locals.user!._id;
     const notificationId = req.body.notificationId;
 
     try {

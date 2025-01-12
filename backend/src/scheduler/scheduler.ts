@@ -3,7 +3,7 @@ import logger from '../utils/logger';
 import {getWinner} from "../service/bid.service";
 import {searchAuctionById, setWinner} from "../service/auction.service";
 import {notifyUser} from "../service/notification.service";
-import {getBookById} from "../service/book.service"
+import { BookDocument } from "../models/book.model";
 
 export interface Task {
     task_id: string;

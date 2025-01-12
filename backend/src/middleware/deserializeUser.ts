@@ -26,7 +26,7 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
         const newAccessToken = await reIssueAccessToken({ refreshToken: refreshTokenStr });
 
         if(newAccessToken) {
-            res.setHeader('x-access-token', newAccessToken);
+            res.cookie('accessToken', newAccessToken);
         }
 
         const { decoded } = verifyJwt<CurrentUserType>(newAccessToken as string);

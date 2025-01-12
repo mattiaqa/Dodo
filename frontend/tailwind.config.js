@@ -23,7 +23,7 @@ module.exports = {
     themes: [
       {
         fantasy: {
-          primary: '#0000ff',
+          primary: '#D7AE95',
           'primary-content': 'white',
           secondary: '#F6F6F6',
           neutral: '#E8E8E8',

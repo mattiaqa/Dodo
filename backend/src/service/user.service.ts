@@ -32,12 +32,12 @@ export async function validatePassword({email, password}: { email: string; passw
 }
 
 type SafeUser = Pick<UserDocument, "_id"|"email"|"verified"|"isAdmin"|"name"|"avatar"|"createdAt"|"updatedAt"|"savedAuctions">;
-export async function findUser(query: FilterQuery<UserDocument>) : Promise<SafeUser | null> {
+export async function findUser(query: FilterQuery<UserDocument>) {
   return UserModel.findOne(query).lean<SafeUser>();
 }
 
 export async function findUsers(query: FilterQuery<UserDocument>) {
-  return UserModel.find(query).lean(); // find() restituisce un array di documenti
+  return UserModel.find(query).lean();
 }
 
 export async function deleteUser(query: FilterQuery<UserDocument>) {

@@ -10,7 +10,7 @@
           <label class="label">
             <span class="label-text text-gray-600">Email</span>
           </label>
-          <div class="input-group flex items-center gap-2 border-2 border-gray-300 rounded-lg px-4 py-2 focus-within:border-blue-500 transition">
+          <div class="input-group flex items-center gap-2 border-2 border-gray-300 rounded-lg px-4 py-2 transition">
             <fa-icon [icon]="['fas', 'envelope']" class="search-icon w-5 h-5"></fa-icon>
             <input type="email" [(ngModel)]="form.email" name="email" class="grow bg-transparent focus:outline-none text-gray-700" placeholder="email@example.com" required/>
           </div>
@@ -19,19 +19,19 @@
           <label class="label">
             <span class="label-text text-gray-600">Password</span>
           </label>
-          <div class="input-group flex items-center gap-2 border-2 border-gray-300 rounded-lg px-4 py-2 focus-within:border-blue-500 transition">
+          <div class="input-group flex items-center gap-2 border-2 border-gray-300 rounded-lg px-4 py-2-blue-500 transition">
             <fa-icon [icon]="['fas', 'key']" class="search-icon w-5 h-5"></fa-icon>
             <input type="password" [(ngModel)]="form.password" name="password" class="grow bg-transparent focus:outline-none text-gray-700" placeholder="Enter password" required/>
           </div>
           <label class="label">
-            <a href="#" class="label-text-alt link link-hover text-blue-500">Forgot password?</a>
+            <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
           </label>
           <div *ngIf="isLoginFailed" class="text-red-500 mt-4">
             <p>{{ errorMessage }}</p>
           </div>
         </div>
         <div class="form-control mt-6">
-          <button type="submit" class="btn btn-primary bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 transition">Login</button>
+          <button type="submit" class="btn btn-primary bg-gradient-to-r text-white font-bold py-2 px-4 rounded-lg primary-color">Login</button>
         </div>
       </form>
       <div class="divider my-6 text-gray-400">OR</div>

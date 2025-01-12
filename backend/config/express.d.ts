@@ -1,7 +1,7 @@
-import 'express'; // Importa i tipi originali di Express
-// Tipizzazione dell'utente
+import 'express';
+
 interface CurrentUserType {
-    id: string;
+    _id: mongoose.Types.ObjectId;
     email: string;
     name: string;
     verified: boolean;

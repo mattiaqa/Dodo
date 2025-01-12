@@ -13,8 +13,13 @@
   color: #D7AE95;
 }
 
-.button-color {
+.button-primary-color {
   background-color: #D7AE95;
+  text-decoration-color: #FFFFFF;
+}
+
+.button-secondary-color {
+  background-color: rgba(215, 174, 149, 0.27);
   text-decoration-color: #FFFFFF;
 }
 
@@ -26,4 +31,41 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.fullscreen-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.popup-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  position: relative;
+}
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.popup-content {
+  @apply p-6 w-full max-w-lg bg-white rounded-lg shadow-lg;
+}
+
+.button-color {
+  background-color: #D7AE95;
+  text-decoration-color: #FFFFFF;
 }

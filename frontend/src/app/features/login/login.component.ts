@@ -43,17 +43,18 @@ export class LoginComponent implements OnInit {
       next: data => {
         this.isLoginFailed = false;
         this.isLoggedIn = true;
+        this.storageService.saveRefreshToken(data.refreshToken);
+        this.userModel.getUserInfo(data._id).subscribe(user => {
+          this.storageService.saveUser(user);
+
+          this.router.navigate(['/']);
+        });
       },
       error: error => {
         this.errorMessage = "Wrong Credentials!";
         this.isLoginFailed = true;
+        console.log(error);
       }
     });
-
-    this.userModel.getUserInfo().subscribe(user => {
-      this.storageService.saveUser(user);
-
-      this.router.navigate(['/']);
-    })
   }
 }

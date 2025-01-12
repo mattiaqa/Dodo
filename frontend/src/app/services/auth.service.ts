@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 const AUTH_API = 'http://localhost:1338/api/user/';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-};
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +14,7 @@ export class AuthService {
     return this.http
       .post(
         AUTH_API + 'login',
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
   }
 
@@ -32,7 +27,7 @@ export class AuthService {
         password,
         passwordConfirmation
       },
-      httpOptions
+      {withCredentials: true}
     );
   }
 
@@ -41,6 +36,6 @@ export class AuthService {
   }
 
   confirmRegistration(token: string): Observable<any> {
-    return this.http.get(AUTH_API + 'register/' + token + '/confirm');
+    return this.http.get(AUTH_API + 'register/' + token + '/confirm', {withCredentials: true});
   }
 }

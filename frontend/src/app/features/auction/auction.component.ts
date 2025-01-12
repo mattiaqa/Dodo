@@ -1,68 +1,58 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NavbarComponent} from '../../layout/navbar/navbar.component';
-import {FooterComponent} from '../../layout/footer/footer.component';
-import {AuctionService} from '../../services/auction.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
-import {FormsModule} from '@angular/forms';
-import {StorageService} from '../../storage/storage.service';
-import {CommentComponent} from './components/comment/comment.component';
+import { Component, OnInit } from '@angular/core';
+import { NavbarComponent } from '../../layout/navbar/navbar.component';
+import { FooterComponent } from '../../layout/footer/footer.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FormsModule } from '@angular/forms';
+import { CommentComponent } from './components/comment/comment.component';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-auction',
-  imports: [
-    NavbarComponent,
-    FooterComponent,
-    FaIconComponent,
-    FormsModule,
-    CommentComponent
-  ],
+  standalone: true,
+  imports: [NavbarComponent, FooterComponent, FaIconComponent, FormsModule, CommentComponent, NgIf],
   templateUrl: './auction.component.html',
   styleUrl: './auction.component.scss'
 })
 export class AuctionComponent implements OnInit {
-  data: any = null;
-  auctionId: string = '';
-
-  constructor(private auctionModel: AuctionService, private route: ActivatedRoute, private storageService: StorageService, private router: Router) {}
-
-  @Input() auction: {
-    auctionId: string;
-    description: string;
-    book: {
-      title: string;
-      ISBN: string;
-      authors: string[];
-      description: string;
-    };
-    condition: string;
-    lastBid: number;
-    country: string;
-    province: string;
-    image: string;
-    expireDate: string;
-    createdAt: string;
-  } | undefined;
-
+  auctionId: string = '12345';
   bidAmount: number = 0;
+  data: any = {
+    auctionId: '12345',
+    description: 'A rare book auction',
+    book: {
+      title: 'The Great Gatsby',
+      ISBN: '978-3-16-148410-0',
+      authors: ['F. Scott Fitzgerald'],
+      description: 'A classic novel set in the 1920s.',
+    },
+    condition: 'Good',
+    lastBid: 100,
+    country: 'USA',
+    province: 'New York',
+    image: 'path/to/image.jpg',
+    expireDate: '2025-12-31',
+    createdAt: '2024-01-01'
+  };
+  isOfferPopupOpen: boolean = false;
 
   ngOnInit() {
-    this.auctionId = this.route.snapshot.paramMap.get('auctionId') || '';
-    this.auctionModel.getAuctionById(this.auctionId).subscribe(auction => {
-      this.data = auction;
-    });
+    console.log('Auction initialized with hardcoded data.');
   }
 
   placeBid(): void {
-    if(!this.storageService.isLoggedIn()) {
-      this.router.navigate(['login']);
+    if (this.bidAmount > this.data.lastBid) {
+      this.data.lastBid = this.bidAmount;
+      alert('Bid placed successfully!');
     } else {
-      if (this.bidAmount > this.data.lastBid) {
-        this.data.lastBid = this.bidAmount;
-        this.auctionModel.placeBid(this.auctionId, this.bidAmount).subscribe();
-      } else {
-        alert('Your bid must be higher than the last bid!');
-      }
+      alert('Your bid must be higher than the last bid!');
     }
+  }
+
+  openOfferPopup() {
+    this.isOfferPopupOpen = true;
+  }
+
+  submitOffer() {
+
   }
 }

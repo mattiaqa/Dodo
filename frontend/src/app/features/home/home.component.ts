@@ -4,17 +4,16 @@ import {FooterComponent} from '../../layout/footer/footer.component';
 import {CardComponent} from './components/card/card.component';
 import {NgForOf} from '@angular/common';
 import {AuctionService} from '../../services/auction.service';
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {SharedDataService} from '../../shared/shared-data';
 
 @Component({
   selector: 'app-home',
-    imports: [
-        NavbarComponent,
-        FooterComponent,
-        CardComponent,
-        NgForOf
-    ],
+  imports: [
+    NavbarComponent,
+    FooterComponent,
+    CardComponent,
+    NgForOf
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -23,13 +22,13 @@ export class HomeComponent implements OnInit {
   constructor(private auctionModel: AuctionService, private sharedDataService: SharedDataService) {}
 
   ngOnInit() {
-      this.auctionModel.getAllAuction().subscribe(auctions => {
-        this.auctions = auctions;
-        this.sharedDataService.updateArray(auctions);
-      });
+    this.auctionModel.getAllAuction().subscribe(auctions => {
+      this.auctions = auctions;
+      this.sharedDataService.updateArray(auctions);
+    });
 
-      this.sharedDataService.dataArray$.subscribe(auctions => {
-        this.auctions = auctions;
-      });
+    this.sharedDataService.dataArray$.subscribe(auctions => {
+      this.auctions = auctions;
+    });
   }
 }

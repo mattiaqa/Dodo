@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {RouterLink} from '@angular/router';
+import Chart from 'chart.js/auto';
+import {DecimalPipe, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-card',
@@ -23,6 +25,7 @@ export class CardComponent implements OnInit, OnDestroy {
     lastBid: number;
     country: string;
     province: string;
+    reservePrice: number;
     image: string;
     expireDate: string;
     createdAt: string;
@@ -33,8 +36,39 @@ export class CardComponent implements OnInit, OnDestroy {
   timeLeftPercentage: number = 0;
   timeLeft: string = '';
   private timerInterval: any;
+  chart: any = [];
+
+  reservePricePercentage: number = 0;
 
   ngOnInit() {
+    this.chart = new Chart('canvas', {
+      type: 'line',
+      data: {
+        labels: ['mon', 'tue', 'wed', 'thu', 'fr'],
+        datasets: [{
+          label: 'Eur',
+          data: [10, 15, 33, 80, 120, 1],
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Offers',
+          },
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+
+    this.updateReservePriceProgress();
+
     this.updateTimeLeft();
 
     this.timerInterval = setInterval(() => {
@@ -72,6 +106,19 @@ export class CardComponent implements OnInit, OnDestroy {
         if (this.timerInterval) {
           clearInterval(this.timerInterval);
         }
+      }
+    }
+  }
+
+  private updateReservePriceProgress() {
+    if (this.auction) {
+      const lastBid = this.auction?.lastBid ?? 0;
+      const reservePrice = this.auction?.reservePrice ?? 0;
+
+      if (reservePrice > 0) {
+        this.reservePricePercentage = Math.max(0, Math.min(100, (lastBid / reservePrice) * 100));
+      } else {
+        this.reservePricePercentage = 0;
       }
     }
   }

@@ -10,10 +10,10 @@ const router = express.Router();
 
 router.post('/register', Validator.validateBody(createUserSchema), AuthController.createUserHandler);
 router.get('/register/:token/confirm', AuthController.confirmUserHandler);
-router.delete('/:userId', requireAdmin, Validator.validateParams(getUserSchema), AuthController.deleteUserHandler);
+router.delete('/:userId/delete', [requireAdmin, Validator.validateParams(getUserSchema)], AuthController.deleteUserHandler);
 
 router.post('/login', Validator.validateBody(loginSchema), AuthController.createSessionHandler);
-router.delete('/logout', requireUser, AuthController.deleteSessionHandler);
+router.delete('/logout', [requireUser], AuthController.deleteSessionHandler);
 router.get('/session', requireUser, AuthController.getUserSessionHandler);
 
 

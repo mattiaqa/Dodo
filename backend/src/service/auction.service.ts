@@ -112,7 +112,7 @@ export async function searchAuctionById(id: string)
       });
   } catch (e:any) {
     logger.error(`Failed to find auction by ID: ${e.message}`);
-    throw new Error("Error retrieving auction");
+    throw new Error(e.message);
   }
 }
 

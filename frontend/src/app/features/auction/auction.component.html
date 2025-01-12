@@ -1,47 +1,61 @@
 <app-navbar></app-navbar>
 
-<div class="container mx-auto p-8">
-  <!-- Title Section -->
-  <h1 class="text-3xl font-bold text-primary-600 primary-color text-center">{{ data?.book?.title || 'Title not available' }}</h1>
-
+<div class="container mx-auto">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 bg-base-300 p-6 rounded-lg">
 
-    <!-- Carousel Section -->
+    <!-- Enlarged Carousel Section -->
     <div class="relative w-full">
       <div class="carousel w-full">
         <div class="carousel-item relative w-full">
-          <img alt="Book Image" class="w-full h-96 object-cover rounded-lg shadow-lg" src="https://picsum.photos/600/600"/>
+          <img alt="Book Image" class="w-full h-[500px] object-cover rounded-lg shadow-lg" src="https://picsum.photos/600/600"/>
           <a class="btn btn-circle absolute top-1/2 left-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide3">❮</a>
           <a class="btn btn-circle absolute top-1/2 right-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide2">❯</a>
         </div>
       </div>
     </div>
 
-    <!-- Auction Bid Box Section -->
+    <!-- Auction Bid Box Section with lastBid on the right -->
     <div class="space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-md w-full max-w-md mt-8 ml-12">
-        <h2 class="text-2xl font-semibold text-primary-700">Current Offer</h2>
-        <div class="text-3xl font-bold text-primary-600 mt-2">
+      <div class="bg-white p-3 rounded-xl w-full max-w-md mt-0 ml-5">
+        <!-- Title Section -->
+        <h1 class="text-4xl font-bold text-primary-600 primary-color text-left">{{ data?.book?.title || 'Title not available' }}</h1>
+
+        <div class="flex items-center text-3xl font-bold text-primary-600 mt-2">
           <span>€{{ data?.lastBid || 'Not available' }}</span>
         </div>
 
-        <div class="mb-2 mt-4">
-          <span class="text-gray-600">Suggested Bids:</span>
-          <div class="flex space-x-4 mt-2">
-            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 10 || 'undefined' }}</button>
-            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 20 || 'undefined' }}</button>
-            <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 50 || 'undefined' }}</button>
-          </div>
+        <div class="flex text-slate-600 items-center mb-2 underline">
+          <span>0 offers - expires in 3h 12min 3sec</span>
         </div>
 
-        <div class="flex items-center space-x-4 mt-2">
-          <div class="flex-1">
-            <label for="bidInput" class="text-gray-600">Place your bid:</label>
-            <input id="bidInput" type="number" class="input input-bordered w-full mt-2" placeholder="Enter your bid amount" [(ngModel)]="bidAmount"/>
-          </div>
-          <button class="btn button-color mt-8 w-40" (click)="placeBid()">Place Bid</button>
-        </div>
+        <p class="text-md text-gray-700 mt-4">
+          <fa-icon [icon]="['fas', 'circle-check']" class="text-primary-500"></fa-icon>
+          Condition: <span class="font-semibold text-primary-600">{{ data?.condition || 'Not available' }}</span>
+        </p>
 
+        <p class="text-md text-gray-700 mt-2">
+          <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-2 text-primary-500"></fa-icon>
+          <span>{{ data?.country + ', ' + data?.province || 'Location not available' }}</span>
+        </p>
+
+        <p class="text-md text-gray-700 mt-4 mb-4">
+          {{ data?.description || 'Description not available'}}
+        </p>
+
+        <hr>
+
+        <!-- Popup Trigger -->
+        <button class="btn button-primary-color mt-8 w-full" (click)="isOfferPopupOpen = true">Make an Offer</button>
+
+        <button class="btn button-secondary-color mt-2 w-full">Contact the seller</button>
+
+        <p class="text-sm text-gray-600 mt-8">
+          Shipping Cost: <span class="font-semibold">€5.00</span>
+        </p>
+
+        <p class="text-sm text-gray-600">
+          Accepted Payments: Credit Card, PayPal, Bank Transfer
+        </p>
       </div>
     </div>
   </div>
@@ -65,39 +79,41 @@
       </p>
     </div>
 
-    <!-- About the Auction Section -->
+    <!-- About the Seller Section -->
     <div>
-      <h2 class="text-2xl font-semibold text-primary-700">About the Auction</h2>
-      <p class="text-md text-gray-700 mt-4">
-        {{ data?.description || 'Description not available'}}
-      </p>
-
-      <p class="text-sm text-gray-600 flex items-center space-x-2 pt-3">
-        <fa-icon [icon]="['fas', 'circle-check']" class="text-primary-500"></fa-icon>
-        <span>Condition: <span class="font-semibold text-primary-600">{{ data?.condition || 'Not available' }}</span></span>
-      </p>
-
-      <p class="text-sm text-gray-600 flex items-center space-x-2">
-        <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-2 text-primary-500"></fa-icon>
-        <span>{{ data?.country + ', ' + data?.province || 'Location not available' }}</span>
-      </p>
+      <h2 class="text-2xl font-semibold text-primary-700">About the Seller</h2>
     </div>
   </div>
-  <button class="btn">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-    </svg>
-    Save
-  </button>
+
   <app-comment></app-comment>
 </div>
 <app-footer></app-footer>
+
+<!-- Conditional Popup -->
+<div *ngIf="isOfferPopupOpen" class="fullscreen-popup">
+  <div class="popup-content p-6 w-full max-w-lg bg-white rounded-lg shadow-lg relative">
+    <button class="close-button absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-900" (click)="isOfferPopupOpen = false">&times;</button>
+    <h2 class="text-center text-xl font-semibold mb-2">Make an Offer</h2>
+    <div>
+      <span class="text-gray-600 mb-1">Suggested Bids:</span>
+      <div class="flex space-x-4">
+        <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 10 || 'undefined' }}</button>
+        <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 20 || 'undefined' }}</button>
+        <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 50 || 'undefined' }}</button>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-4 mt-4">
+      <div class="flex-1">
+        <input id="bidInput" type="number" class="input input-bordered w-full" placeholder="Enter your bid amount" [(ngModel)]="bidAmount"/>
+      </div>
+      <button class="btn button-color w-40" (click)="placeBid()">Place Bid</button>
+    </div>
+
+    <p class="text-sm text-gray-500 mt-4 border-t pt-2">
+      <fa-icon [icon]="['fas', 'circle-exclamation']" class="text-primary-500"></fa-icon>
+      Please bid responsibly. Ensure you are comfortable with the bid amount before placing your offer. All bids are binding and cannot be withdrawn once submitted.
+    </p>
+  </div>
+</div>
+

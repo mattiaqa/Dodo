@@ -12,7 +12,7 @@
   transition: border-color 0.3s;
 
   &:focus-within {
-    border-color: #3b82f6;
+    border-color: #D7AE95;
   }
 }
 
@@ -20,18 +20,7 @@ input {
   @apply grow bg-transparent focus:outline-none text-gray-700;
 }
 
-.btn-primary {
-  @apply bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-2 px-4 rounded-lg transition;
-
-  &:hover {
-    @apply from-blue-600 to-blue-700;
-  }
-}
-
-.divider {
-  @apply text-gray-400 my-6;
-}
-
-.link-primary {
-  @apply text-blue-500 hover:underline;
+.primary-color {
+  background-color: #D7AE95;
+  border: none;
 }

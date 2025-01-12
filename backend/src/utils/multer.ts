@@ -9,12 +9,12 @@ const allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
 function fileFilter(req: Express.Request, file: Express.Multer.File, callback: multer.FileFilterCallback) {
     const safeFilename = sanitize(file.originalname);
     const ext = path.extname(safeFilename);
-  
+
     if (!allowedFileTypes.includes(file.mimetype) || !['.png', '.jpg', '.jpeg', '.gif'].includes(ext)) {
-      callback(new Error('Only images are allowed!'));
-      return;
+        callback(new Error('Only images are allowed!'));
+        return;
     }
-  
+
     callback(null, true);
 }
 
@@ -42,17 +42,4 @@ export const uploadAuctionImages = multer({
     storage: multer.memoryStorage(), // Salva in "auctions" folder
     fileFilter,
     limits: { fileSize: 3 * 1024 * 1024 }, // Limite di 3 MB per le immagini delle aste},
-  }).array('images', 10); // 'auctionImages' è il nome del campo per le immagini delle aste, con un massimo di 10 immagini
-
-/*
-const storage = (folder: string) =>  multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, `../../public/uploads/${folder}`));
-    },
-    filename: function (req, file, cb) {
-        const ext = path.extname(file.originalname);
-        const newName = Date.now() + '_' + crypto.randomUUID() + ext;
-        cb(null, newName);
-    }
-});
-*/
+}).array('images', 10); // 'auctionImages' è il nome del campo per le immagini delle aste, con un massimo di 10 immagini

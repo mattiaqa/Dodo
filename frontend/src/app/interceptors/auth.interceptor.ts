@@ -6,8 +6,9 @@ import {
   HttpRequest,
   HTTP_INTERCEPTORS, HttpErrorResponse,
 } from '@angular/common/http';
-import {catchError, Observable, throwError} from 'rxjs';
+import {catchError, Observable, throwError, switchMap} from 'rxjs';
 import {StorageService} from '../storage/storage.service';
+import { Provider } from '@angular/core';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
@@ -22,14 +23,22 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error) => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
+          const token = this.serviceStorage.getToken();
+          console.log(token);
+          if (token) {
+            const clonedReq = req.clone({
+              setHeaders: { 'x-refresh': token }
+            });
+            return next.handle(clonedReq);
+          }
           this.serviceStorage.clean();
         }
-        return throwError(error);
+        return throwError(() => error);
       })
     );
   }
 }
 
-export const httpInterceptorProviders = [
+export const httpInterceptorProviders: Provider = [
   { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
 ];

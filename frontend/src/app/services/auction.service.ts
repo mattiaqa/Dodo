@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 const API_URL = 'http://localhost:1338/api/auction/';
 
@@ -15,7 +15,7 @@ export class AuctionService {
   }
 
   getAuctionById(auctionId: string): Observable<any> {
-    return this.http.get(API_URL + '/' + auctionId);
+    return this.http.get(API_URL + '/' + auctionId, { withCredentials: true });
   }
 
   search(query: any): Observable<any> {
@@ -23,7 +23,7 @@ export class AuctionService {
   }
 
   getAuctionComments(auctionId: string): Observable<any> {
-    return this.http.get(API_URL + auctionId + '/comments' );
+    return this.http.get(API_URL + auctionId + '/comment', {withCredentials: true } );
   }
 
   submitComment(auctionId: string, comment: string): Observable<any> {

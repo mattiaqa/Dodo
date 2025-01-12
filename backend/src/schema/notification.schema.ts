@@ -1,9 +1,7 @@
 import { object, string, TypeOf } from "zod";
 
 export const readNotificationSchema = object({
-    body: object({
-        notificationId: string({required_error: "notificationId is required"})
-    })
+    notificationId: string({required_error: "notificationId is required"})
 });
 
 export type ReadNotificationInput = TypeOf<typeof readNotificationSchema>;

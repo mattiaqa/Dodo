@@ -9,6 +9,7 @@ import {AuctionService} from '../../services/auction.service';
 import {SharedDataService} from '../../shared/shared-data';
 import {catchError, of} from 'rxjs';
 import {NotificationComponent} from './components/notification/notification.component';
+import {NewListingComponent} from '../../features/new-listing/new-listing.component';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +19,8 @@ import {NotificationComponent} from './components/notification/notification.comp
     RouterLink,
     NgIf,
     ReactiveFormsModule,
-    NotificationComponent
+    NotificationComponent,
+    NewListingComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
@@ -27,6 +29,7 @@ export class NavbarComponent implements OnInit {
   protected isLoggedIn: boolean = false;
   protected avatar_url: string = '';
   searchForm: FormGroup = new FormGroup({});
+  isPopupOpen: boolean = false;
 
   constructor(
     private storageService: StorageService,
@@ -72,5 +75,9 @@ export class NavbarComponent implements OnInit {
         }
       })
     }
+  }
+
+  openPopup() {
+    this.isPopupOpen = true;
   }
 }

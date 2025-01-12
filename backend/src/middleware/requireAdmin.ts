@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { findUser } from '../service/user.service'
 
 const requireAdmin = async (req: Request, res: Response, next: NextFunction) => {
-    var user = res.locals.user;
+    const user = res.locals.user;
 
     if(!user) {
         //res.sendStatus(403);

@@ -81,21 +81,8 @@ export async function getCurrentUserAuctionsHandler(req: Request, res: Response)
   }
 }
 
-
-export async function getCurrentUserInfoHandler(req: Request, res: Response) {
-  const userId = res.locals.user!.id;
-  const user = await findUser({ _id: userId });
-
-  if (!user) {
-    res.status(404).send({"Error" : "User not found"});
-    return;
-  }
-
-  res.send(user);
-}
-
 export async function getUserInfoHandler(req: Request<{},{}, z.infer<typeof getUserSchema>>, res: Response) {
-  const {userId} = req.body;
+  const {userId} = req.params;
   const foundUser = await findUser({ _id: userId });
 
   if (!foundUser) {

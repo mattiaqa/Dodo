@@ -5,8 +5,6 @@ import AuctionRoutes from './auction';
 import ChatRoutes from './chat';
 import BookRoutes from './book';
 
-import { getBookInfoHandler } from "../controller/book.controller";
-import requireUser from "../middleware/requireUser";
 import DownloadRoutes from "./download/routes/download.routes";
 import NotificationRoutes from "./notification/routes/notification.routes";
 

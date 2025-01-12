@@ -1,19 +1,21 @@
-<a [routerLink]="'/auction/' + auction?.auctionId" class="block hover:shadow-lg transition-shadow duration-300 ease-in-out">
-  <div class="hero bg-base-100 w-full h-auto mb-5 border border-gray-200 rounded-lg overflow-hidden">
-    <div class="hero-content flex-col lg:flex-row p-6 gap-6">
-      <img
-        src="https://picsum.photos/600/200"
-        alt="Auction Image"
-        class="object-cover w-1/3 h-48 rounded-lg shadow-md" />
+<a [routerLink]="'/auction/' + auction?.auctionId" class="hover:shadow-lg transition-shadow duration-300 ease-in-out">
+  <div class="card border border-gray-200 rounded-lg overflow-hidden w-full">
+    <div class="flex flex-col lg:flex-row items-center justify-center">
+      <!-- Image Section -->
+      <img alt="Auction Image" class="object-cover w-60 h-max rounded-lg shadow-md"
+           src="https://picsum.photos/250/200"/>
 
-      <div class="w-2/3 space-y-4">
-        <h2 class="text-xl font-bold text-gray-800">{{ auction?.book?.title || 'Title not available' }}</h2>
+      <div class=" ml-6 flex flex-col">
+        <!-- Auction Title -->
+        <h2 class="text-3xl font-semibold primary-color mt-0">
+          {{ auction?.book?.title || 'Title not available' }}
+        </h2>
+        <div class="flex flex-col mt-2 mb-6">
+          <p class="font-bold text-xl">{{ 'EUR ' + auction?.lastBid || 'Undefined' }} <span class="text-sm text-gray-600">/ {{auction?.reservePrice || 'Undefined' }}</span></p>
+        </div>
 
-        <div class="grid grid-cols-4 gap-4 text-sm text-gray-600">
-          <div class="flex flex-col items-center">
-            <fa-icon [icon]="['fas', 'money-bill-1']"></fa-icon>
-            <p>Last Bid: <span class="font-semibold">{{ auction?.lastBid + '€' || 'Undefined' }}</span></p>
-          </div>
+        <!-- Stats Section -->
+        <div class="grid grid-cols-4 text-sm text-gray-600 gap-4 justify-items-center mb-2">
           <div class="flex flex-col items-center">
             <fa-icon [icon]="['fas', 'heart']"></fa-icon>
             <p>Likes: <span class="font-semibold">4</span></p>
@@ -26,14 +28,15 @@
             <fa-icon [icon]="['fas', 'eye']"></fa-icon>
             <p>Views: <span class="font-semibold">{{ auction?.views }}</span></p>
           </div>
-        </div>
-
-        <div class="flex items-center mt-5">
-          <fa-icon [icon]="['fas', 'clock']" class="text-gray-500"></fa-icon>
-          <div class="w-full bg-gray-300 rounded-full h-2 ml-4 overflow-hidden">
-            <div class="progressBar bg-green-500 h-2" [style.width.%]="timeLeftPercentage"></div>
+          <div class="flex flex-col items-center">
+            <fa-icon [icon]="['fas', 'hourglass']"></fa-icon>
+            <p class="w-28 text-center">{{ timeLeft }}</p>
           </div>
         </div>
+      </div>
+      <!-- Canvas Section -->
+      <div class="w-50 px-6 flex">
+        <canvas id="canvas"> {{ chart }}</canvas>
       </div>
     </div>
   </div>

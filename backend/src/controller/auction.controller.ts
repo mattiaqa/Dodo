@@ -4,12 +4,11 @@ import {
     deleteAuction,
     searchAuctionById,
     searchAuctions,
-    getUserAuctions,
-    incrementInteraction, incrementViews,
+    incrementInteraction,
     updateAuction
 } from "../service/auction.service";
 import logger from "../utils/logger";
-import { createAuctionSchema, editAuctionSchema, getAuctionSchema, SearchAuctionInput, searchAuctionSchema} from "../schema/auction.schema";
+import { createAuctionSchema, editAuctionSchema, getAuctionSchema, searchAuctionSchema} from "../schema/auction.schema";
 import { pick} from "lodash";
 import sanitize from "mongo-sanitize";
 import mongoose, { FilterQuery } from "mongoose";
@@ -26,9 +25,9 @@ export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof c
 
         const uploadedImages = req.files as Express.Multer.File[]; // Le immagini caricate
         uploadedImagesPaths = await saveFilesToDisk(uploadedImages, 'auctions'); // Salva i file nel file system
-        
+
         const auction = await createAuction({...body, images: uploadedImagesPaths, seller});
-        
+
         res.status(200).send({
             "Message":"The auction was created successfully",
             "Warning":"Please consider adding a book tag, to make your auction easier to find",
@@ -117,7 +116,7 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
             pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid"])
         );
 
-        res.status(200).send({ filteredAuctions });
+        res.status(200).send(filteredAuctions);
     } catch (error: any) {
         res.status(500).send({ message: "Internal server error", error: error.message });
     }
@@ -173,48 +172,3 @@ export async function deleteAuctionHandler(req: Request<z.infer<typeof getAuctio
         res.status(500).send({ message: e.message || "Error deleting auction" });
     }
 }
-
-/*
-export async function searchAuctionHandler(req: Request<SearchAuctionInput['body']>, res: Response) {
-    const { where, ISBN, budget } = req.body;
-
-    let conditions: any[] = [];
-
-    if (where) {
-        conditions.push({ country: { $regex: `.*${sanitize(where)}.*`, $options: 'i' } });
-    }
-    if (ISBN) {
-        conditions.push({ ISBN: sanitize(ISBN) });
-    }
-    if (budget) {
-        const budgetNumber = Number(budget);
-        if (!isNaN(budgetNumber)) {
-            conditions.push({ lastBid: { $lte: budgetNumber } });
-        }
-    }
-    const query: any = conditions.length > 0 ? { $and: conditions } : {};
-
-    try {
-        const now = new Date();
-
-        const auctions = await searchAuctions(
-            query
-        );
-
-        if (!auctions || auctions.length === 0) {
-            res.status(404).send({message: "No auction found"});
-            return;
-        }
-
-        const validAuctions = auctions!.filter(auction => {
-            const expirationDate = new Date(auction.expireDate);
-            return expirationDate > now;
-        });
-
-        res.send(validAuctions);
-    } catch (e) {
-        logger.error(e);
-        res.status(500).send({message: "Internal Server Error"});
-    }
-}
-*/

@@ -49,11 +49,17 @@
         }
       </div>
 
-      <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10">
+      <ul class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10 no-wrap-text">
         <li *ngIf="isLoggedIn">
           <a href="/profile">
             <fa-icon [icon]="['fas', 'user']" class="mr-2"></fa-icon>
             Profile
+          </a>
+        </li>
+        <li *ngIf="isLoggedIn" (click)="isPopupOpen = true" tabindex="0">
+          <a href="#">
+            <fa-icon [icon]="['fas', 'plus']" class="mr-2"></fa-icon>
+            New Listing
           </a>
         </li>
         <li *ngIf="isLoggedIn">
@@ -65,19 +71,13 @@
         <li *ngIf="isLoggedIn">
           <a href="/ongoing">
             <fa-icon [icon]="['fas', 'dollar-sign']" class="mr-2"></fa-icon>
-            On Going Auctions
+            My Offers
           </a>
         </li>
         <li *ngIf="isLoggedIn">
           <a href="/chats">
             <fa-icon [icon]="['fas', 'message']" class="mr-2"></fa-icon>
             Chats
-          </a>
-        </li>
-        <li *ngIf="isLoggedIn">
-          <a href="/statistics">
-            <fa-icon [icon]="['fas', 'chart-simple']" class="mr-2"></fa-icon>
-            Statistics
           </a>
         </li>
         <li *ngIf="isLoggedIn">
@@ -95,5 +95,5 @@
       </ul>
     </div>
   </div>
-
+  <app-new-listing *ngIf="isPopupOpen" (closePopup)="isPopupOpen = false"></app-new-listing>
 </div>

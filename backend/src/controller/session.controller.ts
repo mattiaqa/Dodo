@@ -9,6 +9,7 @@ import { signJwt } from "../utils/jwt.utils";
 import config from 'config';
 import { z } from "zod";
 import { loginSchema } from "../schema/session.schema";
+import {notifyUser} from "../service/notification.service";
 
 
 export async function createUserHandler(
@@ -19,6 +20,15 @@ export async function createUserHandler(
         const user = await createUser(req.body);
         const link = await createConfirmationLink(user.email);
         await sendConfirmationEmail(user.email, link, user.name);
+
+        console.log(user)
+
+        await notifyUser({
+            userId: user._id,
+            title: "🎉 Welcome to Dodo!",
+            text: `Hello ${user.name}, welcome aboard! 🎉\n` +
+                "We're thrilled to have you join Dodo! Start exploring and enjoy your journey with us."
+        });
 
         res.status(200).send({message: 'User created successfully, open your email to confirm', email: user.email});
     } catch (e: any) {
@@ -100,7 +110,7 @@ export async function createSessionHandler(req: Request<{}, {}, z.infer<typeof l
 
         res.cookie('accessToken', accessToken, { httpOnly: true });
 
-        res.send({ accessToken, refreshToken });
+        res.send({"refreshToken": refreshToken, "_id": user._id});
     } catch (e) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});

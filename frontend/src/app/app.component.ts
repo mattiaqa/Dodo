@@ -2,13 +2,15 @@ import {Component, inject, OnInit} from '@angular/core';
 import { fontAwesomeIcons } from './shared/font-awesome-icons';
 import {
   FaConfig,
-  FaIconLibrary,
+  FaIconLibrary
 } from '@fortawesome/angular-fontawesome';
 import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [
+    RouterOutlet
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

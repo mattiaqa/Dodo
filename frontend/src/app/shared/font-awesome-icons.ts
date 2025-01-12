@@ -3,18 +3,19 @@ import {
   faArrowRightFromBracket,
   faBars, faBell,
   faBook, faChartSimple,
-  faCircleCheck,
+  faCircleCheck, faCircleExclamation,
   faClock,
   faCogs, faComments, faDollarSign,
   faEnvelope, faEye,
   faGavel, faHeart,
   faKey,
   faMapMarkerAlt, faMessage,
-  faMoneyBill1,
+  faMoneyBill1, faMoneyBillWave,
   faPencil,
   faPlus,
   faSearch, faSignInAlt, faTrash,
   faUser,
+  faHourglass
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faFacebook,
@@ -50,5 +51,8 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faChartSimple,
   faDollarSign,
   faBell,
-  faTrash
+  faTrash,
+  faPlus,
+  faCircleExclamation,
+  faHourglass,
 ];
