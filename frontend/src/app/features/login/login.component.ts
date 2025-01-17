@@ -44,6 +44,7 @@ export class LoginComponent implements OnInit {
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.storageService.saveRefreshToken(data.refreshToken);
+        this.authService.getCsrfToken().subscribe();
         this.userModel.getUserInfo(data._id).subscribe(user => {
           this.storageService.saveUser(user);
 

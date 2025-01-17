@@ -34,7 +34,6 @@ export class MyauctionComponent implements OnInit {
         lastBid: 100,
         country: 'USA',
         province: 'New York',
-        reservePrice: 120,
         image: 'path/to/image.jpg',
         expireDate: '2025-12-31',
         createdAt: '2024-01-01',

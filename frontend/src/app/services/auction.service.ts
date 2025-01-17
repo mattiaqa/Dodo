@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-const API_URL = 'http://localhost:1338/api/auction/';
+const API_URL = '//localhost:1338/api/auction';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class AuctionService {
   }
 
   search(query: any): Observable<any> {
-    return this.http.post(API_URL + 'search', query, { withCredentials: true });
+    return this.http.post(API_URL + '/search', query, { withCredentials: true });
   }
 
   getAuctionComments(auctionId: string): Observable<any> {

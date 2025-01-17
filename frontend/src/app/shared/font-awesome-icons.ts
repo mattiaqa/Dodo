@@ -15,7 +15,7 @@ import {
   faPlus,
   faSearch, faSignInAlt, faTrash,
   faUser,
-  faHourglass
+  faHourglass, faPen
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faFacebook,
@@ -55,4 +55,5 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faPlus,
   faCircleExclamation,
   faHourglass,
+  faPen
 ];

@@ -14,7 +14,8 @@ export class AuthService {
     return this.http
       .post(
         AUTH_API + 'login',
-        { email, password }
+        { email, password },
+        { withCredentials: true }
       );
   }
 
@@ -37,5 +38,9 @@ export class AuthService {
 
   confirmRegistration(token: string): Observable<any> {
     return this.http.get(AUTH_API + 'register/' + token + '/confirm', {withCredentials: true});
+  }
+
+  getCsrfToken(): Observable<any> {
+    return this.http.get('http://localhost:1338/api/csrf');
   }
 }

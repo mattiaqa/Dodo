@@ -18,7 +18,11 @@
     <div class="space-y-6">
       <div class="bg-white p-3 rounded-xl w-full max-w-md mt-0 ml-5">
         <!-- Title Section -->
-        <h1 class="text-4xl font-bold text-primary-600 primary-color text-left">{{ data?.book?.title || 'Title not available' }}</h1>
+        <div class="flex justify-between items-center">
+          <h1 class="text-4xl font-bold text-primary-600 primary-color text-left">{{ data?.book?.title || 'Title not available' }}</h1>
+          <fa-icon *ngIf="isAdmin" [icon]="['fas', 'pen']" class="text-gray-500  opacity-60 text-xl ml-5"></fa-icon>
+          <fa-icon *ngIf="isAdmin" [icon]="['fas', 'trash']" class="text-gray-500 opacity-60 text-xl ml-1"></fa-icon>
+        </div>
 
         <div class="flex items-center text-3xl font-bold text-primary-600 mt-2">
           <span>€{{ data?.lastBid || 'Not available' }}</span>
@@ -116,4 +120,3 @@
     </p>
   </div>
 </div>
-

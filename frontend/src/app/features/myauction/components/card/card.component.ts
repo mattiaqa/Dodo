@@ -25,7 +25,6 @@ export class CardComponent implements OnInit, OnDestroy {
     lastBid: number;
     country: string;
     province: string;
-    reservePrice: number;
     image: string;
     expireDate: string;
     createdAt: string;
@@ -37,8 +36,6 @@ export class CardComponent implements OnInit, OnDestroy {
   timeLeft: string = '';
   private timerInterval: any;
   chart: any = [];
-
-  reservePricePercentage: number = 0;
 
   ngOnInit() {
     this.chart = new Chart('canvas', {
@@ -66,8 +63,6 @@ export class CardComponent implements OnInit, OnDestroy {
         }
       }
     });
-
-    this.updateReservePriceProgress();
 
     this.updateTimeLeft();
 
@@ -106,19 +101,6 @@ export class CardComponent implements OnInit, OnDestroy {
         if (this.timerInterval) {
           clearInterval(this.timerInterval);
         }
-      }
-    }
-  }
-
-  private updateReservePriceProgress() {
-    if (this.auction) {
-      const lastBid = this.auction?.lastBid ?? 0;
-      const reservePrice = this.auction?.reservePrice ?? 0;
-
-      if (reservePrice > 0) {
-        this.reservePricePercentage = Math.max(0, Math.min(100, (lastBid / reservePrice) * 100));
-      } else {
-        this.reservePricePercentage = 0;
       }
     }
   }

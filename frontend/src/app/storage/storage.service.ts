@@ -60,4 +60,8 @@ export class StorageService {
     }
     return {};
   }
+
+  public isUserAdmin(): boolean {
+    return this.getUser().isAdmin;
+  }
 }

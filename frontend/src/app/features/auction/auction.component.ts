@@ -5,6 +5,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { CommentComponent } from './components/comment/comment.component';
 import {NgIf} from '@angular/common';
+import {StorageService} from '../../storage/storage.service';
 
 @Component({
   selector: 'app-auction',
@@ -34,9 +35,12 @@ export class AuctionComponent implements OnInit {
     createdAt: '2024-01-01'
   };
   isOfferPopupOpen: boolean = false;
+  isAdmin: boolean = false;
+
+  constructor(private storageService: StorageService) {}
 
   ngOnInit() {
-    console.log('Auction initialized with hardcoded data.');
+    this.isAdmin = this.storageService.isUserAdmin();
   }
 
   placeBid(): void {

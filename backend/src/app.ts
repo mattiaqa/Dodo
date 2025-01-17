@@ -31,7 +31,6 @@ app.use((err: multer.MulterError, req: Request, res: Response, next: NextFunctio
     res.status(400).send({ error: err.message });
 });
 
-
 app.listen(port, () => {
     logger.info(`App is running at http://localhost:${port}`);
     connect_db();
