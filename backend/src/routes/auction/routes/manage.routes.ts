@@ -19,5 +19,8 @@ router.put('/:auctionId', Validator.validateBody(editAuctionSchema), Validator.v
 //elimina un'asta
 router.delete('/:auctionId', Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, Controller.deleteAuctionHandler);
 
+router.post('/:auctionId/like', Validator.validateParams(getAuctionSchema), requireUser, Controller.likeAuctionHandler)
+
+router.post('/:auctionId/watchlist', Validator.validateParams(getAuctionSchema), requireUser, Controller.addToWatchlistHandler)
 
 export default router;

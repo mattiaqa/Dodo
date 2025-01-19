@@ -32,8 +32,8 @@ export async function validatePassword({email, password}: { email: string; passw
 }
 
 type SafeUser = Pick<UserDocument, "_id"|"email"|"verified"|"isAdmin"|"name"|"avatar"|"createdAt"|"updatedAt"|"savedAuctions">;
-export async function findUser(query: FilterQuery<UserDocument>) {
-  return UserModel.findOne(query).lean<SafeUser>();
+export async function findUser(query: FilterQuery<UserDocument>): Promise<SafeUser | null> {
+  return UserModel.findOne(query).lean<SafeUser>().exec();
 }
 
 export async function findUsers(query: FilterQuery<UserDocument>) {

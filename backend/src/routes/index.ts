@@ -26,7 +26,7 @@ function routes(app: Express) {
     app.use('/api/chat', csrfProtection, ChatRoutes);
     app.use('/api/download', csrfProtection, DownloadRoutes);
     app.use('/api/notification', csrfProtection, NotificationRoutes);
-    app.use('/api/book', csrfProtection, BookRoutes);
+    app.use('/api/book', BookRoutes);
 }
 
 export default routes;

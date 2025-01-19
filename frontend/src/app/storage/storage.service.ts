@@ -64,4 +64,32 @@ export class StorageService {
   public isUserAdmin(): boolean {
     return this.getUser().isAdmin;
   }
+
+  public saveAuction(auctionId: string): void {
+    if (this.isBrowser()) {
+      let user = this.getUser();
+
+      if (!user.savedAuctions) {
+        user.savedAuctions = [];
+      }
+
+      user.savedAuctions.push(auctionId);
+
+      sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    }
+  }
+
+  public addToWatchlist(auctionId: string): void {
+    if (this.isBrowser()) {
+      let user = this.getUser();
+
+      if (!user.watchList) {
+        user.watchList = [];
+      }
+
+      user.watchList.push(auctionId);
+
+      sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    }
+  }
 }

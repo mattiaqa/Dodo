@@ -1,20 +1,18 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import Chart from 'chart.js/auto';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {RouterLink} from '@angular/router';
-import Chart from 'chart.js/auto';
-import {DecimalPipe, NgIf} from '@angular/common';
 
 @Component({
-  selector: 'app-card',
-  standalone: true,
+  selector: 'app-partecipated-card',
   imports: [
     FaIconComponent,
     RouterLink
   ],
-  templateUrl: './card.component.html',
-  styleUrls: ['./card.component.scss']
+  templateUrl: './partecipated-card.component.html',
+  styleUrl: './partecipated-card.component.scss'
 })
-export class CardComponent implements OnInit, OnDestroy {
+export class PartecipatedCardComponent implements OnInit {
   @Input() auction: {
     auctionId: string;
     book: {
@@ -28,14 +26,12 @@ export class CardComponent implements OnInit, OnDestroy {
     image: string;
     expireDate: string;
     createdAt: string;
-    interactions: number;
-    views: number;
   } | undefined;
 
   timeLeftPercentage: number = 0;
   timeLeft: string = '';
-  private timerInterval: any;
   chart: any = [];
+  private timerInterval: any;
 
   ngOnInit() {
     this.chart = new Chart('canvas', {

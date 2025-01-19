@@ -10,26 +10,32 @@
           <img alt="Book Image" class="w-full h-[500px] object-cover rounded-lg shadow-lg" src="https://picsum.photos/600/600"/>
           <a class="btn btn-circle absolute top-1/2 left-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide3">❮</a>
           <a class="btn btn-circle absolute top-1/2 right-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide2">❯</a>
+          <button class="btn btn-circle absolute top-2 right-16 bg-white text-primary" (click)="addToWatchlist(data?.auctionId)">
+            <fa-icon [icon]="['fas', 'clock']" class="text-xl"></fa-icon>
+          </button>
+          <button class="btn btn-circle absolute top-2 right-2 bg-white text-primary" (click)="likeAuction(data?.auctionId)">
+            <fa-icon [icon]="['fas', 'heart']" class="text-xl"></fa-icon>
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Auction Bid Box Section with lastBid on the right -->
     <div class="space-y-6">
-      <div class="bg-white p-3 rounded-xl w-full max-w-md mt-0 ml-5">
+      <div class="bg-white p-3 rounded-xl w-full max-w-md ml-5">
+        <fa-icon *ngIf="isAdmin" [icon]="['fas', 'pen']" class="text-gray-500  opacity-60 text-xl cursor-pointer"></fa-icon>
+        <fa-icon *ngIf="isAdmin" [icon]="['fas', 'trash']" class="text-gray-500 opacity-60 text-xl ml-5 cursor-pointer" (click)="deleteAuction(data?.auctionId)"></fa-icon>
         <!-- Title Section -->
         <div class="flex justify-between items-center">
           <h1 class="text-4xl font-bold text-primary-600 primary-color text-left">{{ data?.book?.title || 'Title not available' }}</h1>
-          <fa-icon *ngIf="isAdmin" [icon]="['fas', 'pen']" class="text-gray-500  opacity-60 text-xl ml-5"></fa-icon>
-          <fa-icon *ngIf="isAdmin" [icon]="['fas', 'trash']" class="text-gray-500 opacity-60 text-xl ml-1"></fa-icon>
         </div>
 
         <div class="flex items-center text-3xl font-bold text-primary-600 mt-2">
-          <span>€{{ data?.lastBid || 'Not available' }}</span>
+          <span>{{ data?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</span>
         </div>
 
         <div class="flex text-slate-600 items-center mb-2 underline">
-          <span>0 offers - expires in 3h 12min 3sec</span>
+          <span>{{offersNumber}} offers - expires in {{timeLeft}}</span>
         </div>
 
         <p class="text-md text-gray-700 mt-4">
@@ -52,41 +58,36 @@
         <button class="btn button-primary-color mt-8 w-full" (click)="isOfferPopupOpen = true">Make an Offer</button>
 
         <button class="btn button-secondary-color mt-2 w-full">Contact the seller</button>
-
-        <p class="text-sm text-gray-600 mt-8">
-          Shipping Cost: <span class="font-semibold">€5.00</span>
-        </p>
-
-        <p class="text-sm text-gray-600">
-          Accepted Payments: Credit Card, PayPal, Bank Transfer
-        </p>
       </div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-    <!-- About the Book Section -->
-    <div>
-      <h2 class="text-2xl font-semibold text-primary-700">About the Book</h2>
-      <p class="text-md text-gray-700 mt-4">
-        {{ data?.book?.description || 'Description not available'}}
-      </p>
+  <!-- About the Book Section -->
+  <div class="ml-4">
+    <h2 class="text-2xl font-semibold text-primary-700">About the Book</h2>
+    <p class="text-md text-gray-700 mt-4">
+      {{ data?.book?.description || 'Description not available'}}
+    </p>
 
-      <p class="text-md text-gray-700 mt-4">
-        <fa-icon [icon]="['fas', 'book']" class="mr-2 text-primary-500"></fa-icon>
-        {{ 'ISBN: ' + (data?.book?.ISBN || 'Not available') }}
-      </p>
+    <p class="text-md text-gray-700 mt-4">
+      <fa-icon [icon]="['fas', 'book']" class="mr-2 text-primary-500"></fa-icon>
+      {{ 'ISBN: ' + (data?.book?.ISBN || 'Not available') }}
+    </p>
 
-      <p class="text-md text-gray-700 mt-4">
-        <fa-icon [icon]="['fas', 'pencil']" class="mr-2 text-primary-500"></fa-icon>
-        {{ 'Authors: ' + (data?.book?.author?.join(', ') || 'Not available') }}
-      </p>
-    </div>
+    <p class="text-md text-gray-700 mt-4">
+      <fa-icon [icon]="['fas', 'pencil']" class="mr-2 text-primary-500"></fa-icon>
+      {{ 'Authors: ' + (data?.book?.authors?.join(', ') || 'Not available') }}
+    </p>
 
-    <!-- About the Seller Section -->
-    <div>
-      <h2 class="text-2xl font-semibold text-primary-700">About the Seller</h2>
-    </div>
+    <p class="text-md text-gray-700 mt-4">
+      <fa-icon [icon]="['fas', 'language']" class="mr-2 text-primary-500"></fa-icon>
+      {{ 'Language: ' + (data?.book?.language || 'Not available') }}
+    </p>
+
+    <p class="text-md text-gray-700 mt-4">
+      <fa-icon [icon]="['fas', 'newspaper']" class="mr-2 text-primary-500"></fa-icon>
+      {{ 'Publisher: ' + (data?.book?.publisher || 'Not available') }}
+    </p>
   </div>
 
   <app-comment></app-comment>
@@ -101,9 +102,12 @@
     <div>
       <span class="text-gray-600 mb-1">Suggested Bids:</span>
       <div class="flex space-x-4">
-        <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 10 || 'undefined' }}</button>
-        <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 20 || 'undefined' }}</button>
-        <button class="btn btn-sm btn-outline primary-color">€{{ data?.lastBid + 50 || 'undefined' }}</button>
+        <button class="btn btn-sm btn-outline primary-color"
+                (click)="setBidAmount(data?.lastBid + 10 || 0)">€{{ data?.lastBid + 10 || 'undefined' }}</button>
+        <button class="btn btn-sm btn-outline primary-color"
+                (click)="setBidAmount(data?.lastBid + 20 || 0)">€{{ data?.lastBid + 20 || 'undefined' }}</button>
+        <button class="btn btn-sm btn-outline primary-color"
+                (click)="setBidAmount(data?.lastBid + 50 || 0)">€{{ data?.lastBid + 50 || 'undefined' }}</button>
       </div>
     </div>
 

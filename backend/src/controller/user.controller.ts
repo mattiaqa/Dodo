@@ -20,16 +20,16 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
   }
   
   const file = req.file;
-  const userId = res.locals.user!.id;
+  const userId = res.locals.user!._id;
   let uploadedImagePath: string = "";
   try {
     // Scan file for security checks
-    const { isInfected, viruses } = await scanFile(file.path);
+    /*const { isInfected, viruses } = await scanFile(file.path);
     if (isInfected) {
         //await unlink(file.path); // Use fs/promises for async
         res.status(400).send({ "Error" : 'File is infected and was removed.' });
         return;
-    }
+    }*/
 
     // Update user with avatar
     const updatedUser = await updateUser({ _id: userId }, { avatar: file.filename });
@@ -64,7 +64,7 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
 
 
 export async function getCurrentUserAuctionsHandler(req: Request, res: Response) {
-  const seller = res.locals.user!.id;
+  const seller = res.locals.user!._id;
 
   try {
     const auctions = await getUserAuctions({ seller });

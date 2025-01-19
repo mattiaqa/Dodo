@@ -12,14 +12,7 @@ import { z } from "zod";
 export async function placeBidHandler(req: Request<{}, {}, z.infer<typeof placeBidSchema>>, res: Response) {
     try {
         const { auctionId, amount } = req.body;
-        const userId = res.locals.user!.id;
-
-        /* //An admin cannot place a bid
-        if (userData.isAdmin) {
-            res.sendStatus(403);
-            return;
-        }
-        */
+        const userId = res.locals.user!._id;
 
         const auction = await searchAuctionById(auctionId);
         if (!auction) {
@@ -27,13 +20,19 @@ export async function placeBidHandler(req: Request<{}, {}, z.infer<typeof placeB
             return;
         }
 
-        if (auction.seller == userId) {
+        if (auction.seller._id == userId) {
             res.status(403).send({"Error": 'You cannot place a bid on your auction'});
             return;
         }
 
         if (amount <= auction.lastBid) {
-            res.status(400).send("Bid must be greater than the current highest bid");
+            res.status(400).send({"Error":"Bid must be greater than the current highest bid"});
+            return;
+        }
+
+        const now = new Date();
+        if(now > auction.expireDate) {
+            res.status(400).send({"Error": "You cannot bid on expired auctions"});
             return;
         }
 
@@ -84,11 +83,11 @@ export async function getBidsHandler(req: Request, res: Response) {
 
         // Arricchisci le offerte con i dettagli dei compratori
         const bidsWithBuyer = bids.map(bid => {
-            const createdAtRome = moment(bid.createdAt).tz("Europe/Rome").format("YYYY-MM-DD HH:mm:ss");
+            const date = moment(bid.createdAt).tz("Europe/Rome").format("YYYY-MM-DD");
 
             return {
-                ...pick(bid, ["amount", "createdAt"]),
-                buyer: buyerMap[(bid.buyer as string)] || null, // Aggiungi i dettagli del compratore, oppure `null` se non trovato
+                ...pick(bid, ["amount"]),
+                date
             }
         });
 

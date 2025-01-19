@@ -18,7 +18,7 @@ export const addCommentHandler = async (req: Request, res: Response) => {
             return;
         }
         
-        const user = await findUser({_id: res.locals.user!.id});
+        const user = await findUser({_id: res.locals.user!._id});
         if(!user)
         {
             res.status(404).send({ message: "User not found" });
@@ -66,7 +66,7 @@ export const getCommentsHandler = async (req: Request, res: Response) => {
             }, ["updatedAt", "__v"]);
         });
 
-        res.status(200).send({ comments: commentsWithTimezone });
+        res.status(200).send(commentsWithTimezone);
         return;
     } catch (error: any) {
         logger.error(error);

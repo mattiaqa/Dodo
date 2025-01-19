@@ -23,6 +23,13 @@ app-card {
 
 @media (max-width: 480px) {
   .card-container {
-    gap: 10px;                 /* Riduce la spaziatura tra i card su schermi più piccoli */
+    gap: 10px;
   }
 }
+
+.selected {
+  background-color: #D7AE95;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+

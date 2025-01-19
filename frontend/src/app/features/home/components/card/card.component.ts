@@ -1,13 +1,15 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {CurrencyPipe} from '@angular/common';
 
 @Component({
   selector: 'app-card',
   standalone: true,
   imports: [
     RouterLink,
-    FaIconComponent
+    FaIconComponent,
+    CurrencyPipe
   ],
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']

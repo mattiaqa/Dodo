@@ -5,15 +5,18 @@ import {loginGuard} from './guards/login.guard';
 import {RegisterComponent} from './features/register/register.component';
 import {RegistrationConfirmComponent} from './features/registration-confirm/registration-confirm.component';
 import {AuctionComponent} from './features/auction/auction.component';
-import {MyauctionComponent} from './features/myauction/myauction.component';
+import {MyDodoComponent} from './features/mydodo/mydodo.component';
+import {ProfileComponent} from './features/profile/profile.component';
+import {authGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'register/:token/confirm', component: RegistrationConfirmComponent },
+  { path: 'auction/:auctionId', component: AuctionComponent},
+
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [loginGuard] },
-  { path: 'register/:token/confirm', component: RegistrationConfirmComponent },
 
-  { path: 'auction', component: AuctionComponent},
-
-  { path: 'myauction', component: MyauctionComponent},
+  { path: 'mydodo', component: MyDodoComponent, canActivate: [authGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
 ];

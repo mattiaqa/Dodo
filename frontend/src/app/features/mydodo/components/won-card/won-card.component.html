@@ -1,0 +1,48 @@
+<a [routerLink]="'/auction/' + auction?.auctionId" class="hover:shadow-lg transition-shadow duration-300 ease-in-out">
+  <div class="card border border-gray-200 rounded-lg overflow-hidden w-full">
+    <div class="flex flex-col lg:flex-row items-center justify-center">
+      <!-- Image Section -->
+      <img alt="Auction Image" class="object-cover w-60 h-max rounded-lg shadow-md ml-2"
+           src="https://picsum.photos/250/200"/>
+
+      <div class=" ml-6 flex flex-col">
+        <!-- Auction Title -->
+        <h2 class="text-4xl font-semibold primary-color mt-0">
+          {{ auction?.book?.title || 'Title not available' }}
+        </h2>
+
+        <!-- Stats Section -->
+        <div class="grid grid-cols-4 text-sm text-gray-600 justify-items-center mb-2 ml-52">
+          <div class="stats scale-75">
+            <div class="stat">
+              <div class="stat-figure">
+                <fa-icon [icon]="['fas', 'dollar-sign']" class="mr-2 text-xl"></fa-icon>
+              </div>
+              <div class="stat-title">Won Price</div>
+              <div class="stat-value">31.000</div>
+              <div class="stat-desc">EUR</div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-figure">
+                <fa-icon [icon]="['fas', 'gavel']" class="mr-2 text-xl"></fa-icon>
+              </div>
+              <div class="stat-title">Number of bids</div>
+              <div class="stat-value">45</div>
+              <div class="stat-desc">↗︎ 400 (22%)</div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-figure">
+                <fa-icon [icon]="['fas', 'hourglass']" class="mr-2 text-xl"></fa-icon>
+              </div>
+              <div class="stat-title">Expired</div>
+              <div class="stat-value">{{ auction?.expireDate }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</a>

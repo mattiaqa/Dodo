@@ -5,7 +5,7 @@ import {Task, scheduler} from "../scheduler/scheduler"
 
 import sanitize from "mongo-sanitize";
 import {BidDocument} from "../models/bid.model";
-import {omit} from "lodash";
+import {omit, pick} from "lodash";
 
 export async function createAuction(newAuction: AuctionInput): Promise<AuctionDocument | undefined> {
   try {
@@ -84,7 +84,7 @@ export async function incrementViews(auctionId: string) {
 }
 
 export async function getUserAuctions(query: FilterQuery<AuctionDocument>) {
-  return AuctionModel.find(query).populate("book");
+  return AuctionModel.find(query).populate({path: "book", select: {"title": 1}});
 }
 
 export async function deleteAuction(query: FilterQuery<AuctionDocument>) {

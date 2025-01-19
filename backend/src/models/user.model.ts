@@ -12,7 +12,8 @@ export interface UserDocument extends mongoose.Document, UserInput {
   createdAt: Date;
   updatedAt: Date;
   verified: boolean;
-  savedAuctions: mongoose.Schema.Types.ObjectId[];
+  savedAuctions: string[];
+  watchList: string[];
   isAdmin: Boolean;
   avatar?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -24,7 +25,8 @@ const userSchema = new mongoose.Schema<UserDocument>(
     name: { type: String, required: true },
     password: { type: String, required: true },
     verified: {type: Boolean, required: true, default: false},
-    savedAuctions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Auction", required: false }],
+    savedAuctions: [{ type: String, ref: "Auction", required: false }],
+      watchList: [{ type: String, ref: "Auction", required: false }],
     isAdmin: {type: Boolean, required: true, default: false},
     avatar: {type: String, required: false},
   },

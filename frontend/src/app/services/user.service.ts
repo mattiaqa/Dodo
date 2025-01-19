@@ -15,10 +15,6 @@ export class UserService {
   }
 
   getUserAuctions(): Observable<any> {
-    return this.http.get(API_URL + 'auction/', { withCredentials: true });
-  }
-
-  getUserNotifications(): Observable<any> {
-    return this.http.get(API_URL + 'notifications/', { withCredentials: true });
+    return this.http.get(API_URL + 'auctions', { withCredentials: true });
   }
 }

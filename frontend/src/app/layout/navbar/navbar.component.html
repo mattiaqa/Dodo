@@ -56,22 +56,16 @@
             Profile
           </a>
         </li>
+        <li *ngIf="isLoggedIn">
+          <a href="/mydodo">
+            <fa-icon [icon]="['fas', 'gavel']" class="mr-2"></fa-icon>
+            My Dodo
+          </a>
+        </li>
         <li *ngIf="isLoggedIn" (click)="isPopupOpen = true" tabindex="0">
           <a href="#">
             <fa-icon [icon]="['fas', 'plus']" class="mr-2"></fa-icon>
             New Listing
-          </a>
-        </li>
-        <li *ngIf="isLoggedIn">
-          <a href="/myauction">
-            <fa-icon [icon]="['fas', 'gavel']" class="mr-2"></fa-icon>
-            My Auction
-          </a>
-        </li>
-        <li *ngIf="isLoggedIn">
-          <a href="/ongoing">
-            <fa-icon [icon]="['fas', 'dollar-sign']" class="mr-2"></fa-icon>
-            My Offers
           </a>
         </li>
         <li *ngIf="isLoggedIn">

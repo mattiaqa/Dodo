@@ -16,17 +16,18 @@ import { AuctionDocument } from "../models/auction.model";
 import { z } from "zod";
 import { unlink } from "fs/promises";
 import { saveFilesToDisk } from "../utils/multer";
+import {updateUser} from "../service/user.service"
 
 export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof createAuctionSchema>>, res: Response) {
     let uploadedImagesPaths: string[] = [];
     try {
-        const seller = res.locals.user!.id;
+        const seller = res.locals.user!._id;
         const body = req.body;
 
-        const uploadedImages = req.files as Express.Multer.File[]; // Le immagini caricate
-        uploadedImagesPaths = await saveFilesToDisk(uploadedImages, 'auctions'); // Salva i file nel file system
+        //const uploadedImages = req.files as Express.Multer.File[]; // Le immagini caricate
+        //uploadedImagesPaths = await saveFilesToDisk(uploadedImages, 'auctions'); // Salva i file nel file system
 
-        const auction = await createAuction({...body, images: uploadedImagesPaths, seller});
+        const auction = await createAuction({...body, images: [], seller});
 
         res.status(200).send({
             "Message":"The auction was created successfully",
@@ -76,11 +77,7 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
         if (where) {
             query.country = { $regex: `.*${sanitize(where)}.*`, $options: 'i' };
         }
-        /*
-        if (ISBN) {
-            query.isbn = sanitize(ISBN);
-        }
-        */
+
         if (bookId) {
             if (mongoose.Types.ObjectId.isValid(bookId as string)) {
                 query.book = new mongoose.Types.ObjectId(bookId as string); // Converte il parametro bookId in ObjectId
@@ -113,7 +110,7 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
             return expirationDate > now;
         });
         const filteredAuctions = validAuctions.map(auction =>
-            pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid"])
+            pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid", "province", "condition", "createdAt"])
         );
 
         res.status(200).send(filteredAuctions);
@@ -170,5 +167,47 @@ export async function deleteAuctionHandler(req: Request<z.infer<typeof getAuctio
         return;
     } catch (e: any) {
         res.status(500).send({ message: e.message || "Error deleting auction" });
+    }
+}
+
+export async function likeAuctionHandler(req: Request, res: Response) {
+    const auctionId = req.params.auctionId;
+    const userId = res.locals.user!._id;
+
+    try{
+        const auction = await searchAuctionById(auctionId);
+
+        if (!auction) {
+            res.status(404).send({"Error": "No auction found"});
+            return;
+        }
+
+        await updateUser({ _id: userId }, {$push: { savedAuctions: auction.auctionId } });
+
+        res.status(200).send({"Message": "Auction liked successfully"});
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
+    }
+}
+
+export async function addToWatchlistHandler(req: Request, res: Response) {
+    const auctionId = req.params.auctionId;
+    const userId = res.locals.user!._id;
+
+    try{
+        const auction = await searchAuctionById(auctionId);
+
+        if (!auction) {
+            res.status(404).send({"Error": "No auction found"});
+            return;
+        }
+
+        await updateUser({ _id: userId }, {$push: { watchList: auction.auctionId } });
+
+        res.status(200).send({"Message": "Auction added to watchlist successfully"});
+    } catch (e) {
+        logger.error(e);
+        res.status(500).send({message: "Internal Server Error"});
     }
 }

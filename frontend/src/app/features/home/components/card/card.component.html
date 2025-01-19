@@ -30,7 +30,7 @@
        </p>
        <p class="text-sm text-gray-600">
          <fa-icon [icon]="['fas', 'money-bill-1']"></fa-icon>
-         Current Bid: <span class="font-semibold">{{ auction?.lastBid + '€' || 'Undefined' }}</span>
+         Current Bid: <span class="font-semibold">{{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</span>
        </p>
        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
          <div

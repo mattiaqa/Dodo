@@ -1,0 +1,51 @@
+<app-navbar></app-navbar>
+<div class="container mx-auto p-6">
+  <div class="card w-full lg:w-3/4 mx-auto bg-base-100 overflow-hidden">
+    <div class="card-body">
+      <div class="flex flex-col lg:flex-row items-center gap-6">
+        <div class="avatar">
+          <div class="w-32 rounded-full">
+            <img
+              [src]="'https://picsum.photos/150'"
+              alt="Profile Picture"
+            />
+          </div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold">{{ user.name }}</h2>
+          <p class="text-gray-500">{{ user.email }}</p>
+          <p class="text-gray-400 text-sm mt-6">In Dodo since {{ user.createdAt | date }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="mt-10">
+    <h3 class="text-xl font-semibold mb-4">
+      <fa-icon [icon]="['fas', 'clock']" class="mr-2 text-xl"></fa-icon>
+      Watchlist
+    </h3>
+    <div class="carousel carousel-center space-x-4 bg-base-200 p-4 rounded-lg overflow-x-auto max-w-full">
+      <p *ngIf="watchlist.length == 0" class="text-gray-300 italic">You have no auctions in watchlist</p>
+      <app-card *ngFor="let auction of watchlist" [auctionId]="auction" class="carousel-item flex-shrink-0"></app-card>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h3 class="text-xl font-semibold mb-4">
+      <fa-icon [icon]="['fas', 'heart']" class="mr-2 text-xl"></fa-icon>
+      Auction You Like
+    </h3>
+    <p *ngIf="savedAuctions.length == 0" class="text-gray-300 italic">You have no favourite auctions</p>
+    <div class="carousel carousel-center space-x-4 bg-base-200 p-4 rounded-lg overflow-x-auto max-w-full">
+      <div *ngFor="let auction of savedAuctions" class="carousel-item flex-shrink-0">
+        <app-card [auctionId]="auction"></app-card>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<app-footer></app-footer>

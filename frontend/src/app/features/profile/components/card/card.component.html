@@ -1,0 +1,16 @@
+<div class="carousel-item">
+<a [routerLink]="'/auction/' + auctionId" class="block">
+<div class="card card-compact bg-base-100 w-60 shadow-sm">
+    <figure>
+      <div class="w-full relative group">
+        <img
+          src="https://picsum.photos/600/200"
+          alt="Image 1" />
+      </div>
+    </figure>
+     <div class="card-body relative">
+       <h3 class="card-title font-bold">{{ bookTitle || 'Title not available' }}</h3>
+     </div>
+ </div>
+</a>
+</div>

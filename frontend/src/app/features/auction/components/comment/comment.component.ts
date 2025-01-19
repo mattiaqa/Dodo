@@ -18,6 +18,7 @@ import {StorageService} from '../../../../storage/storage.service';
 export class CommentComponent implements OnInit {
   comments: any;
   auctionId: string = '';
+  profilePicture: string = '';
 
   constructor(private auctionModel: AuctionService, private storageService: StorageService, private route: ActivatedRoute) {}
 
@@ -33,6 +34,8 @@ export class CommentComponent implements OnInit {
     this.auctionModel.getAuctionComments(this.auctionId).subscribe(comments => {
       this.comments = comments;
     });
+
+    this.storageService.getUser().avatar;
   }
 
   submitComment() {
