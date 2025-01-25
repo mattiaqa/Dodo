@@ -79,15 +79,11 @@ export class StorageService {
     }
   }
 
-  public addToWatchlist(auctionId: string): void {
+  public removeSavedAuction(auctionId: string): void {
     if (this.isBrowser()) {
       let user = this.getUser();
 
-      if (!user.watchList) {
-        user.watchList = [];
-      }
-
-      user.watchList.push(auctionId);
+      user.savedAuctions = user.savedAuctions.filter((id: string) => id !== auctionId);
 
       sessionStorage.setItem(USER_KEY, JSON.stringify(user));
     }

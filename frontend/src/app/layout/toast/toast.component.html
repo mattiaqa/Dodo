@@ -1,0 +1,14 @@
+<div class="fixed bottom-5 right-5 z-50 space-y-2">
+  <div *ngFor="let toast of toasts" class="toast">
+    <div [ngClass]="{
+        'alert-success': toast.type === 'success',
+        'alert-error': toast.type === 'error',
+        'alert-info': toast.type === 'info'
+      }" class="alert shadow-lg" >
+      <div>
+        <fa-icon [icon]="getIcon(toast.type)" class="text-primary-500 mr-3"></fa-icon>
+        <span>{{ toast.message }}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -86,7 +86,6 @@ export async function updateUser(query: FilterQuery<UserDocument>, update: Updat
 export async function confirmUser(token: string)
 {
   try {
-    console.log('entered');
     // Decodifica del token JWT
     const payload = verifyJwt(token).decoded;
 

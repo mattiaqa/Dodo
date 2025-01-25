@@ -1,35 +1,34 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import Chart from 'chart.js/auto';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
-import {RouterLink} from '@angular/router';
 import {AuctionService} from '../../../../services/auction.service';
-import {CurrencyPipe, DatePipe} from '@angular/common';
+import Chart from 'chart.js/auto';
 
 @Component({
-  selector: 'app-partecipated-card',
-  imports: [
-    FaIconComponent,
-    RouterLink,
-    DatePipe,
-    CurrencyPipe
-  ],
-  templateUrl: './partecipated-card.component.html',
-  styleUrl: './partecipated-card.component.scss'
+  selector: 'app-ongoing-card',
+  imports: [],
+  templateUrl: './ongoing-card.component.html',
+  styleUrl: './ongoing-card.component.scss'
 })
-export class PartecipatedCardComponent implements OnInit, OnDestroy {
+export class OngoingCardComponent implements OnInit, OnDestroy {
   @Input() auction: {
     auctionId: string;
     book: {
       title: string;
-      ISBN: string;
+      _id: string;
     };
-    condition: string;
     lastBid: number;
+    condition: string;
+    description: string;
+    seller: string;
     country: string;
     province: string;
+    images: string[];
     image: string;
     expireDate: string;
     createdAt: string;
+    updatedAt: string;
+    interactions: number;
+    likes: number;
+    views: number;
   } | undefined;
 
   timeLeftPercentage: number = 0;
@@ -38,12 +37,11 @@ export class PartecipatedCardComponent implements OnInit, OnDestroy {
   chart: any = [];
   amounts: number[] = [];
   dates: string[] = [];
-  bids: any[] = [];
 
-  constructor(private auctionService: AuctionService) {}
+  constructor(private auctionService: AuctionService) {
+  }
 
   ngOnInit() {
-
     this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe({
       next: (bids) => {
         for (const bid of bids) {
@@ -51,7 +49,7 @@ export class PartecipatedCardComponent implements OnInit, OnDestroy {
           this.dates!.push(bid.date.toString());
         }
 
-        if(this.amounts.length == 0 && this.dates.length == 0) {
+        if (this.amounts.length == 0 && this.dates.length == 0) {
           this.amounts!.push(0);
           this.dates!.push('');
         }
@@ -70,10 +68,6 @@ export class PartecipatedCardComponent implements OnInit, OnDestroy {
     this.timerInterval = setInterval(() => {
       this.updateTimeLeft();
     }, 1000);
-
-    this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe(bids => {
-      this.bids = bids;
-    })
   }
 
   ngOnDestroy() {

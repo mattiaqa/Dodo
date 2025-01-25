@@ -20,6 +20,7 @@ import {updateUser} from "../service/user.service"
 import path from "path";
 import { searchBook } from "../service/book.service";
 
+
 export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof createAuctionSchema>>, res: Response) {
     let uploadedImagesPaths: string[] = [];
     try {
@@ -31,8 +32,8 @@ export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof c
             const uploadedImages = req.files as Express.Multer.File[]; // Le immagini caricate
             uploadedImagesPaths = await saveFilesToDisk(uploadedImages, 'auctions'); // Salva i file nel file system
         }
-        
-        const auction = await createAuction({...body, images: uploadedImagesPaths, seller});
+
+        const auction = await createAuction({...body, images: uploadedImagesPaths, seller: seller});
 
         res.status(200).send({
             "Message":"The auction was created successfully",
@@ -63,15 +64,15 @@ export async function getAuctionHandler(req: Request<z.infer<typeof getAuctionSc
         }
 
         await incrementInteraction(auctionId);
-        
+
         const response = {
             ...auction.toObject(), // Assicurati di lavorare con un oggetto JS puro
             reservePrice: auction.seller === res.locals.user?.id || !auction.reservePrice
                 ? auction.reservePrice // Proprietario vede il valore esatto
                 : auction.lastBid >= auction.reservePrice
-                ? "Prezzo di riserva raggiunto"
-                : "Prezzo di riserva non raggiunto"
-        
+                    ? "Prezzo di riserva raggiunto"
+                    : "Prezzo di riserva non raggiunto"
+
         }
         res.send(response);
 
@@ -105,15 +106,15 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
         }
         */
         // Filtra per bookId (array)
- 
+
         if (ISBN || bookTitle || bookPublisher || bookAuthor) {
             const books = await searchBook({
-                ISBN, 
-                title: bookTitle, 
-                publisher: bookPublisher, 
+                ISBN,
+                title: bookTitle,
+                publisher: bookPublisher,
                 author: bookAuthor
             });
-           
+
             // Filtra le aste per i books trovati
             books.forEach(book => bookIds.push(book.mongoId as mongoose.ObjectId));
             query.book = { $in: bookIds }; // Usa $in per cercare tutte le aste con questi bookId
@@ -156,7 +157,7 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
 export async function editAuctionHandler(req: Request<z.infer<typeof getAuctionSchema>, {}, z.infer<typeof editAuctionSchema>>, res: Response)
 {
     try {
-        
+
         const auction = await getAuctionById(req.params.auctionId);
         if (!auction) {
             res.status(404).send({"Error": "Auciton not found"});
@@ -256,7 +257,7 @@ export async function likeAuctionHandler(req: Request, res: Response) {
     }
 }
 
-export async function addToWatchlistHandler(req: Request, res: Response) {
+export async function dislikeAuctionHandler(req: Request, res: Response) {
     const auctionId = req.params.auctionId;
     const userId = res.locals.user!.id;
 
@@ -268,9 +269,9 @@ export async function addToWatchlistHandler(req: Request, res: Response) {
             return;
         }
 
-        await updateUser({ _id: userId }, {$push: { watchList: auction.auctionId } });
+        await updateUser({ _id: userId }, { $pull: { savedAuctions: auction.auctionId } });
 
-        res.status(200).send({"Message": "Auction added to watchlist successfully"});
+        res.status(200).send({"Message": "Auction liked successfully"});
     } catch (e) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});

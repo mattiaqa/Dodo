@@ -9,6 +9,9 @@ const router = express.Router();
 
 router.post('/avatar', [requireUser, uploadProfilePicture], Controller.uploadAvatarHandler);
 router.get('/auctions', requireUser, Controller.getCurrentUserAuctionsHandler);
+router.get('/winning', requireUser, Controller.getCurrentUserWinningHandler);
+router.get('/partecipated', requireUser, Controller.getCurrentUserPartecipationHandler);
+router.get('/ongoing', requireUser, Controller.getCurrentOngoingAuctionsHandler);
 router.get('/:userId/info', [requireUser, Validator.validateParams(getUserSchema)], Controller.getUserInfoHandler)
 
 export default router;

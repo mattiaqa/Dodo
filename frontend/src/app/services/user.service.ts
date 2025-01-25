@@ -17,4 +17,16 @@ export class UserService {
   getUserAuctions(): Observable<any> {
     return this.http.get(API_URL + 'auctions', { withCredentials: true });
   }
+
+  getUserWinning(): Observable<any> {
+    return this.http.get(API_URL + 'winning', { withCredentials: true });
+  }
+
+  getUserPartecipation(): Observable<any> {
+    return this.http.get(API_URL + 'partecipated', { withCredentials: true });
+  }
+
+  getUserOngoingAuctions(): Observable<any> {
+    return this.http.get(API_URL + 'ongoing', { withCredentials: true });
+  }
 }

@@ -9,11 +9,13 @@ import {
 import {catchError, Observable, throwError} from 'rxjs';
 import {StorageService} from '../storage/storage.service';
 import { Provider } from '@angular/core';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
 
-  constructor(private serviceStorage: StorageService) {}
+  constructor(private serviceStorage: StorageService, private router: Router) {
+  }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     req = req.clone({
@@ -27,11 +29,18 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
           if (token) {
             const clonedReq = req.clone({
-              setHeaders: { 'x-refresh': token }
+              setHeaders: {'x-refresh': token}
             });
-            return next.handle(clonedReq);
+
+            return next.handle(clonedReq).pipe(
+              catchError((e) => {
+                if (e instanceof HttpErrorResponse && e.status === 401) {
+                  this.serviceStorage.clean();
+                }
+                return throwError(() => e);
+              })
+            );
           }
-          this.serviceStorage.clean();
         }
         return throwError(() => error);
       })

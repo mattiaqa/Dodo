@@ -13,7 +13,6 @@ export interface UserDocument extends mongoose.Document, UserInput {
   updatedAt: Date;
   verified: boolean;
   savedAuctions: string[];
-  watchList: string[];
   isAdmin: Boolean;
   avatar?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -26,7 +25,6 @@ const userSchema = new mongoose.Schema<UserDocument>(
     password: { type: String, required: true },
     verified: {type: Boolean, required: true, default: false},
     savedAuctions: [{ type: String, ref: "Auction", required: false }],
-      watchList: [{ type: String, ref: "Auction", required: false }],
     isAdmin: {type: Boolean, required: true, default: false},
     avatar: {type: String, required: false},
   },

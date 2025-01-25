@@ -3,7 +3,6 @@ import logger from '../utils/logger';
 import {getWinner} from "../service/bid.service";
 import {getAuctionById, setWinner} from "../service/auction.service";
 import {notifyUser} from "../service/notification.service";
-import { BookDocument } from "../models/book.model";
 
 export interface Task {
     task_id: string;
@@ -14,9 +13,8 @@ export interface Task {
 export class Scheduler {
     private async closeAuction(auctionId: string): Promise<void> {
         const winner = await getWinner({auctionId: auctionId});
-        const auction = await getAuctionById(auctionId);
-        console.log(auction);
-        //const book = await getBookById(auction!.book);
+        //FIXME: const auction = await searchAuctionById(auctionId);
+
         if(!winner) {
             //send email
             return;

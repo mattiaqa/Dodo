@@ -6,14 +6,17 @@ import {NgIf, NgOptimizedImage} from '@angular/common';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {Router, RouterLink} from '@angular/router';
 import {UserService} from '../../services/user.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ToastService} from '../../services/toast.service';
+import {ToastComponent} from '../../layout/toast/toast.component';
 
 @Component({
   selector: 'app-login',
   imports: [
     FormsModule,
     FaIconComponent,
-    NgIf,
     RouterLink,
+    ToastComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -28,7 +31,13 @@ export class LoginComponent implements OnInit {
   isLoginFailed: boolean = false;
   errorMessage: string = '';
 
-  constructor(private  authService: AuthService, private router: Router, private storageService: StorageService, private userModel: UserService) { }
+  constructor(
+    private  authService: AuthService,
+    private router: Router,
+    private storageService: StorageService,
+    private userModel: UserService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit() {
     if(this.storageService.isLoggedIn()) {
@@ -47,15 +56,19 @@ export class LoginComponent implements OnInit {
         this.authService.getCsrfToken().subscribe();
         this.userModel.getUserInfo(data._id).subscribe(user => {
           this.storageService.saveUser(user);
-
           this.router.navigate(['/']);
         });
       },
-      error: error => {
-        this.errorMessage = "Wrong Credentials!";
+      error: (error: HttpErrorResponse) => {
         this.isLoginFailed = true;
-        console.log(error);
+        this.toastService.showToast({
+          message: 'Invalid Email or Password!',
+          type: 'error',
+          duration: 8000
+        });
       }
-    });
+    })
+
+
   }
 }

@@ -2,7 +2,7 @@
 
 <h3 class="text-3xl font-bold text-primary-600 primary-color text-center">My Dodo</h3>
 <div class="container mx-auto mt-4 scale-75 cursor-pointer">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <!-- Listing Created Card -->
     <div class="card bg-secondary justify-center items-center" (click)="selectCard('listingCreated')" [class.selected]=" selectedCard === 'listingCreated'">
       <div class="stat w-fit scale-125">
@@ -15,6 +15,18 @@
       </div>
     </div>
 
+    <!-- Ongoing Card -->
+    <div class="card bg-secondary justify-center items-center" (click)="selectCard('onGoing')" [class.selected]=" selectedCard === 'onGoing'">
+      <div class="stat w-fit scale-125">
+        <div class="stat-figure">
+          <fa-icon [icon]="['fas', 'bolt']" class="mr-2 text-xl"></fa-icon>
+        </div>
+        <div class="stat-title">Ongoing Auctions</div>
+        <div class="stat-value">{{userOngoingAuctions.length || 0}}</div>
+        <div *ngIf="selectedCard !== 'onGoing'" class="stat-desc">Click to see details</div>
+      </div>
+    </div>
+
     <!-- Participated Auctions Card -->
     <div class="card bg-secondary justify-center items-center" (click)="selectCard('participated')" [class.selected]=" selectedCard === 'participated'">
       <div class="stat w-fit scale-125">
@@ -22,7 +34,7 @@
           <fa-icon [icon]="['fas', 'gavel']" class="mr-2 text-xl"></fa-icon>
         </div>
         <div class="stat-title">Participated Auction</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">{{userPartecipation.length || 0}}</div>
         <div *ngIf="selectedCard !== 'participated'" class="stat-desc">Click to see details</div>
       </div>
     </div>
@@ -34,7 +46,7 @@
           <fa-icon [icon]="['fas', 'trophy']" class="mr-2 text-xl"></fa-icon>
         </div>
         <div class="stat-title">Won Auction</div>
-        <div class="stat-value">32</div>
+        <div class="stat-value">{{userWinning.length || 0}}</div>
         <div *ngIf="selectedCard !== 'winning'" class="stat-desc">Click to see details</div>
       </div>
     </div>
@@ -47,18 +59,23 @@
     <div class="card-container max-w-full max-h-full">
       <app-created-card *ngFor="let auction of userAuctions" [auction]="auction"></app-created-card>
     </div>
-
+  </div>
+  <div *ngIf="selectedCard === 'onGoing'">
+    <h4 class="text-xl font-bold">Ongoing Auctions</h4>
+    <div class="card-container max-w-full max-h-full">
+      <app-partecipated-card *ngFor="let auction of userOngoingAuctions" [auction]="auction"></app-partecipated-card>
+    </div>
   </div>
   <div *ngIf="selectedCard === 'participated'">
     <h4 class="text-xl font-bold">Participated Auctions</h4>
     <div class="card-container max-w-full max-h-full">
-      <app-partecipated-card *ngFor="let auction of auctions" [auction]="auction"></app-partecipated-card>
+      <app-partecipated-card *ngFor="let auction of userPartecipation" [auction]="auction"></app-partecipated-card>
     </div>
   </div>
   <div *ngIf="selectedCard === 'winning'">
     <h4 class="text-xl font-bold">Winning Auctions</h4>
     <div class="card-container max-w-full max-h-full">
-      <app-won-card *ngFor="let auction of auctions" [auction]="auction"></app-won-card>
+      <app-won-card *ngFor="let auction of userWinning" [auction]="auction"></app-won-card>
     </div>
   </div>
 </div>

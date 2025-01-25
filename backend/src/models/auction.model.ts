@@ -42,7 +42,7 @@ const auctionSchema = new mongoose.Schema(
         country: { type: String, required: true },
         province: { type: String, required: true },
         expireDate: {type: Date, required: true},
-        winner: { type: String, required: false},
+        winner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false},
         likes: { type: Number, required: false, default: 0 },
         interactions: { type: Number, required: false, default: 0 },
         views: { type: Number, required: false, default: 0 },

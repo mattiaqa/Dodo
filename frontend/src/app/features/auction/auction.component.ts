@@ -4,15 +4,16 @@ import { FooterComponent } from '../../layout/footer/footer.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { CommentComponent } from './components/comment/comment.component';
-import {CurrencyPipe, NgIf} from '@angular/common';
+import {CurrencyPipe, NgClass, NgIf} from '@angular/common';
 import {StorageService} from '../../storage/storage.service';
 import {AuctionService} from '../../services/auction.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-auction',
   standalone: true,
-  imports: [NavbarComponent, FooterComponent, FaIconComponent, FormsModule, CommentComponent, NgIf, CurrencyPipe],
+  imports: [NavbarComponent, FooterComponent, FaIconComponent, FormsModule, CommentComponent, NgIf, CurrencyPipe, NgClass],
   templateUrl: './auction.component.html',
   styleUrl: './auction.component.scss'
 })
@@ -25,14 +26,22 @@ export class AuctionComponent implements OnInit {
   offersNumber: number = 0;
   timeLeft: string = '';
   private timerInterval: any;
+  userLike: boolean = false;
 
-  constructor(private storageService: StorageService, private auctionService: AuctionService, private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private storageService: StorageService,
+    private auctionService: AuctionService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.isAdmin = this.storageService.isUserAdmin();
     this.auctionId = this.route.snapshot.paramMap.get('auctionId') || '';
     this.auctionService.getAuctionById(this.auctionId).subscribe(auction => {
       this.data = auction;
+      this.userLike = auction.userLike;
     });
 
     this.auctionService.getBidsByAuctionId(this.auctionId).subscribe(auction => {
@@ -55,10 +64,19 @@ export class AuctionComponent implements OnInit {
           if(!data.Error)
             this.offersNumber++;
             this.data.lastBid = this.bidAmount;
+            this.toastService.showToast({
+              message: `Bid successfully entered.`,
+              type: 'success',
+              duration: 8000
+            });
         }
         );
       } else {
-        alert('Your bid must be higher than the last bid!');
+        this.toastService.showToast({
+          message: `Your bid must be more than ${this.data.lastBid} euros!`,
+          type: 'error',
+          duration: 8000
+        });
       }
     }
   }
@@ -97,13 +115,15 @@ export class AuctionComponent implements OnInit {
     this.bidAmount = amount;
   }
 
-  addToWatchlist(auctionId: any) {
-    this.auctionService.addToWatchlist(auctionId).subscribe();
-    this.storageService.addToWatchlist(auctionId);
-  }
-
-  likeAuction(auctionId: any) {
-    this.auctionService.saveAuction(auctionId).subscribe();
-    this.storageService.saveAuction(auctionId);
+  handleLike(auctionId: any) {
+    if(this.userLike) {
+      this.auctionService.dislikeAuction(auctionId).subscribe();
+      this.storageService.removeSavedAuction(auctionId);
+      this.userLike = false;
+    } else {
+      this.auctionService.likeAuction(auctionId).subscribe();
+      this.storageService.saveAuction(auctionId);
+      this.userLike = true;
+    }
   }
 }

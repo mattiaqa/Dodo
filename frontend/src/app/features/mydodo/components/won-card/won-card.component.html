@@ -16,10 +16,9 @@
           <div class="stats scale-75">
             <div class="stat">
               <div class="stat-figure">
-                <fa-icon [icon]="['fas', 'dollar-sign']" class="mr-2 text-xl"></fa-icon>
               </div>
               <div class="stat-title">Won Price</div>
-              <div class="stat-value">31.000</div>
+              <div class="stat-value">{{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</div>
               <div class="stat-desc">EUR</div>
             </div>
 
@@ -28,8 +27,8 @@
                 <fa-icon [icon]="['fas', 'gavel']" class="mr-2 text-xl"></fa-icon>
               </div>
               <div class="stat-title">Number of bids</div>
-              <div class="stat-value">45</div>
-              <div class="stat-desc">↗︎ 400 (22%)</div>
+              <div class="stat-value">{{ bids.length || 0 }}</div>
+              <div class="stat-desc"></div>
             </div>
 
             <div class="stat">
@@ -37,7 +36,7 @@
                 <fa-icon [icon]="['fas', 'hourglass']" class="mr-2 text-xl"></fa-icon>
               </div>
               <div class="stat-title">Expired</div>
-              <div class="stat-value">{{ auction?.expireDate }}</div>
+              <div class="stat-value">{{ auction?.expireDate | date}}</div>
             </div>
           </div>
         </div>

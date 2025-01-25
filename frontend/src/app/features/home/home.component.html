@@ -1,7 +1,47 @@
 <app-navbar></app-navbar>
 
-<div class="card-container">
-  <app-card *ngFor="let auction of auctions" [auction]="auction"></app-card>
+<div class="dropdown relative left-20 mt-4">
+  <div class="btn m-1 text-sm" role="button" tabindex="0">
+    <fa-icon [icon]="['fas', 'filter']"></fa-icon>
+    Filters
+  </div>
+  <ul class="dropdown-content dropdown-bottom dropdown-end menu bg-base-100 rounded-box z-[1] w-80 p-2 shadow" tabindex="0">
+    <li><label class="label">
+      <span class="label-text">Filtra per prezzo</span>
+    </label>
+      <div class="flex flex-col items-center gap-4">
+        <!-- Slider Range -->
+        <input
+          (input)="applyFilters()"
+          [(ngModel)]="filters.maxPrice"
+          class="range range-primary"
+          max="300"
+          min="0"
+          step="1"
+          type="range"
+        />
+        <div class="w-full flex justify-between text-xs px-2">
+          <span>€0</span>
+          <span>€{{ filters.maxPrice }}</span>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="form-control w-full">
+        <label class="form-control w-full max-w-xs">
+          <div class="label">
+            <span class="label-text">Position</span>
+          </div>
+          <input type="text" placeholder="Type here" class="input input-bordered w-full max-w-xs" (input)="applyFilters()" [(ngModel)]="filters.location" />
+        </label>
+      </div>
+    </li>
+  </ul>
 </div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 card-container">
+  <app-card *ngFor="let auction of filteredAuctions" [auction]="auction"></app-card>
+</div>
+
 
 <app-footer></app-footer>

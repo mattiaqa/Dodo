@@ -27,12 +27,12 @@ export async function readNotificationsHandler(req: Request, res: Response) {
         const notification = await getUserNotifications({userId: userId, _id: notificationId});
 
         if(!notification) {
-            res.status(404).send("Notification not found");
+            res.status(404).send({"Error":"Notification not found"});
         }
 
         await readNotificationById(notificationId);
 
-        res.sendStatus(200);
+        res.status(200).send({"Message": "Notification read successfully"});
     } catch (e: any) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});

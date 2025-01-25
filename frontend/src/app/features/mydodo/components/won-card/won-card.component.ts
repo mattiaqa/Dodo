@@ -1,17 +1,21 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {RouterLink} from '@angular/router';
+import {CurrencyPipe, DatePipe} from '@angular/common';
+import {AuctionService} from '../../../../services/auction.service';
 
 @Component({
   selector: 'app-won-card',
   imports: [
     FaIconComponent,
-    RouterLink
+    RouterLink,
+    CurrencyPipe,
+    DatePipe
   ],
   templateUrl: './won-card.component.html',
   styleUrl: './won-card.component.scss'
 })
-export class WonCardComponent {
+export class WonCardComponent implements OnInit {
   @Input() auction: {
     auctionId: string;
     book: {
@@ -26,4 +30,13 @@ export class WonCardComponent {
     expireDate: string;
     createdAt: string;
   } | undefined;
+  bids: any[] = [];
+
+  constructor(private auctionService: AuctionService,) { }
+
+  ngOnInit() {
+    this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe(bids => {
+      this.bids = bids;
+    })
+  }
 }

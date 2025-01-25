@@ -31,7 +31,7 @@ export class AuctionService {
   }
 
   placeBid(auctionId: string, bid: number): Observable<any> {
-    return this.http.post(API_URL + '/bid', {auctionId: auctionId, amount: bid}, { withCredentials: true });
+    return this.http.post(API_URL + '/' + auctionId + '/bid', {amount: bid}, { withCredentials: true });
   }
 
   deleteAuction(auctionId: string): Observable<any> {
@@ -42,11 +42,11 @@ export class AuctionService {
     return this.http.get(API_URL + '/' + auctionId + '/bid', {withCredentials: true});
   }
 
-  saveAuction(auctionId: string): Observable<any> {
+  likeAuction(auctionId: string): Observable<any> {
     return this.http.post(API_URL + '/' + auctionId + '/like', { withCredentials: true });
   }
 
-  addToWatchlist(auctionId: string): Observable<any> {
-    return this.http.post(API_URL + '/' + auctionId + '/watchlist', { withCredentials: true });
+  dislikeAuction(auctionId: string): Observable<any> {
+    return this.http.post(API_URL + '/' + auctionId + '/dislike', { withCredentials: true });
   }
 }

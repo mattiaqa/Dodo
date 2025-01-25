@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
-import { getUserById, updateUser } from "../service/user.service";
+import {getUserById, updateUser} from "../service/user.service";
 import { scanFile } from "../utils/clamAV";
 import { unlink } from "fs/promises";
 import logger from "../utils/logger";
 import { getUserSchema } from "../schema/user.schema";
 import { z } from "zod";
-import { getUserAuctions } from "../service/auction.service";
+import {getAuctionById, getUserAuctions} from "../service/auction.service";
 import { saveFilesToDisk } from "../utils/multer";
 import path from "path";
+import {getBidsDistinct} from "../service/bid.service";
 
 
 export async function uploadAvatarHandler(req: Request, res: Response) {
- 
+
   if (req.files) {
     res.status(400).send({ "Error": 'Only one file is allowed' });
     return;
@@ -26,13 +27,12 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
 
   let uploadedImagePath: string = '';
   try {
-    // Scan file for security checks
-    /*const { isInfected, viruses } = await scanFile(file.path);
+    const { isInfected, viruses } = await scanFile(file!.path);
     if (isInfected) {
-        //await unlink(file.path); // Use fs/promises for async
+        await unlink(file!.path);
         res.status(400).send({ "Error" : 'File is infected and was removed.' });
         return;
-    }*/
+    }
     if(file)
     {
       const uploadedImage : Express.Multer.File[] = [];
@@ -65,6 +65,79 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
   }
 }
 
+export async function getCurrentUserWinningHandler(req: Request, res: Response) {
+  const userId = res.locals.user!.id;
+
+  try {
+    const auctions = await getUserAuctions({ winner: userId });
+
+    if(!auctions) {
+      res.status(404).send({"Error": "The user has not yet won any auctions"});
+      return;
+    }
+
+    res.send(auctions);
+  } catch (e: any) {
+    logger.error(e);
+    res.status(500).send({"Error": "Internal Server Error"});
+  }
+}
+
+export async function getCurrentUserPartecipationHandler(req: Request, res: Response) {
+  const userId = res.locals.user!.id;
+
+  try {
+    const auctions = await getBidsDistinct({ buyer: userId });
+
+    if(!auctions) {
+      res.status(404).send({"Error": "The user has not yet won any auctions"});
+      return;
+    }
+
+    const auctionsDetails = await Promise.all(
+        auctions.map(auction => getAuctionById(auction))
+    );
+
+    const now = new Date();
+    const validAuctions = auctionsDetails.filter(auction => {
+      const expirationDate = new Date(auction!.expireDate);
+      return expirationDate <= now;
+    });
+
+    res.send(validAuctions);
+  } catch (e: any) {
+    logger.error(e);
+    res.status(500).send({"Error": "Internal Server Error"});
+  }
+}
+
+export async function getCurrentOngoingAuctionsHandler(req: Request, res: Response) {
+  const userId = res.locals.user!.id;
+
+  try {
+    const auctions = await getBidsDistinct({ buyer: userId });
+
+    if(!auctions) {
+      res.status(404).send({"Error": "The user has not yet won any auctions"});
+      return;
+    }
+
+    const auctionsDetails = await Promise.all(
+        auctions.map(auction => getAuctionById(auction))
+    );
+
+    const now = new Date();
+    const validAuctions = auctionsDetails.filter(auction => {
+      const expirationDate = new Date(auction!.expireDate);
+      return expirationDate > now;
+    });
+
+    res.send(validAuctions);
+  } catch (e: any) {
+    logger.error(e);
+    res.status(500).send({"Error": "Internal Server Error"});
+  }
+}
 
 export async function getCurrentUserAuctionsHandler(req: Request, res: Response) {
   const seller = res.locals.user!.id;
@@ -83,8 +156,6 @@ export async function getCurrentUserAuctionsHandler(req: Request, res: Response)
     res.status(500).send({"Error": "Internal Server Error"});
   }
 }
-
-
 
 export async function getUserInfoHandler(req: Request<z.infer<typeof getUserSchema>>, res: Response) {
   const { userId } = req.params;

@@ -9,7 +9,7 @@
   <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box notification-box">
     <ng-container *ngIf="notifications.length > 0; else noNotifications">
       <li *ngFor="let notification of notifications">
-        <div class="card card-compact bg-base-100 shadow-md p-4 flex items-center gap-4 relative group">
+        <div class="card card-compact bg-base-100 shadow-md p-4 flex items-center gap-4 relative group" @fadeOut>
           <div>
             <h3 class="font-bold text-lg">{{ notification.title }}</h3>
             <p>{{ notification.text }}</p>

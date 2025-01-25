@@ -8,7 +8,7 @@ export const csrfProtection = csurf({ cookie: true })
 const router = express.Router();
 
 router.use(AuthRoutes);
-router.use(ProfileRoutes, csrfProtection);
+router.use(ProfileRoutes);
 router.use(InvitationRoutes);
 
 export default router;

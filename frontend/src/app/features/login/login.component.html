@@ -26,9 +26,7 @@
           <label class="label">
             <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
           </label>
-          <div *ngIf="isLoginFailed" class="text-red-500 mt-4">
-            <p>{{ errorMessage }}</p>
-          </div>
+          <app-toast></app-toast>
         </div>
         <div class="form-control mt-6">
           <button type="submit" class="btn btn-primary bg-gradient-to-r text-white font-bold py-2 px-4 rounded-lg primary-color">Login</button>

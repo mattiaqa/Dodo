@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
-import { GetBidsInput, getBidsSchema, PlaceBidInput, placeBidSchema } from '../schema/bid.schema'
-import {getAuctionById, updateAuction} from '../service/auction.service'
+import {getBidsSchema, placeBidSchema} from '../schema/bid.schema'
 import { placeBid, getBids } from '../service/bid.service'
-import { getUserById, findUsers } from "../service/user.service";
-
-import { omit, pick } from "lodash";
+import { findUsers } from "../service/user.service";
+import { pick } from "lodash";
 import logger from "../utils/logger";
 import moment from "moment-timezone";
 import { z } from "zod";
+import {getAuctionById} from "../service/auction.service";
 
 export async function placeBidHandler(req: Request<z.infer<typeof getBidsSchema>, {}, z.infer<typeof placeBidSchema>>, res: Response) {
     try {
@@ -21,10 +20,10 @@ export async function placeBidHandler(req: Request<z.infer<typeof getBidsSchema>
             return;
         }
 
-        if (auction.seller._id == userId) {
+        /*if (auction.seller._id == userId) {
             res.status(403).send({"Error": 'You cannot place a bid on your auction'});
             return;
-        }
+        }*/
 
         if (amount <= auction.lastBid) {
             res.status(400).send({"Error":"Bid must be greater than the current highest bid"});

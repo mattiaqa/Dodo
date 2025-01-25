@@ -23,13 +23,11 @@ import {CardComponent} from './components/card/card.component';
 export class ProfileComponent implements OnInit {
   user: any = {};
   savedAuctions: any[] = [];
-  watchlist: any[] = [];
 
   constructor(private storageService: StorageService) {}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
     this.savedAuctions = this.user.savedAuctions || [];
-    this.watchlist = this.user.watchList || [];
   }
 }

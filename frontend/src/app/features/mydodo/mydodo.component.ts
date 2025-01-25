@@ -25,35 +25,31 @@ import {PartecipatedCardComponent} from './components/partecipated-card/partecip
   styleUrls: ['./mydodo.component.scss']
 })
 export class MyDodoComponent implements OnInit {
-  auctions: any[] = [];
   selectedCard: string = "listingCreated";
-  userAuctions: any;
+  userAuctions: any[] = [];
+  userWinning: any[] = [];
+  userPartecipation: any[] = [];
+  userOngoingAuctions: any[] = [];
 
   constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.auctions = [
-      {
-        auctionId: '12345',
-        book: {
-          title: 'The Great Gatsby',
-          ISBN: '978-3-16-148410-0',
-        },
-        condition: 'Good',
-        lastBid: 100,
-        country: 'USA',
-        province: 'New York',
-        image: 'path/to/image.jpg',
-        expireDate: '2025-12-31',
-        createdAt: '2024-01-01',
-        interactions: 1,
-        views: 1,
-      }
-    ];
-
     this.userService.getUserAuctions().subscribe(auctions => {
       this.userAuctions = auctions;
     });
+
+    this.userService.getUserWinning().subscribe(winning => {
+      this.userWinning = winning;
+    });
+
+    this.userService.getUserPartecipation().subscribe(partecipation => {
+      this.userPartecipation = partecipation;
+    });
+
+    this.userService.getUserOngoingAuctions().subscribe(auctions => {
+      this.userOngoingAuctions = auctions;
+    });
+
   }
 
   selectCard(card: any) {

@@ -4,6 +4,7 @@ import {HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { httpInterceptorProviders, HttpRequestInterceptor } from './interceptors/auth.interceptor';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +14,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(HttpClientModule),
     importProvidersFrom(HttpRequestInterceptor),
     httpInterceptorProviders,
-    HttpClientXsrfModule
+    HttpClientXsrfModule,
+    importProvidersFrom(BrowserAnimationsModule),
   ]
 };

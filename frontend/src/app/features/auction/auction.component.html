@@ -10,11 +10,12 @@
           <img alt="Book Image" class="w-full h-[500px] object-cover rounded-lg shadow-lg" src="https://picsum.photos/600/600"/>
           <a class="btn btn-circle absolute top-1/2 left-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide3">❮</a>
           <a class="btn btn-circle absolute top-1/2 right-2 transform -translate-y-1/2 bg-primary-600 text-white hover:bg-primary-700" href="#slide2">❯</a>
-          <button class="btn btn-circle absolute top-2 right-16 bg-white text-primary" (click)="addToWatchlist(data?.auctionId)">
-            <fa-icon [icon]="['fas', 'clock']" class="text-xl"></fa-icon>
-          </button>
-          <button class="btn btn-circle absolute top-2 right-2 bg-white text-primary" (click)="likeAuction(data?.auctionId)">
-            <fa-icon [icon]="['fas', 'heart']" class="text-xl"></fa-icon>
+          <button
+            class="btn btn-circle absolute top-2 right-2 text-xl"
+            [ngClass]="userLike ? 'text-primary bg-white' : 'text-white'"
+            (click)="handleLike(data?.auctionId)"
+          >
+            <fa-icon [icon]="['fas', 'heart']"></fa-icon>
           </button>
         </div>
       </div>
@@ -62,33 +63,44 @@
     </div>
   </div>
 
-  <!-- About the Book Section -->
-  <div class="ml-4">
-    <h2 class="text-2xl font-semibold text-primary-700">About the Book</h2>
-    <p class="text-md text-gray-700 mt-4">
-      {{ data?.book?.description || 'Description not available'}}
-    </p>
+  <h2 class="text-2xl font-semibold text-primary-700">About the Book</h2>
 
-    <p class="text-md text-gray-700 mt-4">
-      <fa-icon [icon]="['fas', 'book']" class="mr-2 text-primary-500"></fa-icon>
-      {{ 'ISBN: ' + (data?.book?.ISBN || 'Not available') }}
-    </p>
+  <div class="flex items-start ml-4">
+    <div class="mr-12 mt-5">
+      <img
+        src="{{ data?.book?.imageLinks?.thumbnail || 'default-image.jpg' }}"
+        alt="Book Cover"
+        class="w-48 h-auto rounded shadow-lg"
+      />
+    </div>
 
-    <p class="text-md text-gray-700 mt-4">
-      <fa-icon [icon]="['fas', 'pencil']" class="mr-2 text-primary-500"></fa-icon>
-      {{ 'Authors: ' + (data?.book?.authors?.join(', ') || 'Not available') }}
-    </p>
+    <div class="flex-1">
+      <p class="text-md text-gray-700 mt-4">
+        {{ data?.book?.description || 'Description not available'}}
+      </p>
 
-    <p class="text-md text-gray-700 mt-4">
-      <fa-icon [icon]="['fas', 'language']" class="mr-2 text-primary-500"></fa-icon>
-      {{ 'Language: ' + (data?.book?.language || 'Not available') }}
-    </p>
+      <p class="text-md text-gray-700 mt-4">
+        <fa-icon [icon]="['fas', 'book']" class="mr-2 text-primary-500"></fa-icon>
+        {{ 'ISBN: ' + (data?.book?.ISBN || 'Not available') }}
+      </p>
 
-    <p class="text-md text-gray-700 mt-4">
-      <fa-icon [icon]="['fas', 'newspaper']" class="mr-2 text-primary-500"></fa-icon>
-      {{ 'Publisher: ' + (data?.book?.publisher || 'Not available') }}
-    </p>
+      <p class="text-md text-gray-700 mt-4">
+        <fa-icon [icon]="['fas', 'pencil']" class="mr-2 text-primary-500"></fa-icon>
+        {{ 'Authors: ' + (data?.book?.authors?.join(', ') || 'Not available') }}
+      </p>
+
+      <p class="text-md text-gray-700 mt-4">
+        <fa-icon [icon]="['fas', 'language']" class="mr-2 text-primary-500"></fa-icon>
+        {{ 'Language: ' + (data?.book?.language || 'Not available') }}
+      </p>
+
+      <p class="text-md text-gray-700 mt-4">
+        <fa-icon [icon]="['fas', 'newspaper']" class="mr-2 text-primary-500"></fa-icon>
+        {{ 'Publisher: ' + (data?.book?.publisher || 'Not available') }}
+      </p>
+    </div>
   </div>
+
 
   <app-comment></app-comment>
 </div>

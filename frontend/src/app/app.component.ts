@@ -5,6 +5,8 @@ import {
   FaIconLibrary
 } from '@fortawesome/angular-fontawesome';
 import {RouterOutlet} from '@angular/router';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-root',

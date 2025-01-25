@@ -10,12 +10,12 @@ import {
   faGavel, faHeart,
   faKey,
   faMapMarkerAlt, faMessage,
-  faMoneyBill1, faMoneyBillWave,
+  faMoneyBill1,
   faPencil,
   faPlus,
   faSearch, faSignInAlt, faTrash,
   faUser,
-  faHourglass, faPen, faTrophy, faNewspaper, faLanguage
+  faHourglass, faPen, faTrophy, faNewspaper, faLanguage, faCircleInfo, faCircleXmark, faBolt, faFilter
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faFacebook,
@@ -58,5 +58,10 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faPen,
   faTrophy,
   faNewspaper,
-  faLanguage
+  faLanguage,
+  faCircleCheck,
+  faCircleInfo,
+  faCircleXmark,
+  faBolt,
+  faFilter
 ];

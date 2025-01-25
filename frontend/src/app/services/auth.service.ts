@@ -14,8 +14,7 @@ export class AuthService {
     return this.http
       .post(
         AUTH_API + 'login',
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
   }
 

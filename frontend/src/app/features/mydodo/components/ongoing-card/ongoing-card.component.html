@@ -10,35 +10,28 @@
         <h2 class="text-4xl font-semibold primary-color mt-0">
           {{ auction?.book?.title || 'Title not available' }}
         </h2>
-
-        <p class="text-md text-gray-500">
-          <fa-icon [icon]="['fas', 'circle-check']" class="text-primary-500"></fa-icon>
-          Condition: <span class="font-semibold text-primary-600">{{ auction?.condition || 'Not available' }}</span>
-        </p>
-
-        <p class="text-md text-gray-500">
-          <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-2 text-primary-500"></fa-icon>
-          <span>{{ auction?.country + ', ' + auction?.province || 'Location not available' }}</span>
-        </p>
+        <div class="flex flex-col mt-2">
+          <p class="font-bold text-2xl">{{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</p>
+        </div>
 
         <!-- Stats Section -->
-        <div class="grid grid-cols-4 text-sm text-gray-600 justify-items-center mb-2 ml-64">
+        <div class="grid grid-cols-4 text-sm text-gray-600 justify-items-center mb-2 ml-52">
           <div class="stats scale-75">
             <div class="stat">
               <div class="stat-figure">
-
+                <fa-icon [icon]="['fas', 'eye']" class="mr-2 text-xl"></fa-icon>
               </div>
-              <div class="stat-title">Last Bid</div>
-              <div class="stat-value">{{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</div>
-              <div class="stat-desc">EUR</div>
+              <div class="stat-title">Views</div>
+              <div class="stat-value">{{auction?.views}} </div>
+              <div class="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
             <div class="stat">
               <div class="stat-figure">
-                <fa-icon [icon]="['fas', 'gavel']" class="mr-2 text-xl"></fa-icon>
+                <fa-icon [icon]="['fas', 'comments']" class="mr-2 text-xl"></fa-icon>
               </div>
-              <div class="stat-title">Number of bids</div>
-              <div class="stat-value">{{ bids.length || 0 }}</div>
+              <div class="stat-title">Interactions</div>
+              <div class="stat-value">{{ auction?.interactions }}</div>
               <div class="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
@@ -47,7 +40,7 @@
                 <fa-icon [icon]="['fas', 'hourglass']" class="mr-2 text-xl"></fa-icon>
               </div>
               <div class="stat-title">Expiration</div>
-              <div class="stat-value">{{ auction?.expireDate | date }}</div>
+              <div class="stat-value">{{ auction?.expireDate | date}}</div>
               <div class="stat-desc"> {{timeLeft}}</div>
             </div>
           </div>

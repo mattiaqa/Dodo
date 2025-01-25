@@ -22,7 +22,7 @@ function routes(app: Express) {
     });
 
     app.use('/api/user', UserRoutes);
-    app.use('/api/auction', csrfProtection, AuctionRoutes);
+    app.use('/api/auction', AuctionRoutes);
     app.use('/api/chat', csrfProtection, ChatRoutes);
     app.use('/api/download', csrfProtection, DownloadRoutes);
     app.use('/api/notification', csrfProtection, NotificationRoutes);
