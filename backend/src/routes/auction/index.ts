@@ -7,10 +7,10 @@ import Inforoutes from './routes/info.routes';
 const router = express.Router();
 
 router.use(Inforoutes);
+router.use(Manageroutes);
 
 //uses RequireUser
 router.use(Bidroutes);
-router.use(Manageroutes);
 router.use(Commentroutes);
 
 export default router;

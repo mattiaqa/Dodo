@@ -6,14 +6,13 @@ import { updateAuction } from "./auction.service";
 import { z } from "zod";
 import { placeBidSchema } from "../schema/bid.schema";
 
-export async function placeBid(buyer: string, bid: z.infer<typeof placeBidSchema>) {
+export async function placeBid(buyer: string, auctionId: string, amount: number) {
   try {
     const sanitizedBuyer = sanitize(buyer);
-    const sanitizedBid = sanitize(bid);
-    const result = await BidModel.create({buyer: sanitizedBuyer, auctionId: sanitizedBid.auctionId, amount: sanitizedBid.amount});
+    const result = await BidModel.create({buyer: sanitizedBuyer, auctionId, amount});
     
-    const auction = await updateAuction(sanitizedBid.auctionId, {
-                lastBid: sanitizedBid.amount
+    const auction = await updateAuction(auctionId, {
+                lastBid: amount
             });
     
     return result.toJSON();

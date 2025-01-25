@@ -9,16 +9,29 @@ const objectId = (value: any) => {
     throw new Error('Invalid ObjectId');
 };
 
-export const createAuctionSchema = object({
+const baseAuctionSchema = object({
     title: string({
         required_error: "Title is required!",
     }),
-    lastBid: number({
+    lastBid: preprocess((val) => {
+        // Se il valore è una stringa, lo trasformiamo in numero
+        if (typeof val === 'string') {
+            const parsed = parseFloat(val);
+            return isNaN(parsed) ? undefined : parsed;
+        }
+        return val;
+    }, number({
         required_error: "lastBid is required!",
-    }),
-    description: string(/*{
-        required_error: "Description is required!",
-    }*/).optional(),
+    })),
+    reservePrice:  preprocess((val) => {
+        if (val === undefined) return val; // Se non c'è un valore, lasciamo undefined
+        if (typeof val === 'string') {
+            const parsed = parseFloat(val);
+            return isNaN(parsed) ? undefined : parsed;
+        }
+        return val;
+    }, number().optional()),
+    description: string().optional(),
     condition: string({
         required_error: "Condition is required!",
     }),
@@ -40,21 +53,52 @@ export const createAuctionSchema = object({
     /*book: string()
         .regex(/^\d{13}$/, { message: "Book must be a valid ISBN (13 numeric digits)" })
         .optional(),*/
+})
+
+export const createAuctionSchema = baseAuctionSchema.superRefine((obj, ctx) => {
+    if (obj.reservePrice !== undefined && obj.reservePrice < obj.lastBid) {
+        ctx.addIssue({
+            code: "custom",
+            path: ["reservePrice"], // Campo al quale si riferisce l'errore
+            message: "Reserve price, if present, must be greater than or equal to lastBid!",
+        });
+    }
 });
 
-export const editAuctionSchema = createAuctionSchema.pick({
+export const editAuctionSchema = baseAuctionSchema.pick({
     title: true,
     description: true,
     book: true,
-}).partial();
+}).partial().extend({
+    imagesToRemove: preprocess(
+        (val) => {
+            // Se è una stringa, prova a farne il parse in un array
+            if (typeof val === "string") {
+                try {
+                    return JSON.parse(val);
+                } catch {
+                    return []; // Torna un array vuoto se il parse fallisce
+                }
+            }
+            return val; // Ritorna il valore originale (già array)
+        }, array(string())
+        .max(10, "You can remove a maximum of 10 images.")
+        .optional(),
+    )
+});
 
 export const searchAuctionSchema = object({
-    bookId: string().optional(), // Deve essere una stringa, opzionale
+    auctionTitle: string().optional(),
+    where: string().optional(), // Deve essere una stringa, opzionale
     minPrice: string().regex(/^\d+(\.\d+)?$/, {message : "minPrice must be a valid number"}).optional(), // Deve essere un numero positivo
     maxPrice: string().regex(/^\d+(\.\d+)?$/, {message : "maxPrice must be a valid number"}).optional(), // Deve essere un numero positivo
     sellerId: string().optional(), // Deve essere una stringa, opzionale
-    where: string().regex(/^\d{13}$/, { message : "Book must be a valid ISBN (13 numeric digits)" }).optional(), // Deve essere una stringa, opzionale
-    ISBN: string().optional(), // Deve essere una stringa, opzionale
+
+    bookId: string().optional(), // Deve essere una stringa, opzionale
+    ISBN: string().regex(/^\d{13}$/, { message : "Book must be a valid ISBN (13 numeric digits)" }).optional(), // Deve essere una stringa, opzionale
+    bookTitle: string().optional(),
+    bookPublisher: string().optional(),
+    bookAuthor: string().optional()
 });
 
 export const getAuctionSchema = object({

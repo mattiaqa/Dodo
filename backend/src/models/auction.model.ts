@@ -6,6 +6,7 @@ import {BookDocument} from "./book.model";
 export interface AuctionInput {
     book?: BookDocument['_id'];
     lastBid: number;
+    reservePrice?: number;
     condition: string;
     description?: string;
     country: string;
@@ -34,6 +35,7 @@ const auctionSchema = new mongoose.Schema(
         title: { type: String, required: true },
         book: { type: mongoose.Schema.Types.ObjectId, ref: "Book", required: false },
         lastBid: { type: Number, required: true, default: 0.00 },
+        reservePrice: { type: Number, required: true, default: 0.00 },
         condition: { type: String, required: true },
         description: { type: String, required: false },
         seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

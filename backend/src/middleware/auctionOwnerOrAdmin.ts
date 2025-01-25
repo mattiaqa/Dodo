@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { searchAuctionById } from '../service/auction.service';
+import { getAuctionById } from '../service/auction.service';
 import { ObjectId, Types } from 'mongoose';
 import { z } from 'zod';
 import { getAuctionSchema } from '../schema/auction.schema';
@@ -16,7 +16,7 @@ const requireAuctionOwnerOrAdmin = async (req: Request<z.infer<typeof getAuction
     const { auctionId } = req.params;
 
     // Recupera i dettagli dell'asta
-    const auction = await searchAuctionById(auctionId);
+    const auction = await getAuctionById(auctionId);
 
     if (!auction) {
       res.status(404).json({ message: 'Auction not found' });
@@ -28,7 +28,7 @@ const requireAuctionOwnerOrAdmin = async (req: Request<z.infer<typeof getAuction
         return;
     }
 
-    const owner = auction.seller as {_id: ObjectId}
+    const owner = auction.seller;
     // Verifica se l'utente è il proprietario dell'asta o un amministratore
     if (owner._id.toString() !==  user.id && !user.isAdmin) {
       res.status(403).json({ message: 'Forbidden: Not authorized to modify this auction' });

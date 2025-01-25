@@ -37,7 +37,23 @@ export type SearchBookResult = Pick<BookDocument, "title"|"subtitle"|"ISBN"|"aut
 export async function searchBook(query: z.infer<typeof searchBookSchema>) : Promise<SearchBookResult[]>{
     
     const sanitizedQuery = sanitize(query)
-    const { title, ISBN } = sanitizedQuery;
+    const { title, ISBN, author, publisher } = sanitizedQuery;
+
+    const match: Record<string, any> = {};
+    if (ISBN) {
+        match.ISBN = ISBN; // Filtro per ISBN se specificato
+    }
+    if (title) {
+        match.title = { $regex: title, $options: "i" }; // Filtro per titolo se specificato (case-insensitive)
+    }
+    if (author)
+    {
+        match.authors = { $regex: author, $options: "i" };
+    }
+    if (publisher)
+    {
+        match.publisher = { $regex: publisher, $options: "i" };
+    }
 
     const project = {
         mongoId: "$_id", // Rinomina _id in mongoId
@@ -52,6 +68,7 @@ export async function searchBook(query: z.infer<typeof searchBookSchema>) : Prom
         _id: 0      // Escludi il campo originale _id
     }
 
+    /*
     // Se è specificato un ISBN, cerca corrispondenza esatta
     if (ISBN) {
         const book = (await BookModel.aggregate([
@@ -81,10 +98,19 @@ export async function searchBook(query: z.infer<typeof searchBookSchema>) : Prom
         ]);
         if(books)
             return books; // Ritorna tutti i risultati che corrispondono
-    }
+    }*/
 
+    const books = await BookModel.aggregate([
+        {
+            $match: match // Applica il filtro dinamico
+        },
+        {
+            $project: project // Applica il proiezione
+        }
+    ]);
+    return books ?? []
     // Se nessun criterio è specificato, ritorna un array vuoto
-    return [];
+    //return [];
 }
 
 export async function searchBookOnline(query: z.infer<typeof searchBookSchema>) : Promise<SearchBookResult[]> {
@@ -105,7 +131,7 @@ export async function searchBookOnline(query: z.infer<typeof searchBookSchema>) 
 
         if (response?.data?.items?.length > 0) {
             const books: SearchBookResult[] = response!.data.items.map((item: any) => ({
-              id: item.id,
+              //id: item.id,
               title: item.volumeInfo.title || "No title available",
               ISBN: item.volumeInfo.industryIdentifiers?.find((id: any) => id.type === "ISBN_13")?.identifier || "No ISBN available",
               authors: item.volumeInfo.authors || [],

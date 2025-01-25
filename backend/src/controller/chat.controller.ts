@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 
 import logger from "../utils/logger";
-import {GetChatInput} from "../schema/chat.schema";
-import {SendMessageInput} from "../schema/message.schema";
+import {GetChatInput, getChatSchema} from "../schema/chat.schema";
+import {SendMessageInput, sendMessageSchema} from "../schema/message.schema";
 import {newChat, searchChat, searchChatsByUser} from "../service/chat.service";
 import {searchMessagesByChatId, sendMessage} from "../service/message.service";
-import {searchAuctionById} from "../service/auction.service";
+import {getAuctionById} from "../service/auction.service";
 import {omit} from "lodash";
+import { z } from "zod";
 
-export async function sendMessageHandler(req: Request<SendMessageInput["body"]>, res: Response) {
+export async function sendMessageHandler(req: Request<{},{}, z.infer<typeof sendMessageSchema>>, res: Response) {
     try{
         const sender = res.locals.user!.id;
-        const content = req.body.content;
-        const chatId = req.body.chatId;
+        const { content, chatId } = req.body;
 
         const message = await sendMessage({sender, content, chatId});
 
@@ -23,12 +23,12 @@ export async function sendMessageHandler(req: Request<SendMessageInput["body"]>,
     }
 }
 
-export async function getChatHandler(req: Request<GetChatInput['body']>, res: Response) {
+export async function getChatHandler(req: Request<{},{}, z.infer<typeof getChatSchema>>, res: Response) {
     try {
-        const auctionId = req.body.auctionId;
+        const { auctionId } = req.body;
         const userId = res.locals.user!.id;
 
-        const auction = await searchAuctionById(auctionId);
+        const auction = await getAuctionById(auctionId);
 
         let chat = await searchChat({
             auctionId,

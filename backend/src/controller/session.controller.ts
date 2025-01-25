@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validatePassword } from "../service/user.service";
 import { createSession, findSession, updateSession } from "../service/session.service";
-import { createUser, findUser, deleteUser, createConfirmationLink, sendConfirmationEmail, confirmUser } from "../service/user.service";
+import { createUser, getUserById, deleteUser, createConfirmationLink, sendConfirmationEmail, confirmUser } from "../service/user.service";
 import { CreateUserInput, GetUserInput } from "../schema/user.schema";
 import { omit } from "lodash";
 import logger from "../utils/logger";
@@ -65,7 +65,7 @@ export async function confirmUserHandler(req: Request, res: Response)
 export async function deleteUserHandler(req: Request<GetUserInput>, res: Response){
   const { userId } = req.params;
 
-  const user = await findUser({ _id: userId });
+  const user = await getUserById(userId);
 
   if (!user) {
     res.status(404).send({"Error": "User not found"});
@@ -98,13 +98,14 @@ export async function createSessionHandler(req: Request<{}, {}, z.infer<typeof l
 
         const session = await createSession(String(user._id), req.get("user-agent") || "");
 
+        const { _id, ...rest } = user; // Estrai _id e il resto delle proprietà
         const accessToken = signJwt(
-            { ...user, session: session._id },
+            { ...rest, id: _id, session: session._id },
             { expiresIn: config.get('accessTokenTTL') },
         );
 
         const refreshToken = signJwt(
-            { ...user, session: session._id },
+            { ...rest, id: _id, session: session._id },
             { expiresIn: config.get('refreshTokenTTL') },
         );
 

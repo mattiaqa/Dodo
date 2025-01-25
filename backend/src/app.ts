@@ -7,10 +7,13 @@ import cors, {CorsOptions} from 'cors';
 import deserializeUser from './middleware/deserializeUser';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
+import { uploadAuctionImages } from './utils/multer';
 
 const port = config.get<number>('port');
 const app = express();
 export let globalOAuth2Client: any;
+
+app.use('/api/auction/', uploadAuctionImages); // Multer applicato per upload
 
 app.use(express.json());
 app.use(cookieParser());

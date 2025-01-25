@@ -1,7 +1,7 @@
 import 'express';
 
 interface CurrentUserType {
-    _id: mongoose.Types.ObjectId;
+    id: mongoose.Types.ObjectId;
     email: string;
     name: string;
     verified: boolean;

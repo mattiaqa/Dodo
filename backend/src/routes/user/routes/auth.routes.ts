@@ -14,7 +14,7 @@ router.delete('/:userId/delete', [requireAdmin, Validator.validateParams(getUser
 
 router.post('/login', Validator.validateBody(loginSchema), AuthController.createSessionHandler);
 router.delete('/logout', [requireUser], AuthController.deleteSessionHandler);
-router.get('/session', requireUser, AuthController.getUserSessionHandler);
+//router.get('/session', requireUser, AuthController.getUserSessionHandler);
 
 
 export default router;

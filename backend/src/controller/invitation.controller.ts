@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {findUser, updateUser} from "../service/user.service";
+import {getUserByEmail, updateUser} from "../service/user.service";
 import {signJwt, verifyJwt} from "../utils/jwt.utils";
 import Invitation from '../models/invitation.model';
 import {checkAlreadyInvited, createInvitationLink, sendInviteEmail} from "../service/invitation.service";
@@ -19,7 +19,7 @@ export async function inviteUserHandler(req: Request<{},{}, z.infer<typeof invit
         }
 
         const admin = res.locals.user!;
-        const user = await findUser({ email });
+        const user = await getUserByEmail( email );
         if (!user) {
             res.status(404).send({"Error": 'The email does not exist'});
             return;

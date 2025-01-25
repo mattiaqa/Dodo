@@ -11,7 +11,7 @@ import { uploadAuctionImages } from '../../../utils/multer';
 const router = express.Router();
 
 //crea un'asta
-router.post('/', requireUser, Validator.validateBody(createAuctionSchema), uploadAuctionImages, /*fetchBook,*/ Controller.createAuctionHandler);
+router.post('/', requireUser, Validator.validateBody(createAuctionSchema), Controller.createAuctionHandler);
 
 //modifica un'asta
 router.put('/:auctionId', Validator.validateBody(editAuctionSchema), Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, Controller.editAuctionHandler);

@@ -3,7 +3,7 @@ import logger from "../utils/logger";
 import {getUserNotifications, readNotificationById} from "../service/notification.service";
 
 export async function getUserNotificationsHandler(req: Request, res: Response) {
-    const userId = res.locals.user!._id;
+    const userId = res.locals.user!.id;
 
     try {
         const notifications = await getUserNotifications({userId: userId, read: false});
@@ -20,7 +20,7 @@ export async function getUserNotificationsHandler(req: Request, res: Response) {
 }
 
 export async function readNotificationsHandler(req: Request, res: Response) {
-    const userId = res.locals.user!._id;
+    const userId = res.locals.user!.id;
     const notificationId = req.body.notificationId;
 
     try {

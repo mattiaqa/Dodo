@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateQuery } from "mongoose";
+import mongoose, { FilterQuery, UpdateQuery } from "mongoose";
 import { omit, pick } from "lodash";
 import UserModel, { UserDocument, UserInput } from "../models/user.model";
 import AuctionModel, { AuctionDocument } from "../models/auction.model";
@@ -31,9 +31,40 @@ export async function validatePassword({email, password}: { email: string; passw
   return pick(user, ["_id", "email", "verified", "isAdmin", "name"]);
 }
 
-type SafeUser = Pick<UserDocument, "_id"|"email"|"verified"|"isAdmin"|"name"|"avatar"|"createdAt"|"updatedAt"|"savedAuctions">;
-export async function findUser(query: FilterQuery<UserDocument>): Promise<SafeUser | null> {
-  return UserModel.findOne(query).lean<SafeUser>().exec();
+type SafeUser = Pick<UserDocument, "_id"|"email"|"isAdmin"|"verified"|"name"|"avatar"|"createdAt"|"updatedAt"|"savedAuctions"> & {id : UserDocument['_id']};
+async function getUser(query: FilterQuery<UserDocument>): Promise<SafeUser | null> {
+  const result = await UserModel.aggregate([
+    { $match: query }, // Filtra per ID
+    { 
+      $project: { 
+        id: "$_id", // Rinomina _id in id
+        email: 1,
+        isAdmin: 1,
+        name: 1,
+        avatar: 1,
+        createdAt: 1,
+        savedAuctions: 1,
+        verified: 1,
+
+        _id: 0
+      }
+    }
+  ]);
+
+  return result[0] || null;
+}
+
+export async function getUserById(id: string): Promise<SafeUser | null> {
+  const objectId = mongoose.isValidObjectId(id) ? new mongoose.Types.ObjectId(id) : null;
+  if (!objectId) {
+    throw new Error("Invalid ID format");
+  }
+
+  return await getUser({ _id: objectId });
+  //return await getUser({_id: id});
+}
+export async function getUserByEmail(email: string): Promise<SafeUser | null> {
+  return await getUser({email});
 }
 
 export async function findUsers(query: FilterQuery<UserDocument>) {
@@ -67,7 +98,7 @@ export async function confirmUser(token: string)
     if(!email) throw new Error('Invalid token');
 
     // Cerca l'utente nel database
-    const user = await findUser({email});
+    const user = await getUserByEmail(email);
 
     if (!user) {
       throw new Error('User not found');

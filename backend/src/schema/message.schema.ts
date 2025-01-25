@@ -1,13 +1,11 @@
 import {object, string, TypeOf} from "zod";
 
 const messageBaseFields = object({
-    body: object({
-        content: string({
-            required_error: "Content is required",
-        }),
-        chatId: string({
-            required_error: "chatId is required",
-        }),
+    content: string({
+        required_error: "Content is required",
+    }),
+    chatId: string({
+        required_error: "chatId is required",
     }),
 });
 

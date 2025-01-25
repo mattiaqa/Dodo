@@ -1,9 +1,9 @@
-import { FilterQuery, UpdateQuery } from "mongoose";
+import mongoose, { FilterQuery, UpdateQuery } from "mongoose";
 import SessionModel, {SessionDocument} from "../models/session.model";
 import { signJwt } from "../utils/jwt.utils";
 import { verifyJwt } from "../utils/jwt.utils";
 import {get} from 'lodash';
-import { findUser } from "./user.service";
+import { getUserById } from "./user.service";
 import config from 'config'
 
 export async function createSession(userId: string, userAgent: string) {
@@ -31,13 +31,14 @@ export async function reIssueAccessToken({refreshToken}:{refreshToken: string;})
     if(!session || !session.valid) 
         return false;
 
-    const user = await findUser({_id: session.user});
+    const user = await getUserById( session.user as string );
 
     if(!user) 
         return false;
 
+    const {_id, ...rest} = user;
     const accessToken = signJwt(
-        { ...user, session: session._id },
+        { ...rest, id: _id, session: session._id },
         { expiresIn: config.get('refreshTokenTTL') },
     );
     

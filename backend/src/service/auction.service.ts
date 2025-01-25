@@ -7,6 +7,18 @@ import sanitize from "mongo-sanitize";
 import {BidDocument} from "../models/bid.model";
 import {omit, pick} from "lodash";
 
+type PopulatedAuction = Omit<AuctionDocument, "book" | "seller"> & {
+  book: {
+    title: string;
+    ISBN: string;
+    authors: string[];
+  }; // Puoi aggiungere altri campi se necessario
+  seller: {
+    email: string;
+    _id: string;
+  };
+};
+
 export async function createAuction(newAuction: AuctionInput): Promise<AuctionDocument | undefined> {
   try {
     const newAuctionSanitized = sanitize(newAuction);
@@ -34,14 +46,14 @@ export async function updateAuction(auctionId: string, updateFields: any) {
         const updatedAuction = await AuctionModel.findOneAndUpdate(
             { auctionId: auctionId },
             { $set: updateFields },
-            { new: true }
+            { new: true, runValidators: true  }
         );
 
         if (!updatedAuction) {
             throw new Error("Auction not found.");
         }
 
-        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt");
     } catch (e: any) {
         throw new Error(e.message);
     }
@@ -59,7 +71,7 @@ export async function incrementInteraction(auctionId: string) {
             throw new Error("Auction not found.");
         }
 
-        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt");
     } catch (e: any) {
         throw new Error(e.message);
     }
@@ -77,7 +89,7 @@ export async function incrementViews(auctionId: string) {
             throw new Error("Auction not found.");
         }
 
-        return omit(updatedAuction, "__v", "updatedAt", "createdAt", "buyer");
+        return omit(updatedAuction, "__v", "updatedAt", "createdAt");
     } catch (e: any) {
         throw new Error(e.message);
     }
@@ -96,27 +108,29 @@ export async function deleteAuction(query: FilterQuery<AuctionDocument>) {
   }
 }
 
-export async function searchAuctionById(id: string)
+export async function getAuctionById(id: string) : Promise<PopulatedAuction | null>
 {
   try {
     const query: FilterQuery<AuctionDocument> = { auctionId: id };
     const sanitizedQuery = sanitize(query);
-    return await AuctionModel.findOne(sanitizedQuery)
+    const result =  await AuctionModel.findOne(sanitizedQuery)
       .populate({
         path: "book",
-        select: {"_id":0, "__v": 0}
+        select: {_id: 0, __v: 0}
       })
       .populate({
         path: "seller",
-        select: {"email":1, "_id":1}
+        select: {email: 1, _id: 1}
       });
+
+    return result as unknown as PopulatedAuction;
   } catch (e:any) {
     logger.error(`Failed to find auction by ID: ${e.message}`);
     throw new Error(e.message);
   }
 }
 
-export async function searchAuctionByQuery(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
+/*export async function searchAuctionByQuery(query: FilterQuery<AuctionDocument>, auth: boolean = false, options: QueryOptions = {lean: true}) {
   try {
       const sanitizedQuery = sanitize(query);
     return await AuctionModel.findOne(sanitizedQuery, {}, options)
@@ -131,14 +145,14 @@ export async function searchAuctionByQuery(query: FilterQuery<AuctionDocument>, 
   } catch (e:any) {
       throw new Error(e.message);
   }
-}
+}*/
 
 export async function searchAuctions(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
   try {
     return await AuctionModel.find(query, {}, options)
         .populate({
           path: "book",
-          select: {"title": 1, "ISBN": 1, "_id": 0}
+          select: { "title": 1, "ISBN": 1, "authors": 1, "publisher": 1 }
         })
   } catch (e:any) {
       throw new Error(e.message);

@@ -1,20 +1,21 @@
 import { Request, Response } from "express";
-import { GetBidsInput, PlaceBidInput, placeBidSchema } from '../schema/bid.schema'
-import {searchAuctionById, updateAuction} from '../service/auction.service'
+import { GetBidsInput, getBidsSchema, PlaceBidInput, placeBidSchema } from '../schema/bid.schema'
+import {getAuctionById, updateAuction} from '../service/auction.service'
 import { placeBid, getBids } from '../service/bid.service'
-import { findUser, findUsers } from "../service/user.service";
+import { getUserById, findUsers } from "../service/user.service";
 
 import { omit, pick } from "lodash";
 import logger from "../utils/logger";
 import moment from "moment-timezone";
 import { z } from "zod";
 
-export async function placeBidHandler(req: Request<{}, {}, z.infer<typeof placeBidSchema>>, res: Response) {
+export async function placeBidHandler(req: Request<z.infer<typeof getBidsSchema>, {}, z.infer<typeof placeBidSchema>>, res: Response) {
     try {
-        const { auctionId, amount } = req.body;
-        const userId = res.locals.user!._id;
+        const { amount } = req.body;
+        const { auctionId } = req.params;
+        const userId = res.locals.user!.id;
 
-        const auction = await searchAuctionById(auctionId);
+        const auction = await getAuctionById(auctionId);
         if (!auction) {
             res.status(404).send({"Error": "Auction not found"});
             return;
@@ -36,7 +37,7 @@ export async function placeBidHandler(req: Request<{}, {}, z.infer<typeof placeB
             return;
         }
 
-        const bid = await placeBid(userId, req.body);
+        const bid = await placeBid(userId, auctionId, amount);
         res.send({"Message" : "Bid placed successfully", bid});
 
     } catch (e: any) {
@@ -55,7 +56,7 @@ export async function getBidsHandler(req: Request, res: Response) {
         }
 
         // Verifica se l'asta esiste
-        const auction = await searchAuctionById(auctionId);
+        const auction = await getAuctionById(auctionId);
         if (!auction) {
             res.status(404).send({ "Error": "No auction found" });
             return;

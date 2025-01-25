@@ -59,7 +59,9 @@ export const addBookSchema = object({
 
 export const searchBookSchema = object({
     title: string().optional(),
-    ISBN: string() .regex(/^\d{13}$/, { message: "Book must be a valid ISBN (13 numeric digits)" }).optional(),
+    ISBN: string().regex(/^\d{13}$/, { message: "Book must be a valid ISBN (13 numeric digits)" }).optional(),
+    publisher: string().optional(),
+    author: string().optional(),
 });
 
 export const createBookSchema = bookSchema;

@@ -8,7 +8,7 @@ import { searchBook, searchBookOnline } from '../../service/book.service';
 
 const router = express.Router();
 
-router.get('/info', requireUser, Controller.getBookInfoHandler);
+// router.get('/info', requireUser, Controller.getBookInfoHandler);
 router.delete('/:isbn', requireAdmin, Controller.deleteBookHandler);
 
 router.get("/search/local/", requireUser, Validator.validateQuery(searchBookSchema), (req, res) => Controller.searchBookHandler(req, res, searchBook));
