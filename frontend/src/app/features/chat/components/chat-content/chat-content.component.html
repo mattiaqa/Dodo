@@ -1,0 +1,42 @@
+<div *ngIf="selectedChat; else noChatSelected" class="flex flex-col bg-base-600 p-4" [style.height]="'calc(100vh - 94px - 94px)'">
+  <!-- Chat Messages Container -->
+  <div class="flex-1 overflow-y-auto space-y-4 p-4 bg-base-600 rounded-lg shadow-lg">
+    <div *ngFor="let message of messages" class="chat" [ngClass]="{'chat-start': (message.sender.name == currentUser), 'chat-end': (message.sender.name != currentUser)}">
+
+      <!-- Message Content -->
+      <div class="chat-header">
+        <time class="text-xs opacity-50 ml-2">{{ message.createdAt | date: 'shortTime' }}</time>
+      </div>
+      <div class="chat-bubble" [ngClass]="{'bg-primary text-primary-content': (message.sender.name == currentUser), 'bg-secondary text-secondary-content': (message.sender.name != currentUser)}">
+        {{ message.content }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Box -->
+  <div class="mt-2 bg-base-100 p-4 rounded-lg shadow-lg">
+    <div class="join w-full">
+      <input
+        [(ngModel)]="newMessage"
+        (keydown.enter)="sendMessage()"
+        type="text"
+        class="input input-bordered join-item w-full"
+        placeholder="Type your message..."
+      />
+      <button (click)="sendMessage()" class="btn btn-primary join-item">
+        Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- No Chat Selected Placeholder -->
+<ng-template #noChatSelected>
+  <div class="flex items-center justify-center h-full bg-base-200">
+    <div class="text-center p-8 bg-base-100 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-bold mb-4">No Chat Selected</h2>
+      <p class="text-base-content/70">Select a chat to start messaging.</p>
+    </div>
+  </div>
+</ng-template>
+

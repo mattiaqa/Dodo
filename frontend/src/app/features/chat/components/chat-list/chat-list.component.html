@@ -1,0 +1,25 @@
+<ul class="menu bg-base-200 rounded-box w-full max-w-md">
+  <li
+    *ngFor="let chat of chats"
+    class="hover:bg-base-300 rounded-lg shadow-lg"
+    [ngClass]="{'bg-secondary hover:bg-secondary': selectedChat === chat.chatId}"
+    (click)="onChatSelect(chat)"
+  >
+    <a class="p-4">
+      <div class="flex items-center space-x-4">
+        <!-- Avatar -->
+        <div class="avatar">
+          <div class="w-12 rounded-full">
+            <img [src]="avatar" alt="Profile Picture" />
+          </div>
+        </div>
+
+        <!-- Chat Details -->
+        <div class="flex-1">
+          <h3 class="font-bold text-lg truncate">{{ chat.participants[0].name }}</h3>
+          <p class="text-sm text-base-content/70 truncate">{{ chat.auctionTitle }}</p>
+        </div>
+      </div>
+    </a>
+  </li>
+</ul>

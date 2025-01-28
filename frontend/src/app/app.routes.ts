@@ -8,6 +8,7 @@ import {AuctionComponent} from './features/auction/auction.component';
 import {MyDodoComponent} from './features/mydodo/mydodo.component';
 import {ProfileComponent} from './features/profile/profile.component';
 import {authGuard} from './guards/auth.guard';
+import {ChatComponent} from './features/chat/chat.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,4 +20,5 @@ export const routes: Routes = [
 
   { path: 'mydodo', component: MyDodoComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: 'chats', component: ChatComponent, canActivate: [authGuard] },
 ];

@@ -7,6 +7,7 @@ interface CurrentUserType {
     verified: boolean;
     isAdmin: boolean;
     session: string;
+    avatar: string;
 }
   
 declare global {

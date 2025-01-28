@@ -23,11 +23,13 @@ import {CardComponent} from './components/card/card.component';
 export class ProfileComponent implements OnInit {
   user: any = {};
   savedAuctions: any[] = [];
+  avatar_url: string = '';
 
   constructor(private storageService: StorageService) {}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
     this.savedAuctions = this.user.savedAuctions || [];
+    this.avatar_url = "http://localhost:1338/api/download/" +  this.user.avatar + "/avatar";
   }
 }

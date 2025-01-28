@@ -40,7 +40,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.isLoggedIn = this.storageService.isLoggedIn();
-    this.avatar_url = "http://localhost:1338/api/download/" + this.storageService.getUser().avatar;
+    this.avatar_url = "http://localhost:1338/api/download/" + this.storageService.getUser().avatar + "/avatar";
 
     this.searchForm = new FormGroup({
       where: new FormControl(''),

@@ -94,11 +94,9 @@ export async function createSessionHandler(req: Request<{}, {}, z.infer<typeof l
             return;
         }
 
-        console.log(user);
-
         const session = await createSession(String(user._id), req.get("user-agent") || "");
 
-        const { _id, ...rest } = user; // Estrai _id e il resto delle proprietà
+        const { _id, ...rest } = user;
         const accessToken = signJwt(
             { ...rest, id: _id, session: session._id },
             { expiresIn: config.get('accessTokenTTL') },
@@ -126,18 +124,6 @@ export async function deleteSessionHandler(req: Request, res: Response) {
 
         res.clearCookie('accessToken');
         res.send({"Message" : "Logged out successfully"});
-    } catch (e) {
-        logger.error(e);
-        res.status(500).send({message: "Internal Server Error"});
-    }
-}
-
-export async function getUserSessionHandler(req: Request, res: Response) {
-    try {
-        const user = res.locals.user!._id;
-        const sessions = await findSession({user, valid: true});
-
-        res.send(sessions);
     } catch (e) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});

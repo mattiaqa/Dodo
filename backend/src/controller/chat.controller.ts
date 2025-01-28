@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 
 import logger from "../utils/logger";
-import {GetChatInput, getChatSchema} from "../schema/chat.schema";
-import {SendMessageInput, sendMessageSchema} from "../schema/message.schema";
+import {sendMessageSchema} from "../schema/message.schema";
 import {newChat, searchChat, searchChatsByUser} from "../service/chat.service";
 import {searchMessagesByChatId, sendMessage} from "../service/message.service";
 import {getAuctionById} from "../service/auction.service";
@@ -23,12 +22,17 @@ export async function sendMessageHandler(req: Request<{},{}, z.infer<typeof send
     }
 }
 
-export async function getChatHandler(req: Request<{},{}, z.infer<typeof getChatSchema>>, res: Response) {
+export async function getChatHandler(req: Request, res: Response) {
     try {
-        const { auctionId } = req.body;
+        const {auctionId} = req.params;
         const userId = res.locals.user!.id;
 
         const auction = await getAuctionById(auctionId);
+
+        if (!auction) {
+            res.status(404).send({"Error": "No auction found"});
+            return;
+        }
 
         let chat = await searchChat({
             auctionId,
@@ -40,13 +44,13 @@ export async function getChatHandler(req: Request<{},{}, z.infer<typeof getChatS
                 participants: [userId, auction!.seller],
                 auctionId
             });
-        }
 
+        }
         const messages = await searchMessagesByChatId(chat!._id);
 
         res.send({
             chat,
-            messages
+            messages,
         });
     } catch (e: any) {
         logger.error(e);
@@ -59,7 +63,26 @@ export async function getUserChatHandler(req: Request, res: Response) {
         const userId = res.locals.user!.id;
 
         const chats = await searchChatsByUser({participants: userId});
-        res.send(chats);
+
+        if(!chats) {
+            res.status(404).send({"Error": "No chat found"});
+        }
+
+        const chatDetails = await Promise.all(
+            chats!.map(async (chat) => {
+                const auction = await getAuctionById(chat.auctionId);
+
+                return {
+                    chatId: chat._id,
+                    auctionTitle: auction?.title,
+                    auctionId: auction?.auctionId,
+                    participants: chat.participants,
+                    avatar: res.locals.user!.avatar
+                };
+            })
+        );
+
+        res.send(chatDetails);
     } catch (e: any) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});

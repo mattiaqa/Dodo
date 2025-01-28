@@ -1,4 +1,4 @@
-import { string, object, array, TypeOf } from "zod";
+import { string, object, TypeOf } from "zod";
 
 const chatBaseFields = object({
     auctionId: string({ required_error: "auctionId is required" }),

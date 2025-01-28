@@ -36,16 +36,15 @@ export const saveFilesToDisk = async (files: Express.Multer.File[], folder: stri
     return uploadedFilePaths;
 };
 
-// Multer per le immagini del profilo
 export const uploadProfilePicture = multer({
     storage: multer.memoryStorage(), 
     fileFilter,
-    limits: { fileSize: 1 * 1024 * 1024 }, // Limite di 1 MB per le immagini del profilo
-}).single('avatar'); // 'avatar' è il nome del campo per l'immagine del profilo
+    limits: { fileSize: 1 * 1024 * 1024 },
+}).single('avatar');
 
-// Multer per le immagini delle aste
+
 export const uploadAuctionImages = multer({
-    storage: multer.memoryStorage(), // Salva in "auctions" folder
+    storage: multer.memoryStorage(),
     fileFilter,
-    limits: { fileSize: 3 * 1024 * 1024 }, // Limite di 3 MB per le immagini delle aste},
-}).array('images', 10); // 'auctionImages' è il nome del campo per le immagini delle aste, con un massimo di 10 immagini
+    limits: { fileSize: 3 * 1024 * 1024 },
+}).array('images', 10);

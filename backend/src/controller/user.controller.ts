@@ -27,12 +27,12 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
 
   let uploadedImagePath: string = '';
   try {
-    const { isInfected, viruses } = await scanFile(file!.path);
+    /*const { isInfected, viruses } = await scanFile(file!.path);
     if (isInfected) {
         await unlink(file!.path);
         res.status(400).send({ "Error" : 'File is infected and was removed.' });
         return;
-    }
+    }*/
     if(file)
     {
       const uploadedImage : Express.Multer.File[] = [];

@@ -26,7 +26,8 @@ export class HomeComponent implements OnInit {
   filteredAuctions: any[] = [];
   filters = {
     maxPrice: 0,
-    location: ''
+    location: '',
+    condition: ''
   };
 
   constructor(private auctionModel: AuctionService, private sharedDataService: SharedDataService) {}
@@ -35,23 +36,21 @@ export class HomeComponent implements OnInit {
     this.auctionModel.getAllAuction().subscribe(auctions => {
       this.auctions = auctions.Results;
       this.filteredAuctions = auctions.Results;
-      this.sharedDataService.updateArray(auctions);
+      this.sharedDataService.updateArray(auctions.Results);
+      this.applyFilters();
     });
 
     this.sharedDataService.dataArray$.subscribe(auctions => {
       this.auctions = auctions;
-      this.applyFilters();
     });
   }
 
   applyFilters() {
     this.filteredAuctions = this.auctions.filter(auction => {
-      const matchesPrice =
-        !this.filters.maxPrice || auction.lastBid >= this.filters.maxPrice;
-      const matchesLocation =
-        !this.filters.location ||
-        auction.country.toLowerCase().includes(this.filters.location.toLowerCase());
-      return matchesPrice && matchesLocation;
+      const matchesPrice = !this.filters.maxPrice || auction.lastBid >= this.filters.maxPrice;
+      const matchesLocation = !this.filters.location || auction.country.toLowerCase().includes(this.filters.location.toLowerCase());
+      const matchesCondition = !this.filters.condition || auction.condition.toLowerCase().includes(this.filters.condition.toLowerCase());
+      return matchesPrice && matchesLocation && matchesCondition;
     });
   }
 }

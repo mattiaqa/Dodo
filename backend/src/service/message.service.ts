@@ -15,14 +15,12 @@ export async function sendMessage(message: MessageInput) {
     }
 }
 
-export async function searchMessagesByChatId(chatId: unknown) {
+export async function searchMessagesByChatId(chatId: mongoose.Types.ObjectId) {
     try {
-        const chatIdSanitized = sanitize(chatId);
-
-        return await MessageModel.find({chatId: chatIdSanitized}, {content: 1, sender: 1, _id: 0})
+        return await MessageModel.find({chatId: chatId}, {content: 1, sender: 1, _id: 0, createdAt: 1})
             .populate({
                 path: "sender",
-                select: {"name":1, "_id": 0}
+                select: {"name": 1, "_id": 0, "avatar": 1}
             })
     } catch (e: any) {
         logger.error(e);

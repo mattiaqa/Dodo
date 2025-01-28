@@ -32,9 +32,10 @@ export async function searchChatsByUser(query: FilterQuery<ChatDocument>, option
 
 export async function newChat(newChat: ChatInput) {
     try {
-        const newChatSanitized = sanitize(newChat);
-
-        return await ChatModel.create(newChatSanitized);
+        console.log(newChat);
+        const c = await ChatModel.create(newChat);
+        console.log(c);
+        return c;
     } catch (e: any) {
         logger.error(e);
     }

@@ -1,0 +1,17 @@
+<app-navbar></app-navbar>
+<h3 class="text-3xl font-bold text-primary-600 primary-color text-center">Chats</h3>
+<div class="main-container flex justify-center items-start min-h-screen max-h-screen bg-base-200 p-4">
+  <div class="content-wrapper flex w-full max-w-7xl bg-white p-6 rounded-lg">
+
+    <!-- Chat List -->
+    <div class="chat-list-container w-1/3 pr-4">
+      <app-chat-list (chatSelect)="onChatSelect($event)"></app-chat-list>
+    </div>
+
+    <!-- Chat Content -->
+    <div class="chat-content-container w-2/3 pl-4">
+      <app-chat-content [selectedChat]="selectedChat"></app-chat-content>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
