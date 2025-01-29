@@ -14,6 +14,7 @@
             class="btn btn-circle absolute top-2 right-2 text-xl"
             [ngClass]="userLike ? 'text-primary bg-white' : 'text-white'"
             (click)="handleLike(data?.auctionId)"
+            *ngIf="isLoggedIn"
           >
             <fa-icon [icon]="['fas', 'heart']"></fa-icon>
           </button>

@@ -27,6 +27,7 @@ export class AuctionComponent implements OnInit {
   timeLeft: string = '';
   private timerInterval: any;
   userLike: boolean = false;
+  isLoggedIn: boolean = false;
 
   constructor(
     private storageService: StorageService,
@@ -38,6 +39,8 @@ export class AuctionComponent implements OnInit {
 
   ngOnInit() {
     this.isAdmin = this.storageService.isUserAdmin();
+    this.isLoggedIn = this.storageService.isLoggedIn();
+
     this.auctionId = this.route.snapshot.paramMap.get('auctionId') || '';
     this.auctionService.getAuctionById(this.auctionId).subscribe(auction => {
       this.data = auction;

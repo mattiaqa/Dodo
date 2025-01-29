@@ -3,7 +3,7 @@ import path from "path";
 
 export const imageDownload = async (req: Request, res: Response) => {
     const filename = req.params.filename;
-    const imagePath = path.join(__dirname, '../../public/uploads/', filename);
+    const imagePath = path.join(__dirname, '../../public/uploads/auctions/', filename);
     const normalizedPath = path.normalize(imagePath);
 
     res.sendFile(normalizedPath, (err) => {

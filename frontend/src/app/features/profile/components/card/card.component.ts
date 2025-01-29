@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {FaIconComponent} from '@fortawesome/angular-fontawesome';
-import {CurrencyPipe} from '@angular/common';
 import {AuctionService} from '../../../../services/auction.service';
 
 @Component({

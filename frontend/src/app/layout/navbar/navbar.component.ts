@@ -1,7 +1,7 @@
-import {Component, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {NgIf, NgOptimizedImage} from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
+import {RouterLink} from '@angular/router';
 import {StorageService} from '../../storage/storage.service';
 import {AuthService} from '../../services/auth.service';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -39,7 +39,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.isLoggedIn = this.storageService.isLoggedIn();
-    this.avatar_url = "http://localhost:1338/api/download/" + this.storageService.getUser().avatar + "/avatar";
+    this.avatar_url = "http://localhost:1338/api/download/avatar/" + this.storageService.getUser().avatar;
 
     this.searchForm = new FormGroup({
       where: new FormControl(''),

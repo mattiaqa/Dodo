@@ -61,7 +61,6 @@ export async function getUserById(id: string): Promise<SafeUser | null> {
   }
 
   return await getUser({ _id: objectId });
-  //return await getUser({_id: id});
 }
 export async function getUserByEmail(email: string): Promise<SafeUser | null> {
   return await getUser({email});

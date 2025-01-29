@@ -6,6 +6,6 @@ import {downloadAvatar} from "../../../controller/download.controller";
 
 const router = express.Router();
 
-router.get('/:filename', Validator.validateParams(downloadImageSchema), Controller.imageDownload);
-router.get('/:filename/avatar', Validator.validateParams(downloadImageSchema), Controller.downloadAvatar);
+router.get('/image/:filename', Validator.validateParams(downloadImageSchema), Controller.imageDownload);
+router.get('/avatar/:filename', Validator.validateParams(downloadImageSchema), Controller.downloadAvatar);
 export default router;

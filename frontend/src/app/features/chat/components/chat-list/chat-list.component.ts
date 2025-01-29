@@ -26,7 +26,7 @@ export class ChatListComponent implements OnInit {
         this.chats = chats;
       }
     )
-    this.avatar = "http://localhost:1338/api/download/" + this.storageService.getUser().avatar + "/avatar";
+    this.avatar = "http://localhost:1338/api/download/avatar/" + this.storageService.getUser().avatar;
   }
 
   onChatSelect(chat: any): void {

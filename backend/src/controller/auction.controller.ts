@@ -16,7 +16,7 @@ import { AuctionDocument } from "../models/auction.model";
 import { z } from "zod";
 import { unlink } from "fs/promises";
 import { saveFilesToDisk } from "../utils/multer";
-import {updateUser} from "../service/user.service"
+import {getUserById, updateUser} from "../service/user.service"
 import path from "path";
 import { createOrGetBook, searchBook } from "../service/book.service";
 import { verifyJwt } from "../utils/jwt.utils";
@@ -67,18 +67,27 @@ export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof c
 
 export async function getAuctionHandler(req: Request<z.infer<typeof getAuctionSchema>>, res: Response) {
     const { auctionId } = req.params;
-    try{
+    const userId = res.locals.user?.id;
+    let userLike = false;
+    let user;
+
+    try {
         const auction = await getAuctionById(auctionId);
+        if(userId)
+            user = await getUserById(userId);
 
         if (!auction) {
             res.status(404).send({"Error": "No auction found"});
             return;
         }
 
+        userLike = user ? user.savedAuctions?.includes(auctionId) ?? false : false;
+
         await incrementInteraction(auctionId);
 
         const response = {
-            ...auction.toObject(), // Assicurati di lavorare con un oggetto JS puro
+            ...auction.toObject(),
+            userLike,
             reservePrice: auction.seller === res.locals.user?.id || !auction.reservePrice
                 ? auction.reservePrice // Proprietario vede il valore esatto
                 : auction.lastBid >= auction.reservePrice
@@ -157,7 +166,7 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
             return expirationDate > now;
         });
         const filteredAuctions = validAuctions.map(auction =>
-            pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid", "province", "condition", "createdAt"])
+            pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid", "province", "condition", "createdAt", "images"])
         );
 
         res.status(200).send({"Matches": filteredAuctions.length, "Results": filteredAuctions});

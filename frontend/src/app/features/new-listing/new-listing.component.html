@@ -15,44 +15,44 @@
           <label class="label">
             <span class="label-text font-semibold">Titolo</span>
           </label>
-          <input 
-            type="text" 
-            formControlName="title" 
-            placeholder="Inserisci il titolo del libro" 
-            class="input input-bordered w-full" 
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Inserisci il titolo del libro"
+            class="input input-bordered w-full"
           />
         </div>
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Autore</span>
           </label>
-          <input 
-            type="text" 
-            formControlName="author" 
-            placeholder="Inserisci l'autore del libro" 
-            class="input input-bordered w-full" 
+          <input
+            type="text"
+            formControlName="author"
+            placeholder="Inserisci l'autore del libro"
+            class="input input-bordered w-full"
           />
         </div>
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">Editore</span>
           </label>
-          <input 
-            type="text" 
-            formControlName="publisher" 
-            placeholder="Inserisci l'editore del libro" 
-            class="input input-bordered w-full" 
+          <input
+            type="text"
+            formControlName="publisher"
+            placeholder="Inserisci l'editore del libro"
+            class="input input-bordered w-full"
           />
         </div>
         <div class="form-control">
           <label class="label">
             <span class="label-text font-semibold">ISBN</span>
           </label>
-          <input 
-            type="text" 
-            formControlName="ISBN" 
-            placeholder="Inserisci il codice ISBN" 
-            class="input input-bordered w-full" 
+          <input
+            type="text"
+            formControlName="ISBN"
+            placeholder="Inserisci il codice ISBN"
+            class="input input-bordered w-full"
           />
         </div>
       </form>
@@ -71,12 +71,12 @@
         <div *ngFor="let book of localSearchResults" class="card card-side bg-base-100 shadow-md mb-4" (click)="selectBook(book)">
           <!-- Immagine -->
           <figure>
-            <img 
-              [src]="book.imageLinks?.thumbnail || 'https://sciendo.com/product-not-found.png'" 
+            <img
+              [src]="book.imageLinks?.thumbnail || 'https://sciendo.com/product-not-found.png'"
               alt="Book Image"
             />
           </figure>
-        
+
           <!-- Corpo della card -->
           <div class="card-body">
             <h3 class="card-title truncate" [title]="book.title">{{ book.title }}</h3>
@@ -85,7 +85,7 @@
             <p class="truncate"><strong>ISBN:</strong> {{ book.ISBN || 'N/A' }}</p>
             <p class="truncate"><strong>Anno:</strong> {{ book.publishedDate || 'N/A' }}</p>
           </div>
-        </div>     
+        </div>
       </ng-container>
 
       <!-- Risultati trovati online -->
@@ -93,8 +93,8 @@
         <h2 class="text-xl font-bold mb-4">Risultati trovati online</h2>
         <div *ngFor="let book of onlineSearchResults" class="card card-side bg-base-100 shadow-md mb-4" (click)="selectBook(book)">
           <figure>
-            <img 
-              [src]="book.imageLinks?.thumbnail || 'https://sciendo.com/product-not-found.png'" 
+            <img
+              [src]="book.imageLinks?.thumbnail || 'https://sciendo.com/product-not-found.png'"
               alt="Book Image"
             />
           </figure>
@@ -113,8 +113,8 @@
 
   <!-- Pulsante Continua -->
   <div class="text-center">
-    <button 
-      class="btn btn-secondary btn-wide" 
+    <button
+      class="btn btn-primary btn-wide"
       (click)="continueWithoutMatch()"
       >
       Continua senza una corrispondenza

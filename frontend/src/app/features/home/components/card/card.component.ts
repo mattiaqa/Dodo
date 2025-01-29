@@ -28,11 +28,13 @@ export class CardComponent implements OnInit, OnDestroy {
     image: string;
     expireDate: string;
     createdAt: string;
+    images: string[];
   } | undefined;
 
   timeLeftPercentage: number = 0;
   timeLeft: string = '';
   private timerInterval: any;
+  image_url: string = '';
 
   ngOnInit() {
     this.updateTimeLeft();
@@ -40,6 +42,8 @@ export class CardComponent implements OnInit, OnDestroy {
     this.timerInterval = setInterval(() => {
       this.updateTimeLeft();
     }, 1000);
+
+    this.image_url = "http://localhost:1338/api/download/image/"+ this.auction?.images[0];
   }
 
   ngOnDestroy() {

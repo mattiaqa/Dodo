@@ -18,6 +18,7 @@ import {AuctionService} from '../../../../services/auction.service';
 export class WonCardComponent implements OnInit {
   @Input() auction: {
     auctionId: string;
+    title: string;
     book: {
       title: string;
       ISBN: string;
@@ -26,15 +27,19 @@ export class WonCardComponent implements OnInit {
     lastBid: number;
     country: string;
     province: string;
-    image: string;
+    images: string[];
     expireDate: string;
     createdAt: string;
   } | undefined;
   bids: any[] = [];
 
+  image_url: string = '';
+
   constructor(private auctionService: AuctionService,) { }
 
   ngOnInit() {
+    this.image_url = "http://localhost:1338/api/download/image/" + this.auction?.images[0];
+
     this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe(bids => {
       this.bids = bids;
     })

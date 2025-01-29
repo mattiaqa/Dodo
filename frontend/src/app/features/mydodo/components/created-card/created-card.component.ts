@@ -20,6 +20,7 @@ import {CurrencyPipe, DatePipe} from '@angular/common';
 export class CreatedCardComponent implements OnInit, OnDestroy {
   @Input() auction: {
     auctionId: string;
+    title: string;
     book: {
       title: string;
       _id: string;
@@ -46,10 +47,13 @@ export class CreatedCardComponent implements OnInit, OnDestroy {
   chart: any = [];
   amounts: number[] = [];
   dates: string[] = [];
+  image_url: string = '';
 
   constructor(private auctionService: AuctionService) {}
 
   ngOnInit() {
+
+    this.image_url = "http://localhost:1338/api/download/image/" + this.auction?.images[0];
 
   this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe({
     next: (bids) => {

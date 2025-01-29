@@ -1,16 +1,24 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {AuctionService} from '../../../../services/auction.service';
 import Chart from 'chart.js/auto';
+import {CurrencyPipe} from '@angular/common';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-ongoing-card',
-  imports: [],
+  imports: [
+    CurrencyPipe,
+    FaIconComponent,
+    RouterLink
+  ],
   templateUrl: './ongoing-card.component.html',
   styleUrl: './ongoing-card.component.scss'
 })
 export class OngoingCardComponent implements OnInit, OnDestroy {
   @Input() auction: {
     auctionId: string;
+    title: string;
     book: {
       title: string;
       _id: string;

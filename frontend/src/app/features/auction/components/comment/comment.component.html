@@ -21,7 +21,7 @@
     <div *ngFor="let comment of comments" class="flex items-start space-x-4">
       <!-- Profile Picture -->
       <img
-        [src]="comment?.profilePicture || 'https://via.placeholder.com/40'"
+        [src]="profilePicture || 'https://via.placeholder.com/40'"
         alt="Profile Picture"
         class="w-10 h-10 rounded-full shadow-md">
 

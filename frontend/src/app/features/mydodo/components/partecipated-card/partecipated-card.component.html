@@ -2,13 +2,13 @@
   <div class="card border border-gray-200 rounded-lg overflow-hidden w-full">
     <div class="flex flex-col lg:flex-row items-center justify-center">
       <!-- Image Section -->
-      <img alt="Auction Image" class="object-cover w-60 h-max rounded-lg shadow-md ml-2"
-           src="https://picsum.photos/250/200"/>
+      <img alt="Auction Image" class="w-64 h-56 rounded-lg shadow-md"
+           src="{{image_url}}"/>
 
       <div class=" ml-6 flex flex-col">
         <!-- Auction Title -->
         <h2 class="text-4xl font-semibold primary-color mt-0">
-          {{ auction?.book?.title || 'Title not available' }}
+          {{ auction?.title || 'Title not available' }}
         </h2>
 
         <p class="text-md text-gray-500">

@@ -35,7 +35,7 @@ export class CommentComponent implements OnInit {
       this.comments = comments;
     });
 
-    this.storageService.getUser().avatar;
+    this.profilePicture = "http://localhost:1338/api/download/avatar/" + this.storageService.getUser().avatar;
   }
 
   submitComment() {
