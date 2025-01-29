@@ -1,13 +1,18 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "type": "chrome",
+  "configurations": [
+    {
+        "type": "node-terminal",
+        "name": "Esegui script: dev",
         "request": "launch",
-        "name": "Angular Debug",
-        "url": "http://localhost:4200",
-        "webRoot": "${workspaceFolder}"
-      }
-    ]
-  }
-  
+        "command": "yarn dev",
+        "cwd": "${workspaceFolder}\\backend"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Angular Debug",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}

@@ -68,38 +68,6 @@ export async function searchBook(query: z.infer<typeof searchBookSchema>) : Prom
         _id: 0      // Escludi il campo originale _id
     }
 
-    /*
-    // Se è specificato un ISBN, cerca corrispondenza esatta
-    if (ISBN) {
-        const book = (await BookModel.aggregate([
-            {
-              $match: { ISBN }
-            },
-            {
-                $project: project
-            },
-        ]))[0];  // Prendi il primo (e unico) elemento
-        if (book) {
-            return [book]; // Ritorna un array con un singolo risultato
-        }
-    }
-
-    // Se non c'è ISBN, cerca per titolo (match parziale)
-    if (title) {
-        const books = await BookModel.aggregate([
-            {
-                $match: {
-                    title: { $regex: title, $options: "i" } // Ricerca case-insensitive sul titolo
-                }
-            },
-            {
-                $project: project
-            }
-        ]);
-        if(books)
-            return books; // Ritorna tutti i risultati che corrispondono
-    }*/
-
     const books = await BookModel.aggregate([
         {
             $match: match // Applica il filtro dinamico
@@ -116,33 +84,51 @@ export async function searchBook(query: z.infer<typeof searchBookSchema>) : Prom
 export async function searchBookOnline(query: z.infer<typeof searchBookSchema>) : Promise<SearchBookResult[]> {
     const GOOGLE_BOOKS_API_BASE_URL = "https://www.googleapis.com/books/v1/volumes";
     const sanitizedQuery = sanitize(query)
-    const { title, ISBN } = sanitizedQuery;
+    const { title, ISBN, author, publisher } = sanitizedQuery;
     try{
-        let response;
-    
-        // Cerca per ISBN
+        // Costruisci la query dinamica
+        const queryParts: string[] = [];
+
         if (ISBN) {
-          response = await axios.get(`${GOOGLE_BOOKS_API_BASE_URL}?q=isbn:${ISBN}`);
+            queryParts.push(`isbn:${ISBN}`);
         }
-        // Cerca per titolo
-        else if (title) {
-          response = await axios.get(`${GOOGLE_BOOKS_API_BASE_URL}?q=intitle:${title}`);
+        if (title) {
+            queryParts.push(`intitle:${encodeURIComponent(title)}`);
         }
+        if (author) {
+            queryParts.push(`inauthor:${encodeURIComponent(author)}`);
+        }
+        if (publisher) {
+            queryParts.push(`inpublisher:${encodeURIComponent(publisher)}`);
+        }
+
+        // Combina i parametri in un'unica query
+        const queryString = queryParts.join("+");
+        const response = await axios.get(`${GOOGLE_BOOKS_API_BASE_URL}?q=${queryString}`);
 
         if (response?.data?.items?.length > 0) {
-            const books: SearchBookResult[] = response!.data.items.map((item: any) => ({
-              //id: item.id,
-              title: item.volumeInfo.title || "No title available",
-              ISBN: item.volumeInfo.industryIdentifiers?.find((id: any) => id.type === "ISBN_13")?.identifier || "No ISBN available",
-              authors: item.volumeInfo.authors || [],
-              publisher: item.volumeInfo.publisher || "Unknown publisher",
-              publishedDate: item.volumeInfo.publishedDate || "Unknown date",
-              language: item.volumeInfo.language || "Unknown language",
-              description: item.volumeInfo.description || "No description available",
-              imageLinks: item.volumeInfo.imageLinks || "No images",
-            }));
+            const books: SearchBookResult[] = response!.data.items.map((item: any) => {
+                const isbn = item.volumeInfo.industryIdentifiers?.find(
+                    (id: any) => id.type === "ISBN_13"
+                )?.identifier;
 
-            return books;
+                // Escludi gli elementi senza ISBN
+                if (!isbn) return null;
+        
+                return {  
+                    //id: item.id,
+                    title: item.volumeInfo.title || "No title available",
+                    ISBN: isbn,
+                    authors: item.volumeInfo.authors || [],
+                    publisher: item.volumeInfo.publisher || "Unknown publisher",
+                    publishedDate: item.volumeInfo.publishedDate || "Unknown date",
+                    language: item.volumeInfo.language || "Unknown language",
+                    description: item.volumeInfo.description || "No description available",
+                    imageLinks: item.volumeInfo.imageLinks || "No images",
+                }
+            });
+
+            return books.filter((book) => book !== null) as SearchBookResult[];;
         }
       
         // Se non ci sono risultati

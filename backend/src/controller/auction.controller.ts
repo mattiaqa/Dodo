@@ -18,7 +18,9 @@ import { unlink } from "fs/promises";
 import { saveFilesToDisk } from "../utils/multer";
 import {updateUser} from "../service/user.service"
 import path from "path";
-import { searchBook } from "../service/book.service";
+import { createOrGetBook, searchBook } from "../service/book.service";
+import { verifyJwt } from "../utils/jwt.utils";
+import { BookSchema } from "../schema/book.schema";
 
 
 export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof createAuctionSchema>>, res: Response) {
@@ -32,8 +34,18 @@ export async function createAuctionHandler(req: Request<{}, {}, z.infer<typeof c
             const uploadedImages = req.files as Express.Multer.File[]; // Le immagini caricate
             uploadedImagesPaths = await saveFilesToDisk(uploadedImages, 'auctions'); // Salva i file nel file system
         }
+        
+        let bookId;
+        if(body.book)
+        {
+            const { decoded, valid, expired } = verifyJwt<BookSchema>(body.book);
+            if(decoded)
+            {
+                bookId = (await createOrGetBook(decoded))?._id;
+            }
+        }
 
-        const auction = await createAuction({...body, images: uploadedImagesPaths, seller: seller});
+        const auction = await createAuction({...body, images: uploadedImagesPaths, seller, book: bookId});
 
         res.status(200).send({
             "Message":"The auction was created successfully",

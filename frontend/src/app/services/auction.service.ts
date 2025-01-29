@@ -10,6 +10,10 @@ const API_URL = '//localhost:1338/api/auction';
 export class AuctionService {
   constructor(private http: HttpClient) {}
 
+  createAuction(body: any): Observable<any> {
+    return this.http.post(API_URL + '/', body, { withCredentials: true });
+  }
+
   getAllAuction(): Observable<any> {
     return this.http.get(API_URL, { withCredentials: true });
   }

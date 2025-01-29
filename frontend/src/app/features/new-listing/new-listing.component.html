@@ -1,6 +1,124 @@
-<div class="fullscreen-popup">
-  <div class="popup-content p-6 w-full max-w-lg bg-white rounded-lg shadow-lg">
-    <button class="close-button absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-900" (click)="onClose()">&times;</button>
-    <h2 class="text-center text-xl font-semibold mb-6">New Listing</h2>
+<app-navbar></app-navbar>
+<div class="container mx-auto my-10 p-6 bg-base-100 shadow-xl rounded-xl flex flex-col gap-6">
+  <!-- Titolo e Sottotitolo -->
+  <div class="text-center space-y-2">
+    <h1 class="text-3xl font-bold">Crea la tua vendita</h1>
+    <p class="text-lg text-gray-500">Per iniziare, dicci qualcosa in più sul tuo libro</p>
+  </div>
+
+  <!-- Layout principale -->
+  <div class="flex flex-col lg:flex-row gap-6">
+    <!-- Form a sinistra -->
+    <div class="flex-1 bg-base-200 p-6 rounded-lg shadow-inner">
+      <form [formGroup]="bookSearchGroup" class="space-y-6">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Titolo</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="title" 
+            placeholder="Inserisci il titolo del libro" 
+            class="input input-bordered w-full" 
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Autore</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="author" 
+            placeholder="Inserisci l'autore del libro" 
+            class="input input-bordered w-full" 
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Editore</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="publisher" 
+            placeholder="Inserisci l'editore del libro" 
+            class="input input-bordered w-full" 
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">ISBN</span>
+          </label>
+          <input 
+            type="text" 
+            formControlName="ISBN" 
+            placeholder="Inserisci il codice ISBN" 
+            class="input input-bordered w-full" 
+          />
+        </div>
+      </form>
+    </div>
+
+    <!-- Colonna dei risultati a destra -->
+    <div class="flex-1 bg-base-200 p-6 rounded-lg shadow-inner overflow-y-auto max-h-[500px]">
+      <!-- Placeholder iniziale -->
+      <ng-container *ngIf="!localSearchResults?.length && !onlineSearchResults?.length">
+        <p class="text-center text-gray-500 italic">Nessun risultato trovato. Controlla i parametri della tua ricerca</p>
+      </ng-container>
+
+      <!-- Risultati dalla libreria di Dodo -->
+      <ng-container *ngIf="localSearchResults?.length">
+        <h2 class="text-xl font-bold mb-4">Risultati dalla libreria di Dodo</h2>
+        <div *ngFor="let book of localSearchResults" class="card card-side bg-base-100 shadow-md mb-4" (click)="selectBook(book)">
+          <!-- Immagine -->
+          <figure>
+            <img 
+              [src]="book.imageLinks?.thumbnail || 'https://sciendo.com/product-not-found.png'" 
+              alt="Book Image"
+            />
+          </figure>
+        
+          <!-- Corpo della card -->
+          <div class="card-body">
+            <h3 class="card-title truncate" [title]="book.title">{{ book.title }}</h3>
+            <p class="truncate"><strong>Autore:</strong> {{ book.authors?.join(', ') || 'N/A' }}</p>
+            <p class="truncate"><strong>Editore:</strong> {{ book.publisher || 'N/A' }}</p>
+            <p class="truncate"><strong>ISBN:</strong> {{ book.ISBN || 'N/A' }}</p>
+            <p class="truncate"><strong>Anno:</strong> {{ book.publishedDate || 'N/A' }}</p>
+          </div>
+        </div>     
+      </ng-container>
+
+      <!-- Risultati trovati online -->
+      <ng-container *ngIf="onlineSearchResults?.length">
+        <h2 class="text-xl font-bold mb-4">Risultati trovati online</h2>
+        <div *ngFor="let book of onlineSearchResults" class="card card-side bg-base-100 shadow-md mb-4" (click)="selectBook(book)">
+          <figure>
+            <img 
+              [src]="book.imageLinks?.thumbnail || 'https://sciendo.com/product-not-found.png'" 
+              alt="Book Image"
+            />
+          </figure>
+          <!-- Corpo della card -->
+          <div class="card-body">
+            <h3 class="card-title truncate" [title]="book.title">{{ book.title }}</h3>
+            <p class="truncate"><strong>Autore:</strong> {{ book.authors?.join(', ') || 'N/A' }}</p>
+            <p class="truncate"><strong>Editore:</strong> {{ book.publisher || 'N/A' }}</p>
+            <p class="truncate"><strong>ISBN:</strong> {{ book.ISBN || 'N/A' }}</p>
+            <p class="truncate"><strong>Anno:</strong> {{ book.publishedDate || 'N/A' }}</p>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Pulsante Continua -->
+  <div class="text-center">
+    <button 
+      class="btn btn-secondary btn-wide" 
+      (click)="continueWithoutMatch()"
+      >
+      Continua senza una corrispondenza
+    </button>
   </div>
 </div>
+<app-footer></app-footer>

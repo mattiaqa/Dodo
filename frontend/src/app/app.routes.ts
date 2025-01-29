@@ -8,6 +8,9 @@ import {AuctionComponent} from './features/auction/auction.component';
 import {MyDodoComponent} from './features/mydodo/mydodo.component';
 import {ProfileComponent} from './features/profile/profile.component';
 import {authGuard} from './guards/auth.guard';
+import { NewListingComponent } from './features/new-listing/new-listing.component';
+import { CreateAuctionComponent } from './features/new-listing/auction-data/auction-data.component';
+import { SuccessPageComponent } from './features/new-listing/success-page/success-page.component';
 import {ChatComponent} from './features/chat/chat.component';
 
 export const routes: Routes = [
@@ -21,4 +24,7 @@ export const routes: Routes = [
   { path: 'mydodo', component: MyDodoComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'chats', component: ChatComponent, canActivate: [authGuard] },
+  { path: 'newListing', component: NewListingComponent, canActivate: [authGuard] },
+  { path: 'newListing/auctionData', component: CreateAuctionComponent, canActivate: [authGuard] },
+  { path: 'CreateAuctionSuccess', component: SuccessPageComponent } 
 ];

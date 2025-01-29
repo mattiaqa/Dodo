@@ -1,4 +1,136 @@
-.fullscreen-popup {
+.container {
+  max-width: 1200px; /* Larghezza tipica per un sito desktop */
+  margin: auto;
+  padding: 40px; /* Spaziatura più ampia per maggiore respiro */
+  border: 1px solid #ccc;
+  border-radius: 12px; /* Angoli arrotondati più morbidi */
+  background-color: #f9f9f9; /* Colore di sfondo leggermente più chiaro */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Aggiungi un'ombra per profondità */
+}
+
+div {
+  margin-bottom: 20px; /* Aumenta lo spazio tra i campi */
+}
+
+label {
+  display: block;
+  margin-bottom: 8px; /* Più spazio tra etichetta e campo */
+  font-weight: bold; /* Metti in evidenza l'etichetta */
+  color: #333; /* Colore del testo più scuro per leggibilità */
+}
+
+input {
+  width: 100%;
+  padding: 12px; /* Maggiore spaziatura interna */
+  box-sizing: border-box;
+  border: 1px solid #ddd; /* Colore del bordo più chiaro */
+  border-radius: 6px; /* Angoli arrotondati */
+  font-size: 16px; /* Dimensione del testo leggermente più grande */
+}
+
+input:focus {
+  border-color: #007bff; /* Colore del bordo in focus */
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Effetto glow */
+}
+
+button {
+  padding: 12px 30px; /* Spaziatura maggiore per i pulsanti */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px; /* Angoli arrotondati */
+  font-size: 16px; /* Dimensione del testo più grande */
+  cursor: pointer; /* Cambia il cursore al passaggio */
+  transition: background-color 0.3s; /* Animazione sul passaggio */
+}
+
+button:hover {
+  background-color: #0056b3; /* Colore leggermente più scuro al passaggio */
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed; /* Cambia il cursore per i pulsanti disabilitati */
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 90%; /* Adatta la larghezza per schermi più piccoli */
+    padding: 20px;
+  }
+
+  button {
+    width: 100%; /* Pulsanti a tutta larghezza sui dispositivi mobili */
+  }
+}
+
+/* Colonna dei risultati */
+.overflow-y-auto {
+  overflow-y: auto; /* Rendi l'elenco scorrevole verticalmente */
+  scrollbar-width: thin; /* Migliora lo stile della scrollbar */
+  scrollbar-color: #888 transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px; /* Larghezza della scrollbar */
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #bbb; /* Colore del pollice della scrollbar */
+  border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
+.card {
+  border: 1px solid #ddd; /* Aggiungi un bordo leggero alle card */
+  border-radius: 8px; /* Arrotondamenti più morbidi */
+  height: 192px; /* Altezza minima basata sull'immagine */
+  display: flex; /* Layout orizzontale */
+  overflow: hidden; /* Nasconde il contenuto in eccesso */
+}
+
+/* Contenitore della figura */
+.card-side figure {
+  width: 144px; /* Dimensione fissa per il lato immagine */
+  //height: 144%; /* Altezza piena rispetto alla card */
+  flex-shrink: 0;
+  margin: 0; /* Rimuove i margini */
+  padding: 0; /* Rimuove il padding */
+  overflow: hidden; /* Nasconde eventuali parti dell'immagine in eccesso */
+}
+
+/* Immagine */
+.card-side img {
+  width: 100%; /* Riempie tutta la larghezza */
+  height: 100%; /* Riempie tutta l'altezza */
+  object-fit: fill; /* Forza l'immagine a occupare tutto lo spazio */
+  margin: 0; /* Nessun margine */
+  border-radius: 0; /* Nessun arrotondamento */
+}
+
+/* Corpo della card */
+.card-body {
+  padding: 14px;
+  //flex: 1; /* Occupa lo spazio rimanente */
+  overflow: hidden; /* Nasconde il contenuto oltre i limiti */
+}
+
+/* Troncamento del testo */
+.truncate {
+  white-space: nowrap; /* Nessun a capo */
+  overflow: hidden; /* Nasconde il testo eccedente */
+  text-overflow: ellipsis; /* Aggiunge i tre puntini */
+}
+
+
+
+
+
+/*.fullscreen-popup {
   position: fixed;
   top: 0;
   left: 0;
@@ -72,3 +204,4 @@ input[type="text"], input[type="file"] {
     @apply w-full;
   }
 }
+*/

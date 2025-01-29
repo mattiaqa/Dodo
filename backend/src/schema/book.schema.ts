@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 const bookSchema = object({
     title: string({
-        required_error: "Name is required!",
+        required_error: "Title is required!",
     }),
     subtitle: string().optional(),
     authors: array(string(), {

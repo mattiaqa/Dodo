@@ -48,11 +48,8 @@ const baseAuctionSchema = object({
     }, date({
         required_error: "Expire date is required!",
     })),
-    book: preprocess(objectId, string().optional()), // Sanifica l'ObjectId
-    //book: object(bookBaseFields).optional(),
-    /*book: string()
-        .regex(/^\d{13}$/, { message: "Book must be a valid ISBN (13 numeric digits)" })
-        .optional(),*/
+    //book: preprocess(objectId, string().optional()), // Sanifica l'ObjectId
+    book: string().optional(),
 })
 
 export const createAuctionSchema = baseAuctionSchema.superRefine((obj, ctx) => {

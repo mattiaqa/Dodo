@@ -63,7 +63,7 @@
           </a>
         </li>
         <li *ngIf="isLoggedIn" (click)="isPopupOpen = true" tabindex="0">
-          <a href="#">
+          <a href="/newListing">
             <fa-icon [icon]="['fas', 'plus']" class="mr-2"></fa-icon>
             New Listing
           </a>
@@ -89,5 +89,4 @@
       </ul>
     </div>
   </div>
-  <app-new-listing *ngIf="isPopupOpen" (closePopup)="isPopupOpen = false"></app-new-listing>
 </div>

@@ -6,6 +6,7 @@ import logger from "../utils/logger";
 import BookModel from "../models/book.model";
 import { createBook, createOrGetBook, searchBook, searchBookOnline, SearchBookResult } from "../service/book.service";
 import { z } from "zod";
+import { signJwt } from "../utils/jwt.utils";
 
 export async function addBookHandler(req: Request<{},{}, z.infer<typeof createBookSchema>>, res: Response) {
     try
@@ -54,20 +55,14 @@ export async function searchBookHandler(
         const { title, ISBN } = req.query;
 
         if (!title && !ISBN) {
-            res.status(400).send({
-                message: "You must provide either a title or an ISBN to search."
+            res.status(200).send({
+                message: "Books found",
+                results: []
             });
             return;
         }
 
         const books = await searchFunction(req.query);
-
-        if (books.length === 0) {
-            res.status(404).send({
-                message: "No books found matching the search criteria."
-            });
-            return;
-        }
 
         res.status(200).send({
             message: "Books found",
@@ -81,42 +76,19 @@ export async function searchBookHandler(
     }
 }
 
-
-/*
-export async function getBookInfoHandler (req: Request<GetBookInfoInput['body']>, res: Response){
+export async function serializeBookHandler(req: Request<{}, {}, z.infer<typeof createBookSchema>>, res: Response)
+{
     try {
-        const ISBN = req.body.ISBN.replace(/-/g, '');
-        const apiKey = config.get('googleBooksApiKey');
-
-        if(ISBN.length === 0) {
-            res.sendStatus(400);
-            return;
-        }
-
-        axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${ISBN}&key=${apiKey}`)
-            .then((response) => {
-                if(response.data.totalItems === 0) {
-                    res.sendStatus(404);
-                    return;
-                }
-
-                const filteredData = response.data.items.map((item: any) => ({
-                    title: item.volumeInfo.title || 'Unknown',
-                    authors: item.volumeInfo.authors || [],
-                    publisher: item.volumeInfo.publisher || 'Unknown',
-                    publishedDate: item.volumeInfo.publishedDate || 'Unknown',
-                    language: item.volumeInfo.language || 'Unknown',
-                    description: item.volumeInfo.description || 'Unknown',
-                }));
-                res.send(filteredData);
-            })
-            .catch(error => {
-                console.log(error);
-                res.sendStatus(500);
-            });
-    } catch (e) {
-        logger.error(e);
-        res.status(500).send({message: "Internal Server Error"});
+        const book = req.body
+        const token = signJwt(
+            book,
+            {expiresIn: '1h'}
+        )
+        res.cookie("selectedBook", JSON.stringify({title: book.title, token}));
+        res.send(JSON.stringify({title: book.title, token}));
+    } catch (error) {
+    console.error('Error serializing book:', error);
+    res.status(500).json({ message: 'Internal server error' });
+    return;
     }
 }
-*/

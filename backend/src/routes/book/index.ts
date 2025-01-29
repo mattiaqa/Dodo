@@ -13,6 +13,7 @@ router.delete('/:isbn', requireAdmin, Controller.deleteBookHandler);
 
 router.get("/search/local/", requireUser, Validator.validateQuery(searchBookSchema), (req, res) => Controller.searchBookHandler(req, res, searchBook));
 router.get("/search/online/", requireUser, Validator.validateQuery(searchBookSchema), (req, res) => Controller.searchBookHandler(req, res, searchBookOnline))
+router.post("/serializeBook", requireUser, Validator.validateBody(createBookSchema), Controller.serializeBookHandler);
 router.post('/add', requireUser, Validator.validateBody(createBookSchema), Controller.addBookHandler);
 
 export default router;

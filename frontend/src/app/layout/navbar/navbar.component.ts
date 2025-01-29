@@ -19,8 +19,7 @@ import {NewListingComponent} from '../../features/new-listing/new-listing.compon
     RouterLink,
     NgIf,
     ReactiveFormsModule,
-    NotificationComponent,
-    NewListingComponent
+    NotificationComponent
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'

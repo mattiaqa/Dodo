@@ -12,10 +12,7 @@ import { loginSchema } from "../schema/session.schema";
 import {notifyUser} from "../service/notification.service";
 
 
-export async function createUserHandler(
-    req: Request<{}, {}, CreateUserInput>,
-    res: Response
-    ) {
+export async function createUserHandler(req: Request<{}, {}, CreateUserInput>, res: Response) {
     try {
         const user = await createUser(req.body);
         const link = await createConfirmationLink(user.email);
