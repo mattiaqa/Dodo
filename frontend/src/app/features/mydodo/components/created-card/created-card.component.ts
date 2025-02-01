@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {RouterLink} from '@angular/router';
 import Chart from 'chart.js/auto';
@@ -39,43 +39,44 @@ export class CreatedCardComponent implements OnInit, OnDestroy {
     interactions: number;
     likes: number;
     views: number;
+    reservePrice: number;
   } | undefined;
 
   timeLeftPercentage: number = 0;
   timeLeft: string = '';
-  private timerInterval: any;
   chart: any = [];
   amounts: number[] = [];
   dates: string[] = [];
   image_url: string = '';
+  private timerInterval: any;
 
-  constructor(private auctionService: AuctionService) {}
+  constructor(private auctionService: AuctionService) {
+  }
 
   ngOnInit() {
-
     this.image_url = "http://localhost:1338/api/download/image/" + this.auction?.images[0];
 
-  this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe({
-    next: (bids) => {
-      for (const bid of bids) {
-        this.amounts!.push(Number(bid.amount));
-        this.dates!.push(bid.date.toString());
-      }
+    this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe({
+      next: (bids) => {
+        for (const bid of bids) {
+          this.amounts!.push(Number(bid.amount));
+          this.dates!.push(bid.date.toString());
+        }
 
-      if(this.amounts.length == 0 && this.dates.length == 0) {
-        this.amounts!.push(0);
-        this.dates!.push('');
-      }
+        if (this.amounts.length == 0 && this.dates.length == 0) {
+          this.amounts!.push(0);
+          this.dates!.push('');
+        }
 
-      if (this.amounts.length > 0 && this.dates.length > 0) {
-        this.chart = this.initializeChart();
-        this.chart.update();
+        if (this.amounts.length > 0 && this.dates.length > 0) {
+          this.chart = this.initializeChart();
+          this.chart.update();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching bids:', err);
       }
-    },
-    error: (err) => {
-      console.error('Error fetching bids:', err);
-    }
-  });
+    });
     this.updateTimeLeft();
 
     this.timerInterval = setInterval(() => {

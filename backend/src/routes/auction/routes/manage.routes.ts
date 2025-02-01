@@ -8,8 +8,6 @@ import { uploadAuctionImages } from '../../../utils/multer';
 
 const router = express.Router();
 
-//crea un'asta
-//router.post('/', requireUser, Validator.validateBody(createAuctionSchema), Controller.createAuctionHandler);
 router.post('/', requireUser, (req, res, next) => {
     uploadAuctionImages(req, res, (err) => {
         if (err) {
@@ -22,11 +20,8 @@ router.post('/', requireUser, (req, res, next) => {
     });
 }, Validator.validateBody(createAuctionSchema), Controller.createAuctionHandler);
 
-
-//modifica un'asta
 router.put('/:auctionId', Validator.validateBody(editAuctionSchema), Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, Controller.editAuctionHandler);
 
-//elimina un'asta
 router.delete('/:auctionId', Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, Controller.deleteAuctionHandler);
 
 router.post('/:auctionId/like', Validator.validateParams(getAuctionSchema), requireUser, Controller.likeAuctionHandler);

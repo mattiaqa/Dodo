@@ -7,7 +7,7 @@ import { acceptInvitationSchema, invitationSchema } from '../../../schema/invita
 
 const router = express.Router();
 
-router.post('invitation/invite', [requireAdmin, Validator.validateBody(invitationSchema)], Controller.inviteUserHandler);
-router.get('invitation/accept/:token', [requireUser, Validator.validateParams(acceptInvitationSchema)], Controller.acceptInviteHandler);
+router.post('/invitation/invite', [requireAdmin, Validator.validateBody(invitationSchema)], Controller.inviteUserHandler);
+router.get('/invitation/accept/:token', [requireUser, Validator.validateParams(acceptInvitationSchema)], Controller.acceptInviteHandler);
 
 export default router;

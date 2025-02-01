@@ -14,6 +14,7 @@ import {StorageService} from '../../../../storage/storage.service';
     DatePipe
   ],
   templateUrl: './chat-content.component.html',
+  standalone: true,
   styleUrls: ['./chat-content.component.scss']
 })
 export class ChatContentComponent implements OnInit, OnChanges {
@@ -21,22 +22,22 @@ export class ChatContentComponent implements OnInit, OnChanges {
   messages: any[] = [];
   newMessage: string = '';
   currentUser: string = '';
+  auctionId: string = '';
+  chatId: string = '';
 
   constructor(private chatService: ChatService, private storageService: StorageService) { }
 
   ngOnInit(): void {
-    if (this.selectedChat) {
-      this.chatService.getChatContent(this.selectedChat.auctionId).subscribe(messages => {
+    this.chatService.getChatContent(this.chatId).subscribe(messages => {
         this.messages = messages.messages;
       });
 
-      this.currentUser = this.storageService.getUser().name
-    }
+    this.currentUser = this.storageService.getUser().name
   }
 
   ngOnChanges(): void {
     if (this.selectedChat) {
-      this.chatService.getChatContent(this.selectedChat.auctionId).subscribe(messages => {
+      this.chatService.getChatContent(this.selectedChat.chatId).subscribe(messages => {
         this.messages = messages.messages;
       });
     }
@@ -46,7 +47,7 @@ export class ChatContentComponent implements OnInit, OnChanges {
     if (this.newMessage.trim()) {
       const newMsg = {
         sender: {
-          name: 'You'
+          name: this.currentUser
         },
         createdAt: new Date(),
         content: this.newMessage.trim(),

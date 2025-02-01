@@ -7,6 +7,7 @@ import BookRoutes from './book';
 
 import DownloadRoutes from "./download/routes/download.routes";
 import NotificationRoutes from "./notification/routes/notification.routes";
+import StatisticRoutes from "./statistic/routes/statistic.routes";
 
 import csurf from 'csurf';
 
@@ -22,11 +23,12 @@ function routes(app: Express) {
     });
 
     app.use('/api/user', UserRoutes);
-    app.use('/api/auction', AuctionRoutes);
+    app.use('/api/auction', csrfProtection, AuctionRoutes);
     app.use('/api/chat', csrfProtection, ChatRoutes);
     app.use('/api/download', csrfProtection, DownloadRoutes);
     app.use('/api/notification', csrfProtection, NotificationRoutes);
-    app.use('/api/book', BookRoutes);
+    app.use('/api/book', csrfProtection, BookRoutes);
+    app.use('/api/statistics', csrfProtection, StatisticRoutes);
 }
 
 export default routes;

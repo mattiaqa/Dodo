@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
@@ -13,6 +13,7 @@ import { ChatContentComponent } from './components/chat-content/chat-content.com
     ChatContentComponent
   ],
   templateUrl: './chat.component.html',
+  standalone: true,
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent {

@@ -1,30 +1,48 @@
 <div *ngIf="selectedChat; else noChatSelected" class="flex flex-col bg-base-600 p-4" [style.height]="'calc(100vh - 94px - 94px)'">
   <!-- Chat Messages Container -->
-  <div class="flex-1 overflow-y-auto space-y-4 p-4 bg-base-600 rounded-lg shadow-lg">
-    <div *ngFor="let message of messages" class="chat" [ngClass]="{'chat-start': (message.sender.name == currentUser), 'chat-end': (message.sender.name != currentUser)}">
+  <div class="flex-1 overflow-y-auto space-y-4 p-4 bg-base-600 rounded-lg shadow-xl">
+    <div *ngFor="let message of messages" class="chat" [ngClass]="{'chat-start': (message.sender.name != currentUser), 'chat-end': (message.sender.name == currentUser)}">
 
       <!-- Message Content -->
       <div class="chat-header">
         <time class="text-xs opacity-50 ml-2">{{ message.createdAt | date: 'shortTime' }}</time>
       </div>
-      <div class="chat-bubble" [ngClass]="{'bg-primary text-primary-content': (message.sender.name == currentUser), 'bg-secondary text-secondary-content': (message.sender.name != currentUser)}">
+      <div class="chat-bubble" [ngClass]="{'bg-primary text-primary-content': (message.sender.name != currentUser), 'bg-secondary text-secondary-content': (message.sender.name == currentUser)}">
         {{ message.content }}
       </div>
     </div>
   </div>
 
   <!-- Input Box -->
-  <div class="mt-2 bg-base-100 p-4 rounded-lg shadow-lg">
-    <div class="join w-full">
+  <div class="mt-4 bg-base-100 p-4 rounded-xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
+    <div class="join w-full relative">
+
+      <!-- Input Field -->
       <input
         [(ngModel)]="newMessage"
         (keydown.enter)="sendMessage()"
         type="text"
-        class="input input-bordered join-item w-full"
-        placeholder="Type your message..."
+        class="input input-lg join-item w-full pl-12 pr-24
+             border-2 border-primary/20 hover:border-primary/40
+             focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20
+             transition-all duration-200 rounded-2xl placeholder:opacity-60"
+        placeholder="Type your message here..."
       />
-      <button (click)="sendMessage()" class="btn btn-primary join-item">
-        Send
+
+      <!-- Send Button -->
+      <button
+        (click)="sendMessage()"
+        class="btn btn-primary join-item rounded-xl ml-2
+             transform transition-all duration-200 hover:scale-105 hover:shadow-lg
+             absolute right-1 top-2 bottom-1 px-4"
+        [class.btn-disabled]="!newMessage"
+      >
+      <span class="flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="primary-color">
+          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+        </svg>
+        <span class="hidden md:inline">Send</span>
+      </span>
       </button>
     </div>
   </div>

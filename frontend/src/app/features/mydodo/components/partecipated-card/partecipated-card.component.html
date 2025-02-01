@@ -11,16 +11,6 @@
           {{ auction?.title || 'Title not available' }}
         </h2>
 
-        <p class="text-md text-gray-500">
-          <fa-icon [icon]="['fas', 'circle-check']" class="text-primary-500"></fa-icon>
-          Condition: <span class="font-semibold text-primary-600">{{ auction?.condition || 'Not available' }}</span>
-        </p>
-
-        <p class="text-md text-gray-500">
-          <fa-icon [icon]="['fas', 'map-marker-alt']" class="mr-2 text-primary-500"></fa-icon>
-          <span>{{ auction?.country + ', ' + auction?.province || 'Location not available' }}</span>
-        </p>
-
         <!-- Stats Section -->
         <div class="grid grid-cols-4 text-sm text-gray-600 justify-items-center mb-2 ml-64">
           <div class="stats scale-75">
@@ -29,8 +19,10 @@
 
               </div>
               <div class="stat-title">Last Bid</div>
-              <div class="stat-value">{{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</div>
-              <div class="stat-desc">EUR</div>
+              <div class="stat-value">
+                {{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}
+              </div>
+              <div class="stat-desc text-sm">/ {{ auction?.reservePrice | currency:'EUR':'symbol':'1.2-2' }}</div>
             </div>
 
             <div class="stat">
@@ -39,7 +31,6 @@
               </div>
               <div class="stat-title">Number of bids</div>
               <div class="stat-value">{{ bids.length || 0 }}</div>
-              <div class="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
             <div class="stat">

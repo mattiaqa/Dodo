@@ -11,10 +11,10 @@
       <div class="search-bar">
         <div class="input-container">
           <div class="input-group">
-            <input 
-              class="search-input" 
-              placeholder="Search an auction..." 
-              type="text" 
+            <input
+              class="search-input"
+              placeholder="Search an auction..."
+              type="text"
               name="auctionTitle"
               [(ngModel)]="filters.auctionTitle"
               maxlength="100"
@@ -27,9 +27,7 @@
   </form>
 
   <div class="navbar-end pe-4 flex align-items-center">
-    @if (isLoggedIn) {
-      <app-notification></app-notification>
-    }
+      <app-notification *ngIf="isLoggedIn"></app-notification>
     <div class="dropdown dropdown-end pe-2">
       <div class="icon-container" role="button" tabindex="0">
         <fa-icon [icon]="['fas', 'bars']" class="menu-icon"></fa-icon>
@@ -60,7 +58,7 @@
           </a>
         </li>
         <li *ngIf="isLoggedIn">
-          <a href="/chats">
+          <a href="/chats/all">
             <fa-icon [icon]="['fas', 'message']" class="mr-2"></fa-icon>
             Chats
           </a>

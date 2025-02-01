@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-const API_URL = 'http://localhost:1338/api/user/';
+const API_URL = '//localhost:1338/api/user/';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,22 @@ export class UserService {
   }
 
   setUserProfilePicture(body: any): Observable<any>{
-    return this.http.post(API_URL + 'avatar', body, { withCredentials: true });   
+    return this.http.post(API_URL + 'avatar', body, { withCredentials: true });
+  }
+
+  getAllActiveUser(): Observable<any> {
+    return this.http.get(API_URL + 'all', { withCredentials: true });
+  }
+
+  upgradeToModerator(email: string): Observable<any> {
+    return this.http.post(API_URL + 'invitation/invite', {email: email}, { withCredentials: true });
+  }
+
+  deleteUser(userId: string): Observable<any> {
+    return this.http.delete(API_URL + userId + '/delete', { withCredentials: true });
+  }
+
+  banUser(userId: string): Observable<any> {
+    return this.http.post(API_URL + '/ban', {userId: userId}, { withCredentials: true });
   }
 }

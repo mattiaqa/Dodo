@@ -21,7 +21,11 @@
     <div *ngFor="let comment of comments" class="flex items-start space-x-4">
       <!-- Profile Picture -->
       <img
-        [src]="profilePicture || 'https://via.placeholder.com/40'"
+        [src]="comment?.avatar ?
+        (comment.avatar.startsWith('https://ui-avatars.com')
+            ? comment.avatar
+            : 'http://localhost:1338/api/download/avatar/' + comment.avatar)
+        : 'http://localhost:1338/api/download/avatar/default-avatar.jpg'"
         alt="Profile Picture"
         class="w-10 h-10 rounded-full shadow-md">
 

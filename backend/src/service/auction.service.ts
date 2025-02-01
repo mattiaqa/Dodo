@@ -179,3 +179,16 @@ export async function setWinner(winner: BidDocument) {
         throw new Error(e.message);
     }
 }
+
+export async function getAuctionByIdUnpopulated(id: string)
+{
+    try {
+        const query: FilterQuery<AuctionDocument> = { auctionId: id };
+        const result = await AuctionModel.findOne(query);
+
+        return result as unknown as AuctionDocument;
+    } catch (e:any) {
+        logger.error(`Failed to find auction by ID: ${e.message}`);
+        throw new Error(e.message);
+    }
+}

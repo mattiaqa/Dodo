@@ -8,8 +8,9 @@ import { sendMessageSchema } from '../../../schema/message.schema';
 const router = express.Router();
 router.use(requireUser);
 
-router.get('/:auctionId/content', Controller.getChatHandler);
-router.post('/', Validator.validateBody(sendMessageSchema), Controller.sendMessageHandler);
+router.get('/:chatId/content', Controller.getChatContentHandler);
+router.get('/:auctionId/chat', Controller.getChatIdHandler);
 router.get('/all', Controller.getUserChatHandler);
+router.post('/send', Validator.validateBody(sendMessageSchema), Controller.sendMessageHandler);
 
 export default router;

@@ -16,6 +16,7 @@ export interface UserDocument extends mongoose.Document, UserInput {
   isAdmin: Boolean;
   avatar?: string;
   defaultAvatar:string;
+  isBanned:boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -28,6 +29,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
     savedAuctions: [{ type: String, ref: "Auction", required: false }],
     isAdmin: {type: Boolean, required: true, default: false},
     avatar: {type: String, required: false},
+    isBanned: {type: Boolean, required: true, default: false},
     defaultAvatar: {type: String, validate: {
       validator: function (value: string) {
         return !!value; // Verifica che defaultAvatar non sia vuoto

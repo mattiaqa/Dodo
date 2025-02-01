@@ -31,7 +31,7 @@ export async function validatePassword({email, password}: { email: string; passw
   return pick(user, ["_id", "email", "verified", "isAdmin", "name"]);
 }
 
-type SafeUser = Pick<UserDocument, "_id"|"email"|"isAdmin"|"verified"|"name"|"avatar"|"defaultAvatar"|"createdAt"|"updatedAt"|"savedAuctions"> & {id : UserDocument['_id']};
+type SafeUser = Pick<UserDocument, "_id"|"email"|"isAdmin"|"verified"|"name"|"avatar"|"defaultAvatar"|"createdAt"|"updatedAt"|"savedAuctions"|"isBanned"> & {id : UserDocument['_id']};
 async function getUser(query: FilterQuery<UserDocument>): Promise<SafeUser | null> {
   const result = await UserModel.aggregate([
     { $match: query }, // Filtra per ID
@@ -68,8 +68,12 @@ export async function getUserByEmail(email: string): Promise<SafeUser | null> {
   return await getUser({email});
 }
 
-export async function findUsers(query: FilterQuery<UserDocument>) {
-  return UserModel.find(query).lean();
+export async function findUsers(query: FilterQuery<UserDocument>): Promise<SafeUser[] | null> {
+  try {
+    return await UserModel.find(query);
+  } catch(e: any) {
+    throw new Error(e);
+  }
 }
 
 export async function deleteUser(query: FilterQuery<UserDocument>) {

@@ -7,11 +7,12 @@ import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-confirm-user',
-  imports:[
+  imports: [
     FaIconComponent,
     NgIf,
   ],
   templateUrl: './confirm-user.component.html',
+  standalone: true,
   styleUrls: ['./confirm-user.component.scss']
 })
 export class ConfirmUserComponent implements OnInit {

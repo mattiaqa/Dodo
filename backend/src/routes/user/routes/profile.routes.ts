@@ -4,6 +4,7 @@ import requireUser from '../../../middleware/requireUser';
 import { uploadProfilePicture } from '../../../utils/multer';
 import * as Validator from "../../../middleware/validateResource";
 import { getUserSchema } from '../../../schema/user.schema';
+import requireAdmin from "../../../middleware/requireAdmin";
 
 const router = express.Router();
 router.post('/avatar', requireUser, (req, res, next) => {
@@ -23,5 +24,7 @@ router.get('/winning', requireUser, Controller.getCurrentUserWinningHandler);
 router.get('/partecipated', requireUser, Controller.getCurrentUserPartecipationHandler);
 router.get('/ongoing', requireUser, Controller.getCurrentOngoingAuctionsHandler);
 router.get('/:userId/info', [requireUser, Validator.validateParams(getUserSchema)], Controller.getUserInfoHandler)
+
+router.get('/all', [requireAdmin], Controller.getAllUserHandler)
 
 export default router;

@@ -69,3 +69,14 @@ input[type="number"] {
   background-color: #D7AE95;
   text-decoration-color: #FFFFFF;
 }
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+editing-container {
+  z-index: 100;
+}

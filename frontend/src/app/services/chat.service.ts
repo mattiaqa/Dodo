@@ -15,10 +15,14 @@ export class ChatService {
   }
 
   getChatContent(auctionId: string): Observable<any> {
-    return this.http.get(API_URL + auctionId + '/content', { withCredentials: true });
+    return this.http.get(API_URL + auctionId + 'content', { withCredentials: true });
   }
 
   sendMessage(chatId: string, content: string): Observable<any> {
-    return this.http.post(API_URL, {chatId, content}, { withCredentials: true });
+    return this.http.post(API_URL + 'send', {chatId, content}, { withCredentials: true });
+  }
+
+  getChatId(auctionId: string): Observable<any> {
+    return this.http.get(API_URL + auctionId + '/chat', { withCredentials: true });
   }
 }

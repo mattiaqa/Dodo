@@ -10,8 +10,9 @@
         <h2 class="text-4xl font-semibold primary-color mt-0">
           {{ auction?.title || 'Title not available' }}
         </h2>
-        <div class="flex flex-col mt-2">
+        <div class="flex mt-2 items-baseline p-2">
           <p class="font-bold text-2xl">{{ auction?.lastBid | currency:'EUR':'symbol':'1.2-2' }}</p>
+          <p class="font-bold text-sm text-gray-400 ml-1">/{{ auction?.reservePrice | currency:'EUR':'symbol':'1.2-2' }}</p>
         </div>
 
         <!-- Stats Section -->
@@ -23,7 +24,6 @@
               </div>
               <div class="stat-title">Views</div>
               <div class="stat-value">{{auction?.views}} </div>
-              <div class="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
             <div class="stat">
@@ -32,7 +32,6 @@
               </div>
               <div class="stat-title">Interactions</div>
               <div class="stat-value">{{ auction?.interactions }}</div>
-              <div class="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
             <div class="stat">

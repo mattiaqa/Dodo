@@ -24,6 +24,7 @@ import { HomeComponent } from '../../features/home/home.component';
     FormsModule,
   ],
   templateUrl: './navbar.component.html',
+  standalone: true,
   styleUrl: './navbar.component.scss'
 })
 
@@ -36,7 +37,7 @@ export class NavbarComponent implements OnInit {
     auctionTitle: '',
   };
 
-  
+
   constructor(
     private storageService: StorageService,
     private authService: AuthService,
@@ -77,14 +78,14 @@ export class NavbarComponent implements OnInit {
 
     if (this.router.url !== this.searchRoute) {
       const savedSearchTerm = searchTerm;
-  
+
       this.router.events.pipe(
         filter(event => event instanceof NavigationEnd),
       ).subscribe(() => {
         this.filters.auctionTitle = savedSearchTerm;
         this.executeSearch(savedSearchTerm);
       });
-  
+
       this.router.navigate([this.searchRoute]);
     } else {
       this.executeSearch(searchTerm);
@@ -149,7 +150,7 @@ export class NavbarComponent implements OnInit {
   filters = {
     auctionTitle: '',
   };
-  
+
   constructor(
     private storageService: StorageService,
     private authService: AuthService,

@@ -4,16 +4,18 @@ import { FooterComponent } from '../../layout/footer/footer.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { CommentComponent } from './components/comment/comment.component';
-import {CurrencyPipe, NgClass, NgIf} from '@angular/common';
+import {CurrencyPipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import {StorageService} from '../../storage/storage.service';
 import {AuctionService} from '../../services/auction.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
+import {ChatService} from '../../services/chat.service';
+import {ToastComponent} from '../../layout/toast/toast.component';
 
 @Component({
   selector: 'app-auction',
   standalone: true,
-  imports: [NavbarComponent, FooterComponent, FaIconComponent, FormsModule, CommentComponent, NgIf, CurrencyPipe, NgClass],
+  imports: [NavbarComponent, FooterComponent, FaIconComponent, FormsModule, CommentComponent, NgIf, CurrencyPipe, NgClass, ToastComponent, NgForOf],
   templateUrl: './auction.component.html',
   styleUrl: './auction.component.scss'
 })
@@ -28,13 +30,22 @@ export class AuctionComponent implements OnInit {
   private timerInterval: any;
   userLike: boolean = false;
   isLoggedIn: boolean = false;
+  activeSlide = 0;
+  isEditing: boolean = false;
+
+  editingTitle: string = '';
+  editingDescription: string = '';
+  editingCondition: string = '';
+  editingCountry: string = '';
+  editingProvince: string = '';
 
   constructor(
     private storageService: StorageService,
     private auctionService: AuctionService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private chatService: ChatService
   ) {}
 
   ngOnInit() {
@@ -128,5 +139,46 @@ export class AuctionComponent implements OnInit {
       this.storageService.saveAuction(auctionId);
       this.userLike = true;
     }
+  }
+
+  openChat() {
+    if (!this.storageService.isLoggedIn()) {
+      this.router.navigate(['login']);
+    } else {
+      this.chatService.getChatId(this.auctionId).subscribe(chat => {
+        this.router.navigate([`chats/${chat._id}`]);
+      });
+    }
+  }
+
+  previousSlide() {
+    this.activeSlide = this.activeSlide === 0
+      ? this.data.images.length - 1
+      : this.activeSlide - 1;
+  }
+
+  nextSlide(totalSlides: number) {
+    this.activeSlide = this.activeSlide === totalSlides - 1
+      ? 0
+      : this.activeSlide + 1;
+  }
+
+  enableEditing(): void {
+    this.isEditing = true;
+    this.editingTitle = this.data.title;
+    this.editingDescription = this.data.description;
+    this.editingCondition = this.data.condition;
+    this.editingCountry = this.data.country;
+    this.editingProvince = this.data.province;
+  }
+
+  saveChanges(): void {
+    this.data.title = this.editingTitle;
+    this.data.description = this.editingDescription;
+    this.data.condition = this.editingCondition;
+    this.data.country = this.editingCountry;
+    this.data.province = this.editingProvince;
+
+    this.isEditing = false;
   }
 }

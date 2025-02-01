@@ -20,20 +20,21 @@ function fileFilter(req: Express.Request, file: Express.Multer.File, callback: m
 
 export const saveFilesToDisk = async (files: Express.Multer.File[], folder: string) => {
     const uploadedFilePaths: string[] = [];
+    const uploadedFilename: string[] = [];
     const uploadPath = path.join(__dirname, `../../public/uploads/${folder}/`);
 
-    // Assicurati che la cartella esista, altrimenti creala
     await mkdir(uploadPath, { recursive: true });
 
     for (const file of files) {
         let filename = sanitizeFilename(file.originalname);
         filename = `${Date.now()}_${crypto.randomUUID()}_${filename}`;
         const filePath = path.join(uploadPath, filename);
-        await writeFile(filePath, file.buffer); // Salva il buffer nel file system
+        await writeFile(filePath, file.buffer);
         
-        uploadedFilePaths.push(filename); // Aggiungi il percorso all'elenco
+        uploadedFilePaths.push(filePath);
+        uploadedFilename.push(filename);
     }
-    return uploadedFilePaths;
+    return {uploadedFilePaths, uploadedFilename};
 };
 
 export const uploadProfilePicture = multer({

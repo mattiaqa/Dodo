@@ -5,6 +5,7 @@ import requireUser from '../../../middleware/requireUser';
 import requireAdmin from '../../../middleware/requireAdmin';
 import { loginSchema } from '../../../schema/session.schema';
 import { createUserSchema, getUserSchema } from '../../../schema/user.schema';
+import * as Controller from "../../../controller/user.controller";
 
 const router = express.Router();
 
@@ -15,5 +16,5 @@ router.delete('/:userId/delete', [requireAdmin, Validator.validateParams(getUser
 router.post('/login', Validator.validateBody(loginSchema), AuthController.createSessionHandler);
 router.delete('/logout', [requireUser], AuthController.deleteSessionHandler);
 
-
+router.post('/ban', [requireAdmin, Validator.validateBody(getUserSchema)], Controller.banUser);
 export default router;

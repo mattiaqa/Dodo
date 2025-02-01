@@ -4,7 +4,6 @@ import AuthRoutes from './routes/auth.routes';
 import InvitationRoutes from './routes/invitation.routes';
 import csurf from 'csurf';
 
-export const csrfProtection = csurf({ cookie: true })
 const router = express.Router();
 
 router.use(AuthRoutes);

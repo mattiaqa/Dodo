@@ -7,6 +7,7 @@ import {FaIconComponent} from '@fortawesome/angular-fontawesome';
     FaIconComponent
   ],
   templateUrl: './footer.component.html',
+  standalone: true,
   styleUrl: './footer.component.scss'
 })
 export class FooterComponent {

@@ -7,6 +7,7 @@ import {CurrencyPipe, DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-partecipated-card',
+  standalone: true,
   imports: [
     FaIconComponent,
     RouterLink,
@@ -32,6 +33,7 @@ export class PartecipatedCardComponent implements OnInit, OnDestroy {
     expireDate: string;
     createdAt: string;
     images: string[];
+    reservePrice: number;
   } | undefined;
 
   timeLeftPercentage: number = 0;

@@ -3,6 +3,7 @@ import {FormsModule} from '@angular/forms';
 import {DatePipe, NgForOf} from '@angular/common';
 import {AuctionService} from '../../../../services/auction.service';
 import {ActivatedRoute} from '@angular/router';
+import {UserService} from '../../../../services/user.service';
 import {StorageService} from '../../../../storage/storage.service';
 
 @Component({
@@ -13,14 +14,16 @@ import {StorageService} from '../../../../storage/storage.service';
     DatePipe
   ],
   templateUrl: './comment.component.html',
+  standalone: true,
   styleUrl: './comment.component.scss'
 })
 export class CommentComponent implements OnInit {
   comments: any;
   auctionId: string = '';
-  profilePicture: string = '';
 
-  constructor(private auctionModel: AuctionService, private storageService: StorageService, private route: ActivatedRoute) {}
+  constructor(private auctionModel: AuctionService,
+              private serviceStorage: StorageService,
+              private route: ActivatedRoute) {}
 
   @Input() commentInput: {
     comment: string;
@@ -34,14 +37,12 @@ export class CommentComponent implements OnInit {
     this.auctionModel.getAuctionComments(this.auctionId).subscribe(comments => {
       this.comments = comments;
     });
-
-    this.profilePicture = "http://localhost:1338/api/download/avatar/" + this.storageService.getUser().avatar;
   }
 
   submitComment() {
     this.auctionModel.submitComment(this.auctionId, this.commentInputBox).subscribe({
       next: ()=> {
-        window.location.reload();
+        //window.location.reload();
       }
     });
   }

@@ -13,6 +13,7 @@ import {NgForOf, NgIf} from '@angular/common';
     NgForOf,
     NgIf
   ],
+  standalone: true,
   animations: [
     trigger('fadeOut', [
       transition(':leave', [
