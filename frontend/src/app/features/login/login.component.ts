@@ -43,6 +43,21 @@ export class LoginComponent implements OnInit {
     if(this.storageService.isLoggedIn()) {
       this.isLoggedIn = true;
     }
+
+    console.log(sessionStorage.getItem('accountConfirmed'))
+    if (sessionStorage.getItem('accountConfirmed')) {
+      // Aggiungi un ritardo prima del redirect
+      setTimeout(() => {
+        this.toastService.showToast({
+          message: "Account activated successfully! You can now log in.",
+          type: 'success',
+          duration: 5000
+        });
+        sessionStorage.removeItem('accountConfirmed'); 
+      }, 500);
+      
+  
+    }
   }
 
   onSubmit() {

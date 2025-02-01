@@ -1,0 +1,22 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="card w-full max-w-lg bg-white shadow-lg rounded-lg p-6 text-center">
+      <h2 class="text-2xl font-bold text-gray-800">Account Activation</h2>
+      <p class="text-gray-600 mt-2">
+        We're activating your account. Please wait...
+      </p>
+  
+      <div *ngIf="isLoading" class="mt-4">
+        <div class="loader"></div>
+      </div>
+  
+      <div *ngIf="errorMessage" class="mt-4 text-red-500">
+        <fa-icon [icon]="['fas', 'exclamation-circle']"></fa-icon> {{ errorMessage }}
+      </div>
+  
+      <button *ngIf="errorMessage" (click)="router.navigate(['/login'])"
+        class="mt-4 btn btn-primary text-white px-4 py-2 rounded-lg">
+        Go to Login
+      </button>
+    </div>
+  </div>
+  

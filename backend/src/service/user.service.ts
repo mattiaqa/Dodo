@@ -123,7 +123,7 @@ export async function createConfirmationLink(email: string)
   const hostname = config.get('hostname');
   const token = signJwt({email},{expiresIn: '3h'});
 
-  const link = `http://${hostname}:${port}/register/${token}/confirm`;
+  const link = `http://${hostname}:4200/confirmUser/${token}`;
   return link;
 }
 

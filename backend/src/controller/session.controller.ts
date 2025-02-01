@@ -52,7 +52,7 @@ export async function confirmUserHandler(req: Request, res: Response)
       res.status(200).send({ message: 'User verified successfully' });
   } catch (error: any) {
       logger.error(error);
-      res.status(500).send({message: "Internal Server Error"});
+      res.status(500).send({message: error.message});
   }
 }
 
