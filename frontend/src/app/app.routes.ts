@@ -12,9 +12,11 @@ import { NewListingComponent } from './features/new-listing/new-listing.componen
 import { CreateAuctionComponent } from './features/new-listing/auction-data/auction-data.component';
 import { SuccessPageComponent } from './features/new-listing/success-page/success-page.component';
 import {ChatComponent} from './features/chat/chat.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: HomePageComponent},
+  { path: 'search', component: HomeComponent },
   { path: 'register/:token/confirm', component: RegistrationConfirmComponent },
   { path: 'auction/:auctionId', component: AuctionComponent},
 

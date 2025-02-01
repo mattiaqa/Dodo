@@ -82,12 +82,12 @@ export async function createSessionHandler(req: Request<{}, {}, z.infer<typeof l
         const user = await validatePassword(loginInfo);
 
         if (!user) {
-            res.status(401).send({"Error" : "Invalid email or password"});
+            res.status(404).json({message : "Invalid email or password"});
             return;
         }
         if(!user.verified)
         {
-            res.status(403).send({"Error": 'Your account is not activated. Please check your email'});
+            res.status(403).json({message: 'Your account is not activated. Please check your email'});
             return;
         }
 

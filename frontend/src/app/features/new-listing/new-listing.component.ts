@@ -4,19 +4,16 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BookService } from '../../services/book.service';
 import { forkJoin } from 'rxjs';
-import { ActivatedRoute, Router} from '@angular/router';
-import {NavbarComponent} from '../../layout/navbar/navbar.component';
-import {FooterComponent} from '../../layout/footer/footer.component';
+import { ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 @Component({
   
   selector: 'app-new-listing',
   //standalone: true,
   imports: [
-    NavbarComponent,
-    FooterComponent,
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: './new-listing.component.html',
   styleUrls: ['./new-listing.component.scss'],

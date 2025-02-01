@@ -6,29 +6,20 @@
     </div>
   </div>
 
-  <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+  <form (ngSubmit)="onSubmit()">
     <div class="navbar-center pe-4 flex align-items-center">
       <div class="search-bar">
         <div class="input-container">
           <div class="input-group">
-            <span class="input-label">Where</span>
-            <input class="search-input" placeholder="Everywhere" type="text" formControlName="where">
+            <input 
+              class="search-input" 
+              placeholder="Search an auction..." 
+              type="text" 
+              name="auctionTitle"
+              [(ngModel)]="filters.auctionTitle"
+              maxlength="100"
+            >
           </div>
-
-          <hr class="vertical-line">
-
-          <div class="input-group">
-            <span class="input-label">ISBN</span>
-            <input class="search-input" placeholder="978-3-16-148410-0" type="text" formControlName="ISBN">
-          </div>
-
-          <hr class="vertical-line">
-
-          <div class="input-group">
-            <span class="input-label">Your Budget</span>
-            <input class="search-input" placeholder="€10" type="number" formControlName="budget">
-          </div>
-
           <fa-icon [icon]="['fas', 'search']" class="search-icon" (click)="onSubmit()"></fa-icon>
         </div>
       </div>
@@ -42,7 +33,7 @@
     <div class="dropdown dropdown-end pe-2">
       <div class="icon-container" role="button" tabindex="0">
         <fa-icon [icon]="['fas', 'bars']" class="menu-icon"></fa-icon>
-        @if (isLoggedIn) {
+        @if (isLoggedIn && this.avatar_url) {
           <img [src]=this.avatar_url alt="Avatar" class="avatar-image" />
         } @else {
           <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>

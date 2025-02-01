@@ -5,6 +5,11 @@ import {NavbarComponent} from '../../layout/navbar/navbar.component';
 import {FooterComponent} from '../../layout/footer/footer.component';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {CardComponent} from './components/card/card.component';
+import { UserService } from '../../services/user.service';
+import { ToastService } from '../../services/toast.service';
+import { ToastComponent } from '../../layout/toast/toast.component';
+import { SharedDataService } from '../../shared/shared-data';
+import { faImage, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; 
 
 @Component({
   selector: 'app-profile',
@@ -15,7 +20,8 @@ import {CardComponent} from './components/card/card.component';
     DatePipe,
     FaIconComponent,
     NgIf,
-    CardComponent
+    CardComponent,
+    ToastComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
@@ -24,12 +30,100 @@ export class ProfileComponent implements OnInit {
   user: any = {};
   savedAuctions: any[] = [];
   avatar_url: string = '';
-
-  constructor(private storageService: StorageService) {}
-
+  showMenu = false; // Controlla la visibilità del menu
+  faImage = faImage;
+  faTrashAlt = faTrashAlt;
+  
+  constructor(
+    protected storageService: StorageService,
+    private userService: UserService,
+    private toastService: ToastService,
+    private sharedDataService: SharedDataService,
+  ) {}
+  
   ngOnInit(): void {
+    this.sharedDataService.dataAvatarUrl$.subscribe(url => {
+      this.avatar_url = url;
+    });
+
     this.user = this.storageService.getUser();
     this.savedAuctions = this.user.savedAuctions || [];
-    this.avatar_url = "http://localhost:1338/api/download/avatar/" +  this.user.avatar;
+    if(this.user.avatar){
+      this.avatar_url = "http://localhost:1338/api/download/avatar/" +  this.user.avatar;
+    }
+    else{
+      this.avatar_url = this.user.defaultAvatar;
+    }
+  }
+  
+  // Metodo per attivare/disattivare il menu
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
+  }
+
+// Metodo per aggiungere una nuova immagine
+setNewImage(event: Event) {
+  const input = event.target as HTMLInputElement;
+  
+  // Controlla se ci sono file selezionati
+  if (!input.files || input.files.length === 0) return;
+
+  const file = input.files[0];
+  
+  // Verifica che sia un'immagine (controllo più robusto)
+  if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+  }
+
+  const formData = new FormData();
+  formData.append('avatar', file, file.name);
+
+  this.userService.setUserProfilePicture(formData).subscribe({
+    next: () => {
+      const userId = this.storageService.getUser().id;
+      this.userService.getUserInfo(userId).subscribe(user => {
+        this.storageService.saveUser(user);
+        this.sharedDataService.updateAvatarUrl("http://localhost:1338/api/download/avatar/" +  user.avatar);
+      });
+    },
+    error: (err) => {
+      console.error('An error occured during the edit process of the image:', err);
+      console.log(err.error.message)
+      this.toastService.showToast({
+        message: err.error.message,
+        type: 'error',
+        duration: 8000
+      });
+    }
+  })
+  this.showMenu = false;
+
+  // Reset del valore dell'input per permettere la selezione dello stesso file nuovamente
+  input.value = '';
+}
+
+  // Metodo per rimuovere l'immagine esistente
+  removeExistingImage() {
+    const formData = new FormData();
+    this.userService.setUserProfilePicture(formData).subscribe({
+      next: () => {
+        const userId = this.storageService.getUser().id;
+        this.userService.getUserInfo(userId).subscribe(user => {
+          this.storageService.saveUser(user);
+          this.sharedDataService.updateAvatarUrl(user.defaultAvatar);
+        });
+      },
+      error: (err) => {
+        console.error('An error occured during the edit process of the image:', err);
+        console.log(err.error.message)
+        this.toastService.showToast({
+          message: err.error.message,
+          type: 'error',
+          duration: 8000
+        });
+      }
+    })
+    this.showMenu = false;
   }
 }

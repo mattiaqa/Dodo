@@ -5,11 +5,12 @@ import {
     getAuctionById,
     searchAuctions,
     incrementInteraction,
-    updateAuction
+    updateAuction,
+    AUCTIONS_PAGE_SIZE
 } from "../service/auction.service";
 import logger from "../utils/logger";
 import { createAuctionSchema, editAuctionSchema, getAuctionSchema, searchAuctionSchema} from "../schema/auction.schema";
-import { pick} from "lodash";
+import { omit, pick, result} from "lodash";
 import sanitize from "mongo-sanitize";
 import mongoose, { FilterQuery } from "mongoose";
 import { AuctionDocument } from "../models/auction.model";
@@ -88,11 +89,12 @@ export async function getAuctionHandler(req: Request<z.infer<typeof getAuctionSc
         const response = {
             ...auction.toObject(),
             userLike,
+            condition: translateCondition(auction.condition),
             reservePrice: auction.seller === res.locals.user?.id || !auction.reservePrice
                 ? auction.reservePrice // Proprietario vede il valore esatto
                 : auction.lastBid >= auction.reservePrice
-                    ? "Prezzo di riserva raggiunto"
-                    : "Prezzo di riserva non raggiunto"
+                    ? "Reserve price reached"
+                    : "Reserve price not reached yet"
 
         }
         res.send(response);
@@ -106,7 +108,20 @@ export async function getAuctionHandler(req: Request<z.infer<typeof getAuctionSc
 export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof searchAuctionSchema>>, res: Response) {
     try {
         // Estrai i parametri di query
-        const { ISBN, bookId, minPrice, maxPrice, sellerId, where, auctionTitle, bookPublisher, bookTitle, bookAuthor } = req.query;
+        const { 
+            ISBN, 
+            bookId, 
+            condition, 
+            minPrice, 
+            maxPrice, 
+            sellerId, 
+            where, 
+            auctionTitle, 
+            bookPublisher, 
+            bookTitle, 
+            bookAuthor,
+            resultsPage,
+        } = req.query;
 
         // Costruisci la query dinamicamente
         const query: FilterQuery<AuctionDocument> = {};
@@ -116,17 +131,16 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
             query.country = { $regex: `.*${sanitize(where)}.*`, $options: 'i' };
         }
 
-        /*
-        if (bookId) {
-            if (mongoose.Types.ObjectId.isValid(bookId as string)) {
-                query.book = new mongoose.Types.ObjectId(bookId as string); // Converte il parametro bookId in ObjectId
-            } else {
-                res.status(400).send({ message: "Invalid book ID format" });
-                return;
+        if(auctionTitle){
+            query.title = { $regex: `.*${sanitize(auctionTitle)}.*`, $options: 'i' };
+        }
+
+        if (condition) {
+            const validConditions = ["1", "2", "3", "4", "5"];
+            if (validConditions.includes(condition)) {
+                query.condition = sanitize(condition);
             }
         }
-        */
-        // Filtra per bookId (array)
 
         if (ISBN || bookTitle || bookPublisher || bookAuthor) {
             const books = await searchBook({
@@ -153,10 +167,10 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
         }
 
         // Recupera le aste
-        const auctions = await searchAuctions(query);
+        const auctions = await searchAuctions(query, parseInt(resultsPage ?? '0'));
 
         if (!auctions || auctions.length == 0) {
-            res.status(404).send({ message: "No auctions found" });
+            res.status(200).send({"Matches": 0, "pages": 0, "Results": []});
             return;
         }
 
@@ -165,11 +179,21 @@ export async function getAllAuctionHandler(req: Request<{},{},{}, z.infer<typeof
             const expirationDate = new Date(auction.expireDate);
             return expirationDate > now;
         });
-        const filteredAuctions = validAuctions.map(auction =>
-            pick(auction, ["book", "country", "expireDate", "auctionId", "lastBid", "province", "condition", "createdAt", "images"])
-        );
+        const filteredAuctions = validAuctions.map(auction => ({
+            ...omit(auction, ['__v', '_id']),
+            condition: translateCondition(auction.condition.toString()) // Converti a stringa se necessario
+        }));
 
-        res.status(200).send({"Matches": filteredAuctions.length, "Results": filteredAuctions});
+        //numero totale di aste
+        const auctionsAll = await searchAuctions(query);
+        const validAuctionsAll = auctionsAll.filter(auction => {
+            const expirationDate = new Date(auction.expireDate);
+            return expirationDate > now;
+        });
+        const matches = validAuctionsAll.length;
+        const pages = Math.ceil(matches / AUCTIONS_PAGE_SIZE);
+
+        res.status(200).send({"Matches": matches, pages, "Results": filteredAuctions.reverse()});
     } catch (error: any) {
         res.status(500).send({ message: "Internal server error", error: error.message });
     }
@@ -222,6 +246,7 @@ export async function editAuctionHandler(req: Request<z.infer<typeof getAuctionS
         }
         // Passa i campi validi a updateAuction
         const updatedAuction = await updateAuction(req.params.auctionId, filteredUpdateFields);
+        updatedAuction.condition = translateCondition(updatedAuction.condition)
 
         res.status(200).send({
             message: "Auction updated successfully",
@@ -297,4 +322,28 @@ export async function dislikeAuctionHandler(req: Request, res: Response) {
         logger.error(e);
         res.status(500).send({message: "Internal Server Error"});
     }
+}
+
+function translateCondition(number: string):string{
+    let translatedCondition = '';
+    switch (number) {
+        case "1":
+            translatedCondition = 'New';
+            break;
+        case "2":
+            translatedCondition = 'As good as new';
+            break;
+        case "3":
+            translatedCondition = 'Great condition';
+            break;
+        case "4":
+            translatedCondition = 'Acceptable codition';
+            break;
+        case "5":
+            translatedCondition = 'Condition';
+            break;
+        default:
+            break;
+    }
+    return translatedCondition;
 }

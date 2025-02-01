@@ -1,10 +1,10 @@
 <div class="flex items-center justify-center min-h-screen bg-gray-50">
-  <div class="card lg:card-side bg-white shadow-2xl rounded-lg max-w-4xl w-full overflow-hidden">
+  <div class="card lg:card-side bg-white shadow-2xl rounded-lg w-full max-w-4xl overflow-hidden">
     <figure class="lg:w-1/2">
-      <img src="https://picsum.photos/seed/login/800/600" alt="Random image" class="object-cover w-full h-full" />
+      <img src="assets/images/registerImage2.jpg" alt="Registration image" class="object-cover w-full h-full" />
     </figure>
     <div class="card-body lg:w-1/2 p-8">
-      <h2 class="card-title text-3xl font-extrabold text-gray-800 mb-6">Welcome!</h2>
+      <h2 class="card-title text-3xl font-extrabold text-gray-800 mb-6">Welcome to Dodo!</h2>
       <form (ngSubmit)="onSubmit()">
         <div class="form-control">
           <label class="label">
@@ -49,6 +49,12 @@
           <button type="submit" class="btn text-white font-bold pt-2 py-2 px-4 rounded-lg primary-color">Register</button>
         </div>
       </form>
+      <div class="divider my-6 text-gray-400">OR</div>
+      <div class="text-center">
+        <p class="text-gray-600">Already have an account?</p>
+        <a routerLink="/login" class="link link-primary text-blue-500 hover:underline">Login</a>
+      </div>
+      <app-toast></app-toast>
     </div>
   </div>
 </div>

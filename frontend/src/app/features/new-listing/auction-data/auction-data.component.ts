@@ -3,14 +3,18 @@ import { Component, NgModule, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuctionService } from '../../../services/auction.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { ToastService } from '../../../services/toast.service';
+import { ToastComponent } from '../../../layout/toast/toast.component';
 
 @Component({
   selector: 'app-auction-data',
   standalone: true,
   imports: [
       CommonModule,
-      ReactiveFormsModule
+      ReactiveFormsModule,
+      ToastComponent,
+      RouterLink,
     ],
   templateUrl: './auction-data.component.html',
   styleUrls: ['./auction-data.component.scss']
@@ -22,8 +26,15 @@ export class CreateAuctionComponent implements OnInit {
   isReserveEnabled = false;
   imagePreviews: string[] = [];
   selectedImages: File[] = []; 
+  durationOptions: { label: string; value: string }[] = [];
 
-  constructor(private fb: FormBuilder, private auctionService: AuctionService, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private fb: FormBuilder, 
+    private auctionService: AuctionService, 
+    private router: Router, 
+    private route: ActivatedRoute,
+    private toastService: ToastService,
+  ) {
     this.auctionForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.maxLength(500)]],
@@ -32,7 +43,7 @@ export class CreateAuctionComponent implements OnInit {
       images: [[], Validators.required],
       expireDate: ['', Validators.required],
       book: [''], // Verrà popolato dal cookie
-      condition: ['', Validators.required],
+      condition: ['2', Validators.required],
       country: ['', Validators.required],
       province: ['', [Validators.required, Validators.maxLength(2)]]
     }, { validators: this.crossFieldValidator.bind(this) });
@@ -41,6 +52,7 @@ export class CreateAuctionComponent implements OnInit {
   ngOnInit() {
     // Imposta la data di scadenza a una settimana dal momento attuale
     const currentDate = new Date();
+    this.initDurationOptions();
     currentDate.setDate(currentDate.getDate() + 7); // Imposta la data a una settimana da oggi
     this.expireDate = currentDate.toISOString().split('T')[0]; // Formatta la data come stringa 'yyyy-mm-dd'
     
@@ -49,40 +61,16 @@ export class CreateAuctionComponent implements OnInit {
       expireDate: this.expireDate
     });
 
-    /*// Recupera il token del libro dal cookie
-    const selectedBookCookie = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('selectedBook='));
-
-    if (selectedBookCookie) {
-      try {
-        const cookieValue = decodeURIComponent(selectedBookCookie.split('=')[1]);
-        const parsedCookie = JSON.parse(cookieValue);
-        
-        // Assumendo che il cookie contenga un campo 'token'
-        const bookToken = parsedCookie.token;
-        this.selectedBookTitle = parsedCookie.title;
-        
-        this.auctionForm.patchValue({
-          book: bookToken
-        });
-
-      } catch (error) {
-        console.error('Errore nel parsing del cookie:', error);
-        // Gestione dell'errore
-      }
-    }*/
-
     // Recupera il token del libro dal session storage
     const selectedBook = sessionStorage.getItem('selectedBook');
     if (selectedBook) {
-      this.selectedBookTitle = sessionStorage.getItem('selectedBookTitle') || "Nessun libro";
+      this.selectedBookTitle = sessionStorage.getItem('selectedBookTitle') || "No book";
       this.auctionForm.patchValue({
         book: selectedBook
       });
     }
     else{
-      this.selectedBookTitle = "Nessun libro";
+      this.selectedBookTitle = "No book";
     }
 
     this.auctionForm.get('lastBid')?.valueChanges.subscribe(() => {
@@ -134,54 +122,6 @@ export class CreateAuctionComponent implements OnInit {
     this.auctionForm.updateValueAndValidity(); // Aggiorna validazione globale
   }
 
-  onSubmit() {
-    if (this.auctionForm.invalid) {
-      if (this.auctionForm.errors?.['reserveTooLow']) {
-        alert('Il prezzo riserva deve essere maggiore del prezzo iniziale!');
-      }
-      return;
-    }
-
-    if (this.auctionForm.valid) {
-      // Crea un oggetto FormData
-      const formData = new FormData();
-  
-      // Aggiungi i campi del form
-      Object.keys(this.auctionForm.value).forEach(key => {
-        if (key !== 'images' && key !== 'reservePrice') { // Escludi i file per ora
-          formData.append(key, this.auctionForm.value[key]);
-        }
-      });
-
-      if(this.isReserveEnabled){
-        formData.append('reservePrice', this.auctionForm.value.reservePrice)
-      }
-
-      // Aggiungi i file
-      this.selectedImages.forEach((file, index) => {
-        formData.append('images', file, file.name); // Usa 'images' come chiave
-      });
-  
-      console.log('Form data:', formData);
-
-      this.auctionService.createAuction(formData).subscribe({
-        next: () => {
-          sessionStorage.removeItem('selectedBook'),
-          sessionStorage.removeItem('selectedBookTitle');
-          this.router.navigate(['/CreateAuctionSuccess'], {
-            state: { message: 'Asta pubblicata con successo!' }
-          });
-        },
-        error: (err) => {
-          //sessionStorage.removeItem('selectedBook'),
-          //sessionStorage.removeItem('selectedBookTitle');
-          console.error('Errore nella creazione dell\'asta:', err);
-          alert('Si è verificato un errore durante la pubblicazione dell\'asta');
-        }
-      });
-    }
-  }
-  
   onFileSelected(event: any) {
     const files = event.target.files as FileList;
     
@@ -213,5 +153,69 @@ export class CreateAuctionComponent implements OnInit {
     this.auctionForm.patchValue({
       images: this.selectedImages
     });
+  }
+
+  private initDurationOptions() {
+    const now = new Date();
+    const durations = [1, 3, 5, 7, 10];
+    
+    this.durationOptions = durations.map(days => {
+      const date = new Date(now);
+      date.setDate(date.getDate() + days);
+      return {
+        label: `${days} day${days !== 1 ? 's' : ''}`,
+        value: date.toISOString().split('T')[0] // Formato YYYY-MM-DD
+      };
+    });
+  }
+
+
+  onSubmit() {
+    if (this.auctionForm.valid) {
+      // Crea un oggetto FormData
+      const formData = new FormData();
+  
+      // Aggiungi i campi del form
+      Object.keys(this.auctionForm.value).forEach(key => {
+        if (key !== 'images' && key !== 'reservePrice') { // Escludi i file per ora
+          formData.append(key, this.auctionForm.value[key]);
+        }
+      });
+
+      if(this.isReserveEnabled){
+        formData.append('reservePrice', this.auctionForm.value.reservePrice)
+      }
+
+      // Aggiungi i file
+      this.selectedImages.forEach((file, index) => {
+        formData.append('images', file, file.name); // Usa 'images' come chiave
+      });
+      
+      this.auctionService.createAuction(formData).subscribe({
+        next: () => {
+          sessionStorage.removeItem('selectedBook'),
+          sessionStorage.removeItem('selectedBookTitle');
+          this.toastService.showToast({
+            message: 'Auction created successfully',
+            type: 'success',
+            duration: 3000
+          });
+          // Aggiungi un ritardo prima del redirect
+          setTimeout(() => {
+            this.router.navigate(['mydodo']);
+          }, 3200);
+        },
+        error: (err) => {
+          //sessionStorage.removeItem('selectedBook'),
+          //sessionStorage.removeItem('selectedBookTitle');
+          console.error('Error during auction creation:', err);
+          this.toastService.showToast({
+            message: err.error.message,
+            type: 'error',
+            duration: 8000
+          });
+        }
+      });
+    }
   }
 }

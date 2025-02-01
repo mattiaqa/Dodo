@@ -29,4 +29,8 @@ export class UserService {
   getUserOngoingAuctions(): Observable<any> {
     return this.http.get(API_URL + 'ongoing', { withCredentials: true });
   }
+
+  setUserProfilePicture(body: any): Observable<any>{
+    return this.http.post(API_URL + 'avatar', body, { withCredentials: true });   
+  }
 }

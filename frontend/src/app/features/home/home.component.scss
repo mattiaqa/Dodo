@@ -1,12 +1,58 @@
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 48px;
-  justify-content: center;
-  padding: 48px;
-  align-items: center;
+.progressBar {
+  background-color: #D7AE95;
 }
 
-.card-container > app-card {
-  flex: 0 0 auto;
+.card {
+  width: 100%;
+  max-width: 980px; /* Larghezza massima per allinearsi a Subito.it */
+  min-height: 250px;
+  max-height: 250px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px; /* Larghezza più ristretta per un layout centrato */
+  margin: 0 auto; /* Centratura */
+  padding: 20px; /* Padding uniforme */
+  box-sizing: border-box;
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; /* Spazio tra le cards */
+}
+
+.no-auctions-container {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  margin-top: 2rem;
+
+  img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+    color: #4b5563;
+  }
+}
+
+.btn-active {
+  background-color: #D7AE95;
+}
+
+.select-placeholder {
+  color: gray;
+  border-color: black;
+}
+
+/* Forza il colore delle opzioni a rimanere nere quando il menu è aperto */
+select option {
+  color: black;
 }

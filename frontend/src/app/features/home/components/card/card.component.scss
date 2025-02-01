@@ -1,30 +1,21 @@
-.carousel .btn-circle.btn-sm {
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
-  line-height: 1;
-  color: #fff;
-}
-
-.carousel .absolute {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.carousel.group:hover .absolute {
-  opacity: 1;
-}
-
 .progressBar {
   background-color: #D7AE95;
 }
 
-.carousel-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.card {
+  min-height: 250px;
+  max-height: 250px;
 }
 
-.card-width {
-  min-width: 450px;
+.card-title {
+  min-width: 0;
+  display:block;
+}
+
+.custom-shadow {
+  box-shadow: 0 4px 6px -1px rgba(215, 174, 149, 0.2), 0 2px 4px -1px rgba(215, 174, 149, 0.15);
+}
+
+.custom-shadow-hover:hover {
+  box-shadow: 0 6px 8px -1px rgba(215, 174, 149, 0.4), 0 4px 6px -1px rgba(215, 174, 149, 0.3);
 }

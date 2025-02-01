@@ -57,13 +57,15 @@ export class LoginComponent implements OnInit {
         this.authService.getCsrfToken().subscribe();
         this.userModel.getUserInfo(data._id).subscribe(user => {
           this.storageService.saveUser(user);
-          this.router.navigate(['/']);
+          const redirectUrl = localStorage.getItem('redirectUrl') || '/';
+          localStorage.removeItem('redirectUrl');
+          this.router.navigate([redirectUrl]);
         });
       },
-      error: (error: HttpErrorResponse) => {
+      error: (error) => {
         this.isLoginFailed = true;
         this.toastService.showToast({
-          message: 'Invalid Email or Password!',
+          message: error.error.message ?? "Invalid username or password",
           type: 'error',
           duration: 8000
         });

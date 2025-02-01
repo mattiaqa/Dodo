@@ -1,16 +1,55 @@
 <app-navbar></app-navbar>
 <div class="container mx-auto p-6">
-  <div class="card w-full lg:w-3/4 mx-auto bg-base-100 overflow-hidden">
+  <div class="card w-full lg:w-3/4 mx-auto bg-base-100 overflow-visible">
     <div class="card-body">
       <div class="flex flex-col lg:flex-row items-center gap-6">
-        <div class="avatar">
-          <div class="w-32 rounded-full">
+        <!-- Avatar con overlay e icona -->
+        <div class="avatar relative group">
+          <div class="w-32 rounded-full overflow-visible relative">
             <img
               [src]="avatar_url"
               alt="Profile Picture"
+              class="w-full h-full object-cover"
             />
+            <!-- Overlay per l'oscuramento -->
+            <div
+              class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-full"
+            ></div>
+            <!-- Icona della matita -->
+            <div
+              class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer rounded-full"
+              (click)="toggleMenu()"
+            >
+              <fa-icon [icon]="['fas', 'pencil']" class="text-white text-2xl"></fa-icon>
+            </div>
+          </div>
+          
+          <!-- Menu con le opzioni -->
+          <div
+            *ngIf="showMenu"
+            class="absolute left-1/2 -translate-x-1/2 top-20 mt-2 bg-white shadow-lg rounded-lg p-2 w-48"
+            style="aspect-ratio: 0;"
+          >
+            <div 
+              class="h-10 flex items-center px-3 hover:bg-gray-100 rounded-lg cursor-pointer" 
+              (click)="fileInput.click()"
+            >
+              <fa-icon [icon]="faImage" class="mr-2 text-gray-700"></fa-icon>
+              Select new image
+              <input type="file" (change)="setNewImage($event)" class="hidden" #fileInput>
+            </div>
+            <div
+              *ngIf="!avatar_url.startsWith('https://ui-avatars.com')"
+              class="h-10 flex items-center px-3 hover:bg-gray-100 rounded-lg cursor-pointer"
+              (click)="removeExistingImage()"
+            >
+              <fa-icon [icon]="faTrashAlt" class="mr-2 text-sm"></fa-icon>
+              Remove existing
+            </div>
           </div>
         </div>
+
+        <!-- Dettagli utente -->
         <div>
           <h2 class="text-2xl font-bold">{{ user.name }}</h2>
           <p class="text-gray-500">{{ user.email }}</p>
@@ -34,7 +73,7 @@
       </div>
     </div>
   </div>
-
+  <app-toast></app-toast>
 </div>
 
 <app-footer></app-footer>

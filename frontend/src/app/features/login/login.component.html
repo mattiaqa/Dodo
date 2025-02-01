@@ -1,10 +1,17 @@
 <div class="flex items-center justify-center min-h-screen bg-gray-50">
   <div class="card lg:card-side bg-white shadow-2xl rounded-lg max-w-4xl w-full overflow-hidden">
     <figure class="lg:w-1/2">
-      <img src="https://picsum.photos/seed/login/800/600" alt="Random image" class="object-cover w-full h-full" />
+      <img src="assets/images/loginImage.jpeg" alt="Random image" class="object-cover w-full h-full" />
     </figure>
     <div class="card-body lg:w-1/2 p-8">
-      <h2 class="card-title text-3xl font-extrabold text-gray-800 mb-6">Welcome Back!</h2>
+      <!-- Logo Section -->
+      <div class="flex justify-center items-center space-x-2 mb-6">
+        <img src="assets/images/logo.png" alt="Logo" class="w-24 h-24 object-contain rounded-full" />
+        <!--<span class="logo-style">dodò</span>-->
+      </div>
+      <!-- Title -->
+      <h2 class="card-title text-3xl font-extrabold text-gray-800 mb-6 text-center justify-center">Welcome Back!</h2>
+      <!-- Form -->
       <form (ngSubmit)="onSubmit()">
         <div class="form-control">
           <label class="label">

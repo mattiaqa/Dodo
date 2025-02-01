@@ -147,13 +147,23 @@ export async function getAuctionById(id: string) : Promise<PopulatedAuction | nu
   }
 }*/
 
-export async function searchAuctions(query: FilterQuery<AuctionDocument>, options: QueryOptions = {lean: true}) {
+export const AUCTIONS_PAGE_SIZE = 10;
+export async function searchAuctions(query: FilterQuery<AuctionDocument>, page: number = 0, options: QueryOptions = {lean: true}) {
   try {
-    return await AuctionModel.find(query, {}, options)
-        .populate({
-          path: "book",
-          select: { "title": 1, "ISBN": 1, "authors": 1, "publisher": 1 }
-        })
+    if(page >= 1){
+      return await AuctionModel.find(query, {}, options)
+          .populate({
+            path: "book",
+            select: { "title": 1, "ISBN": 1, "authors": 1, "publisher": 1 }
+          }).skip((page - 1) * AUCTIONS_PAGE_SIZE).limit(AUCTIONS_PAGE_SIZE)
+    }
+    else{
+      return await AuctionModel.find(query, {}, options)
+      .populate({
+        path: "book",
+        select: { "title": 1, "ISBN": 1, "authors": 1, "publisher": 1 }
+      })
+    }
   } catch (e:any) {
       throw new Error(e.message);
   }

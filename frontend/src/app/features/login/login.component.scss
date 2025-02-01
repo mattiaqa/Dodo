@@ -4,6 +4,7 @@
 
 .card-body {
   @apply p-8 text-gray-800;
+  width: 10px;
 }
 
 .input-group {
@@ -23,4 +24,12 @@ input {
 .primary-color {
   background-color: #D7AE95;
   border: none;
+}
+
+/* Stile del logo (rimane invariato) */
+span.logo-style {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+  color: #D7AE95;
 }

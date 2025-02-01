@@ -1,3 +1,4 @@
+/* Stile del logo (rimane invariato) */
 span.logo-style {
   font-family: "Baloo 2", sans-serif;
   font-size: 32px;
@@ -5,6 +6,7 @@ span.logo-style {
   color: #D7AE95;
 }
 
+/* Contenitore dell'icona (rimane invariato) */
 .icon-container {
   display: inline-flex;
   align-items: center;
@@ -19,69 +21,81 @@ span.logo-style {
   gap: 14px;
 }
 
+/* Barra di ricerca */
 .search-bar {
   display: flex;
   justify-content: center;
   width: 100%;
+  padding: 16px; /* Aggiungi padding per maggiore spazio */
 }
 
+/* Contenitore dell'input */
 .input-container {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
   background-color: #FFFFFF;
-  padding: 4px;
+  padding: 8px; /* Aumenta il padding */
   border-radius: 200px;
-  width: auto;
+  width: 100%; /* Occupa tutta la larghezza disponibile */
+  max-width: 800px; /* Limita la larghezza massima */
 }
 
+/* Gruppo di input */
 .input-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  margin-right: 10px;
-  margin-left: 20px;
+  margin-right: 20px; /* Aumenta il margine */
+  margin-left: 20px; /* Aumenta il margine */
 }
 
+/* Etichetta dell'input */
 .input-label {
-  font-size: 12px;
+  font-size: 14px; /* Aumenta la dimensione del font */
   color: #1E1E1E;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
+/* Input di ricerca */
 .search-input {
+  transition: all 0.3s ease;
   border-radius: 5px;
-  font-size: 12px;
-  width: 150px;
+  font-size: 16px; /* Aumenta la dimensione del font */
+  width: 500px; /* Aumenta la larghezza */
   border: none;
-  height: 14px;
+  height: 24px; /* Aumenta l'altezza */
+  padding: 8px; /* Aggiungi padding */
 }
 
 .search-input:focus {
   outline: none;
 }
 
+/* Linea verticale */
 .vertical-line {
   border: none;
   border-left: 1px solid #ccc;
-  height: 33px;
-  margin: 0 10px;
+  height: 40px; /* Aumenta l'altezza */
+  margin: 0 20px; /* Aumenta il margine */
 }
 
+/* Icona dell'etichetta */
 .label-icon {
-  font-size: 15px;
+  font-size: 18px; /* Aumenta la dimensione del font */
   color: #1E1E1E;
   margin-right: 10px;
 }
 
+/* Icona di ricerca */
 .search-icon {
   cursor: pointer;
-  font-size: 24px;
-  margin: 0 2px;
+  font-size: 28px; /* Aumenta la dimensione del font */
+  margin: 0 10px; /* Aumenta il margine */
   background-color: #D7AE95;
-  padding: 10px;
+  padding: 12px; /* Aumenta il padding */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -92,6 +106,7 @@ span.logo-style {
   color: #FFFFFF;
 }
 
+/* Elementi cliccabili */
 .clickable {
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
@@ -101,8 +116,9 @@ span.logo-style {
   transform: scale(0.9);
 }
 
+/* Bottone nuova asta */
 .new-auction-button {
-  font-size: 14px;
+  font-size: 16px; /* Aumenta la dimensione del font */
   cursor: pointer;
   background-color: #D7AE95;
   color: #1E1E1E;
@@ -112,15 +128,23 @@ span.logo-style {
   justify-content: center;
   align-items: center;
   text-align: center;
+  padding: 12px 24px; /* Aumenta il padding */
 }
 
+/* Immagine avatar */
 .avatar-image {
-  width: 28px;
-  height: 28px;
+  width: 36px; /* Aumenta la dimensione */
+  height: 36px; /* Aumenta la dimensione */
   border-radius: 50%;
   object-fit: cover;
 }
 
+/* Testo senza interruzioni */
 .no-wrap-text {
   white-space: nowrap;
+}
+
+/* Angoli arrotondati */
+.rounded-full {
+  border-radius: 9999px;
 }

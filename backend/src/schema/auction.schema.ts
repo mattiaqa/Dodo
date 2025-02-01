@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { object, string, TypeOf, number, preprocess, date, array } from "zod";
+import { object, string, TypeOf, number, preprocess, date, array, optional } from "zod";
 
 // Crea un tipo di validazione per ObjectId
 const objectId = (value: any) => {
@@ -90,12 +90,18 @@ export const searchAuctionSchema = object({
     minPrice: string().regex(/^\d+(\.\d+)?$/, {message : "minPrice must be a valid number"}).optional(), // Deve essere un numero positivo
     maxPrice: string().regex(/^\d+(\.\d+)?$/, {message : "maxPrice must be a valid number"}).optional(), // Deve essere un numero positivo
     sellerId: string().optional(), // Deve essere una stringa, opzionale
+    condition: string().optional().refine(value => 
+        !value || ["1", "2", "3", "4", "5"].includes(value), 
+        { message: "Condition must be a valid string with values from 1 to 5" }
+    ),
 
     bookId: string().optional(), // Deve essere una stringa, opzionale
     ISBN: string().regex(/^\d{13}$/, { message : "Book must be a valid ISBN (13 numeric digits)" }).optional(), // Deve essere una stringa, opzionale
     bookTitle: string().optional(),
     bookPublisher: string().optional(),
-    bookAuthor: string().optional()
+    bookAuthor: string().optional(),
+
+    resultsPage: string().regex(/^\d+(\.\d+)?$/, {message : "minPrice must be a valid number"}).optional(),
 });
 
 export const getAuctionSchema = object({

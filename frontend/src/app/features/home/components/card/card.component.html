@@ -1,12 +1,12 @@
 <a [routerLink]="'/auction/' + auction?.auctionId">
-  <div class="card card-side bg-base-100 shadow-md items-stretch hover:shadow-xl">
+  <div class="card card-side bg-base-100 items-stretch shadow-md custom-shadow-hover">
     <figure class="w-1/3 flex">
-      <img alt="Image 2"
-           class="w-96 h-full"
+      <img alt="Auction image"
+           class="w-45 h-full"
            src="{{image_url}}"/>
     </figure>
-    <div class="card-body relative w-2/3 card-width">
-      <h3 class="card-title text-lg font-bold">{{ auction?.book?.title || 'Title not available' }}</h3>
+    <div class="card-body relative w-2/3">
+      <h3 class="card-title text-lg font-bold truncate">{{ auction?.title || 'Title not available' }}</h3>
       <p class="text-sm text-gray-600">
         <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
         Condition: <span class="font-semibold">{{ auction?.condition || 'Undefined' }}</span>

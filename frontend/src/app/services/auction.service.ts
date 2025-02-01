@@ -18,6 +18,13 @@ export class AuctionService {
     return this.http.get(API_URL, { withCredentials: true });
   }
 
+  getAuctions(params: any): Observable<any> {
+    return this.http.get(API_URL, { 
+      params: params,
+      withCredentials: true 
+    });
+  }
+
   getAuctionById(auctionId: string): Observable<any> {
     return this.http.get(API_URL + '/' + auctionId, { withCredentials: true });
   }

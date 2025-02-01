@@ -13,8 +13,6 @@ const port = config.get<number>('port');
 const app = express();
 export let globalOAuth2Client: any;
 
-app.use('/api/auction/', uploadAuctionImages); // Multer applicato per upload
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -31,8 +29,11 @@ app.use(deserializeUser);
 
 app.use('/public/uploads', express.static('uploads'));
 
-app.use((err: multer.MulterError, req: Request, res: Response, next: NextFunction) => {
-    res.status(400).send({ error: err.message });
+app.use((err:any, req:any, res:any, next:any) => {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'File too large. Max size is 1MB.' });
+    }
+    res.status(500).json({ message: 'Server error', error: err.message });
 });
 
 app.listen(port, () => {

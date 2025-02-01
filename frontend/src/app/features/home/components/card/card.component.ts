@@ -21,6 +21,7 @@ export class CardComponent implements OnInit, OnDestroy {
       title: string;
       ISBN: string;
     };
+    title: string;
     condition: string;
     lastBid: number;
     country: string;

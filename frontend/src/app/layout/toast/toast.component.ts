@@ -40,7 +40,6 @@ export class ToastComponent implements OnInit {
   }
 
   getIcon(type: string): [string, string] {
-    console.log(type)
     switch (type) {
       case 'success':
         return ['fas', 'circle-check'];

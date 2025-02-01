@@ -2,9 +2,9 @@
   max-width: 1200px; /* Larghezza tipica per un sito desktop */
   margin: auto;
   padding: 40px; /* Spaziatura più ampia per maggiore respiro */
-  border: 1px solid #ccc;
+  //border: 1px solid #ccc;
   border-radius: 12px; /* Angoli arrotondati più morbidi */
-  background-color: #f9f9f9; /* Colore di sfondo leggermente più chiaro */
+  //background-color: #f9f9f9; /* Colore di sfondo leggermente più chiaro */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Aggiungi un'ombra per profondità */
 }
 
@@ -35,8 +35,7 @@ input:focus {
 }
 
 button {
-  padding: 12px 30px; /* Spaziatura maggiore per i pulsanti */
-  background-color: #007bff;
+  background-color: #D7AE95;
   color: white;
   border: none;
   border-radius: 6px; /* Angoli arrotondati */
@@ -46,7 +45,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3; /* Colore leggermente più scuro al passaggio */
+  background-color: #9b7b67; /* Colore leggermente più scuro al passaggio */
 }
 
 button:disabled {
@@ -125,83 +124,3 @@ button:disabled {
   overflow: hidden; /* Nasconde il testo eccedente */
   text-overflow: ellipsis; /* Aggiunge i tre puntini */
 }
-
-
-
-
-
-/*.fullscreen-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.popup-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  text-align: center;
-  position: relative;
-}
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.popup-content {
-  @apply p-6 w-full max-w-lg bg-white rounded-lg shadow-lg;
-}
-
-h2 {
-  @apply text-center text-xl font-semibold mb-6;
-}
-
-.listing-form {
-  @apply space-y-4;
-}
-
-.form-group {
-  @apply space-y-2;
-}
-
-input[type="text"], input[type="file"] {
-  @apply input input-bordered w-full;
-}
-
-.file-input {
-  @apply file-input-bordered w-full;
-}
-
-.btn {
-  @apply btn-primary w-full;
-}
-
-@media (max-width: 600px) {
-  .popup-content {
-    @apply p-4 w-full max-w-sm;
-  }
-
-  .form-group {
-    @apply flex-col items-start;
-  }
-
-  label {
-    @apply w-full mb-2;
-  }
-
-  input[type="text"], input[type="file"] {
-    @apply w-full;
-  }
-}
-*/

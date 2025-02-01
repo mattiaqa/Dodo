@@ -1,13 +1,18 @@
-<div class="min-h-screen bg-gray-50 p-8">
+<div class="min-h-screen bg-gray-50 p-8 ">
     <form 
       [formGroup]="auctionForm" 
       (ngSubmit)="onSubmit()" 
       class="bg-white rounded-xl shadow-2xl p-8 max-w-3xl mx-auto transition-all duration-300 hover:shadow-3xl"
     >
+      <!-- Link "Home" in alto a sinistra -->
+      <a routerLink="/newListing" class="top-4 left-4 text-gray-600 hover:text-gray-900 transition-colors duration-300">
+        <span class="text-[18px] font-semibold">&lt; Back</span>
+      </a>
+
       <!-- Header -->
-      <div class="border-b border-gray-200 pb-6 mb-8">
-        <h2 class="text-3xl font-bold text-gray-900">🚀 Crea Nuova Asta</h2>
-        <p class="text-gray-500 mt-2">Compila i dettagli del tuo oggetto da mettere all'asta</p>
+      <div class="border-b border-gray-200 pb-6 mb-8 text-center">
+        <h2 class="text-3xl font-bold text-gray-900">🚀 Complete your auction</h2>
+        <p class="text-gray-500 mt-2">Finish filling out the remaining data of your auciton</p>
       </div>
   
       <!-- Form Content -->
@@ -15,22 +20,22 @@
         <!-- Titolo e Descrizione -->
         <div class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Titolo Asta</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Title of the auction</label>
             <input
               type="text"
               formControlName="title"
               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-              placeholder="Es. Rara prima edizione 'Il Nome della Rosa'"
+              placeholder="E.g. My 2nd year physics book"
             />
           </div>
   
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Descrizione Dettagliata</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Detailed description</label>
             <textarea
               formControlName="description"
               rows="4"
               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-              placeholder="Descrivi ogni dettaglio importante..."
+              placeholder="Help out customers by giving them as much details as possible"
             ></textarea>
           </div>
         </div>
@@ -38,56 +43,54 @@
         <div class="grid grid-cols-3 gap-6">
             <!-- Condizione -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Condizione</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Condition</label>
                 <select
                 formControlName="condition"
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
                 required
                 >
-                <option value="" disabled selected>Seleziona condizione</option>
-                <option>Nuovo</option>
-                <option>Come Nuovo</option>
-                <option>Ottime condizioni</option>
-                <option>Buone condizioni</option>
-                <option>Accettabile</option>
+                <option value="1">New</option>
+                <option value="2">As good as new</option>
+                <option value="3">Great condition</option>
+                <option value="4">Acceptable condition</option>
                 </select>
                 <div *ngIf="auctionForm.get('condition')?.invalid && auctionForm.get('condition')?.touched" 
                     class="text-red-600 text-sm mt-1">
-                Campo obbligatorio
+                Mandatory field
                 </div>
             </div>
 
             <!-- Città -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Città</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
                 <input
                 type="text"
                 formControlName="country"
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                placeholder="Es. Milano"
+                placeholder="E.g. Treviso"
                 required
                 />
                 <div *ngIf="auctionForm.get('city')?.invalid && auctionForm.get('city')?.touched" 
                     class="text-red-600 text-sm mt-1">
-                Campo obbligatorio
+                Mandatory field
                 </div>
             </div>
 
             <!-- Provincia -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Provincia (AA)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Province</label>
                 <input
                 type="text"
                 formControlName="province"
                 maxlength="2"
                 (ionInput)="auctionForm.get('province')?.setValue($any($event.target).value.toUpperCase())"
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none uppercase"
-                placeholder="Es. MI"
+                placeholder="E.g. TV"
                 required
                 />
                 <div *ngIf="auctionForm.get('province')?.invalid && auctionForm.get('province')?.touched" 
                     class="text-red-600 text-sm mt-1">
-                Inserisci la sigla provincia
+                Mandatory field
                 </div>
             </div>
         </div>
@@ -95,7 +98,7 @@
         <!-- Prezzi e Dettagli -->
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Prezzo Iniziale (€)</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Starting price</label>
             <div class="relative">
               <input
                 type="number"
@@ -109,14 +112,14 @@
   
           <div>
             <div class="mb-2 flex items-center justify-between">
-              <label class="text-sm font-medium text-gray-700">Prezzo Riserva (€)</label>
+              <label class="text-sm font-medium text-gray-700">Reserve price</label>
               <div class="flex items-center space-x-2">
                 <button 
                   type="button"
                   (click)="toggleReservePrice()"
                   class="text-sm text-indigo-600 hover:text-indigo-500 focus:outline-none"
                 >
-                  {{ isReserveEnabled ? 'Disattiva' : 'Attiva' }}
+                  {{ isReserveEnabled ? 'Disable' : 'Enable' }}
                 </button>
                 <div 
                   (click)="toggleReservePrice()"
@@ -151,14 +154,14 @@
                     *ngIf="auctionForm.get('reservePrice')?.hasError('min')" 
                     class="text-red-600 text-sm mt-1 error-message"
                     >
-                    Il prezzo non può essere negativo
+                    Price cannot be negative
                     </div>
                     
                     <div 
                     *ngIf="!auctionForm.get('reservePrice')?.hasError('min') && auctionForm.errors?.['reserveTooLow']" 
                     class="text-red-600 text-sm mt-1 error-message"
                     >
-                    Deve essere maggiore del prezzo iniziale!
+                    Must be bigger than starting price
                     </div>
                 </div>
             </div>
@@ -168,17 +171,19 @@
         <!-- Dettagli Temporali -->
         <div class="grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Scadenza Asta</label>
-            <input
-              type="date"
+            <label class="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+            <select
               formControlName="expireDate"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 cursor-not-allowed outline-none"
-              readonly
-            />
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 outline-none"
+            >
+              <option *ngFor="let opt of durationOptions" [value]="opt.value">
+                {{ opt.label }}
+              </option>
+            </select>
           </div>
   
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Libro Selezionato</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Selected book</label>
             <div class="flex items-center space-x-3 px-4 py-3 rounded-lg border border-gray-300 bg-gray-50">
               <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -190,7 +195,7 @@
   
         <!-- Upload Immagini -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-4">Galleria Immagini</label>
+          <label class="block text-sm font-medium text-gray-700 mb-4">Image gallery</label>
           <div class="grid grid-cols-4 gap-4">
             <!-- Immagini Caricate -->
             <div *ngFor="let image of imagePreviews; let i = index" class="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -221,7 +226,7 @@
               <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
               </svg>
-              <span class="text-sm text-gray-500">Aggiungi foto</span>
+              <span class="text-sm text-gray-500">Add picture</span>
             </label>
           </div>
         </div>
@@ -233,59 +238,10 @@
             [disabled]="!auctionForm.valid"
             class="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none"
           >
-            🎯 Pubblica Asta
+            🎯 Publish your auction
           </button>
         </div>
       </div>
     </form>
+    <app-toast></app-toast>
   </div>
-  
-  <style>
-  /* Animazioni personalizzate */
-  .hover\:scale-105:hover {
-    transform: scale(1.05);
-  }
-  
-  .transition-transform {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Effetto glass sul pulsante di rimozione */
-  .bg-white\/90 {
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(2px);
-  }
-  
-  /* Ombre personalizzate */
-  .shadow-3xl {
-    box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Gradiente animato */
-  .bg-gradient-to-r {
-    background-size: 200% auto;
-    transition: background-position 0.5s;
-  }
-  
-  .bg-gradient-to-r:hover {
-    background-position: right center;
-  }
-    .error-message {
-        position: absolute;
-        transform: translateY(3px);
-        z-index: 1;
-    }
-
-    .input-error {
-        border-color: #dc2626 !important;
-        animation: inputError 0.3s ease;
-    }
-
-    @keyframes inputError {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(3px); }
-        50% { transform: translateX(-3px); }
-        75% { transform: translateX(3px); }
-        100% { transform: translateX(0); }
-    }
-  </style>

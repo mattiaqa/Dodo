@@ -48,3 +48,4 @@ export const uploadAuctionImages = multer({
     fileFilter,
     limits: { fileSize: 3 * 1024 * 1024 },
 }).array('images', 10);
+

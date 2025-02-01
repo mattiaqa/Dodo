@@ -15,6 +15,7 @@ export interface UserDocument extends mongoose.Document, UserInput {
   savedAuctions: string[];
   isAdmin: Boolean;
   avatar?: string;
+  defaultAvatar:string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -27,6 +28,12 @@ const userSchema = new mongoose.Schema<UserDocument>(
     savedAuctions: [{ type: String, ref: "Auction", required: false }],
     isAdmin: {type: Boolean, required: true, default: false},
     avatar: {type: String, required: false},
+    defaultAvatar: {type: String, validate: {
+      validator: function (value: string) {
+        return !!value; // Verifica che defaultAvatar non sia vuoto
+      },
+      message: "defaultAvatar is required",
+    },},
   },
   {
     timestamps: true,
@@ -35,6 +42,24 @@ const userSchema = new mongoose.Schema<UserDocument>(
 
 //elimina il record se dopo 3 ore non è stato verificato, altrimenti tienilo
 userSchema.index({createdAt: 1}, {expireAfterSeconds: 3 * 60 * 60, partialFilterExpression: {verified: false}})
+
+userSchema.pre("save", function (next) {
+  const user = this as UserDocument;
+
+  // Trim del nome prima di salvarlo
+  if (user.isModified("name")) {
+    user.name = user.name.trim();
+  }
+
+  // Generazione del defaultAvatar solo se non è già impostato
+  if (!user.defaultAvatar) {
+    const sanitizedName = encodeURIComponent(user.name).replace(/%20/g, "+");
+    user.defaultAvatar = `https://ui-avatars.com/api/?name=${sanitizedName}&background=random&size=128&rounded=true&color=fff`;
+  }
+
+  next();
+});
+
 
 userSchema.pre("save", async function (next) {
   const user = this as UserDocument;

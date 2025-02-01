@@ -1,0 +1,31 @@
+<div class="flex flex-col items-center justify-center min-h-screen from-blue-50 to-purple-50">
+    <!-- Logo e Slogan -->
+    <div class="text-center mb-12">
+        <img src="assets/images/logo.png" alt="Logo" class="w-48 h-48 mx-auto mb-6 rounded-full" />
+        <span class="logo-style">dodò</span>
+        <br><br>
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Give New Life to Used University Books</h1>
+        <p class="text-lg text-gray-600">Buy and sell your academic books with ease.</p>
+    </div>
+
+    <!-- Pulsanti -->
+    <div class="flex flex-col md:flex-row gap-6">
+        <!-- Pulsante "Buy" -->
+        <a
+        routerLink="/search"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105"
+        >
+        <span class="text-2xl">Find Books</span>
+        <p class="text-sm mt-2 opacity-80">Discover affordable used books for your courses.</p>
+        </a>
+
+        <!-- Pulsante "Sell" -->
+        <a
+        routerLink="/newListing"
+        class="newListing text-white font-bold py-4 px-8 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105"
+        >
+        <span class="text-2xl">Sell Books</span>
+        <p class="text-sm mt-2 opacity-80">Sell your old books and earn extra cash.</p>
+        </a>
+    </div>
+</div>

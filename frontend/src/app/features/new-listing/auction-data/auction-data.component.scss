@@ -1,0 +1,47 @@
+
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+  
+  .transition-transform {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Effetto glass sul pulsante di rimozione */
+  .bg-white\/90 {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+  }
+  
+  /* Ombre personalizzate */
+  .shadow-3xl {
+    box-shadow: 0 15px 50px -12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Gradiente animato */
+  .bg-gradient-to-r {
+    background-size: 200% auto;
+    transition: background-position 0.5s;
+  }
+  
+  .bg-gradient-to-r:hover {
+    background-position: right center;
+  }
+    .error-message {
+        position: absolute;
+        transform: translateY(3px);
+        z-index: 1;
+    }
+
+    .input-error {
+        border-color: #dc2626 !important;
+        animation: inputError 0.3s ease;
+    }
+
+    @keyframes inputError {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(3px); }
+        50% { transform: translateX(-3px); }
+        75% { transform: translateX(3px); }
+        100% { transform: translateX(0); }
+    }

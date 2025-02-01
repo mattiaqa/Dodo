@@ -1,69 +1,225 @@
 <app-navbar></app-navbar>
 
-<div class="dropdown relative left-20 mt-6">
-  <div
-    class="btn m-2 text-sm flex items-center gap-2 hover:bg-opacity-90 focus:outline-none active:scale-95 transition-all"
-    role="button"
-    tabindex="0"
-  >
-    <fa-icon [icon]="['fas', 'filter']" class="text-gray-700"></fa-icon>
-    <span>Filters</span>
-  </div>
-  <ul
-    class="dropdown-content dropdown-bottom dropdown-end menu bg-base-100 rounded-box z-[1] w-96 p-4 shadow-lg space-y-4"
-    tabindex="0"
-  >
-    <li class="space-y-1">
-      <label class="label">
-        <span class="label-text font-medium text-gray-800">Your Budget</span>
-      </label>
-      <div class="flex flex-col items-center gap-4">
-        <!-- Slider Range -->
-        <input
-          (input)="applyFilters()"
-          [(ngModel)]="filters.maxPrice"
-          class="range range-primary bg-gray-200"
-          max="300"
-          min="0"
-          step="1"
-          type="range"
-        />
-        <div class="w-full flex justify-between text-sm px-2 text-gray-600">
-          <span>€0</span>
-          <span>€{{ filters.maxPrice }}</span>
+<div class="container mx-auto px-4"> <!-- Padding laterale più rilassato -->
+  <div class="flex gap-8 mt-6"> <!-- Flex container per filtri e aste -->
+    <!-- Filtri a sinistra -->
+    <div class="w-1/4 bg-base-100 p-6 rounded-lg shadow-md"> <!-- Form sempre visibile -->
+      <h2 class="text-lg font-semibold text-gray-800 mb-6">Filters</h2>
+      <form class="space-y-6"> <!-- Spaziatura tra i campi del form -->
+        <!-- Filtro Luogo -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">City</label>
+          <div class="relative">
+            <fa-icon [icon]="['fas', 'map-marker-alt']" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></fa-icon>
+            <input
+              type="text"
+              class="w-full pl-10 input input-bordered"
+              placeholder="Insert location"
+              (input)="applyFilters()"
+              [(ngModel)]="filters.location"
+              name="location"
+            />
+          </div>
+        </div>
+
+        <!-- Filtro Prezzo -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Price</label>
+          <div class="flex gap-4">
+            <input
+              type="number"
+              class="w-1/2 input input-bordered"
+              placeholder="Min €"
+              min="0"
+              step="0.01"
+              (input)="applyFilters()"
+              [(ngModel)]="filters.minPrice"
+              name="minPrice"
+            />
+            <input
+              type="number"
+              class="w-1/2 input input-bordered"
+              placeholder="Max €"
+              min="0"
+              step="0.01"
+              (input)="applyFilters()"
+              [(ngModel)]="filters.maxPrice"
+              name="maxPrice"
+            />
+          </div>
+        </div>
+        
+
+        <!-- Filtro Condizione -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Condition</label>
+          <div class="relative">
+            <fa-icon [icon]="['fas', 'circle-check']" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></fa-icon> 
+            <select
+              class="w-full pl-10 input input-bordered appearance-none bg-transparent"
+              (change)="applyFilters()"
+              [(ngModel)]="filters.condition"
+              name="condition"
+              [ngClass]="{ 'select-placeholder': filters.condition === '' }"
+            >
+              <option value="">Any condition</option>
+              <option value="1">New</option>
+              <option value="2">As good as new</option>
+              <option value="3">Great condtion</option>
+              <option value="4">Acceptable condition</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filtro Libro -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Book</label>
+          <div class="space-y-4">
+            <input
+              type="text"
+              class="w-full input input-bordered"
+              placeholder="Title"
+              (input)="applyFilters()"
+              [(ngModel)]="filters.booktitle"
+              name="booktitle"
+            />
+            <input
+              type="text"
+              class="w-full input input-bordered"
+              placeholder="Author"
+              (input)="applyFilters()"
+              [(ngModel)]="filters.author"
+              name="author"
+            />
+            <input
+              type="text"
+              class="w-full input input-bordered"
+              placeholder="Publisher"
+              (input)="applyFilters()"
+              [(ngModel)]="filters.publisher"
+              name="publisher"
+            />
+            <input
+              type="text"
+              class="w-full input input-bordered"
+              placeholder="ISBN-13"
+              [(ngModel)]="filters.isbn"
+              name="isbn"
+              maxlength="13"
+              (input)="formatISBN($event); applyFilters()"
+              #isbnInput="ngModel"
+              pattern="\d{13}"
+            />
+            <div *ngIf="isbnInput.invalid && (isbnInput.dirty || isbnInput.touched)"
+                class="text-red-500 text-sm mt-1">
+              <span *ngIf="isbnInput.errors?.['pattern']">
+                L'ISBN must be exactly 13 digits long
+              </span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Aste a destra -->
+    <div class="w-3/4">
+      <div class="card-container mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> <!-- Griglia responsive per le aste -->
+        <app-card *ngFor="let auction of filteredAuctions" [auction]="auction" class="card"></app-card>
+      </div>
+      <div *ngIf="filteredAuctions.length === 0" class="flex flex-col items-center justify-center mt-16">
+        <img src="assets/images/no-auctions.png" alt="Nessuna asta trovata" class="w-64 h-64 mb-6">
+        <p class="text-xl text-gray-600">We didn't find any auction</p>
+      </div>
+
+      <!-- Paginazione -->
+      <div class="flex justify-center mt-8">
+        <div class="join">
+          <!-- Bottone "Precedente" -->
+          <div  *ngIf="totalPages > 0 && filters.currentPage !== 1">
+            <button
+              class="join-item btn" 
+              (click)="changePage(filters.currentPage - 1)" 
+            >
+              «
+            </button>
+          </div>
+
+          <!-- Numeri di pagina -->
+          <div  *ngIf="
+            (totalPages >= 3) || 
+            (totalPages === 2 && filters.currentPage === 1) ||
+            (totalPages === 1)
+          ">
+            <button
+              class="join-item btn"
+              [ngClass]="{ 'btn-active': filters.currentPage === 1 }"
+              (click)="changePage(filters.currentPage === 1 ? 1 : 
+              filters.currentPage === totalPages ? totalPages-2 :
+              filters.currentPage - 1 )"
+            >
+            {{ 
+              filters.currentPage === 1 ? 1 : 
+              filters.currentPage === totalPages ? totalPages-2 :
+              filters.currentPage - 1 
+            }}
+            </button>
+          </div>
+
+          <div  *ngIf="
+            (totalPages >= 2)
+          ">
+            <button
+              class="join-item btn"
+              [ngClass]="{ 'btn-active': filters.currentPage !== 1 &&  filters.currentPage !== totalPages}"
+              (click)="changePage( filters.currentPage === 1 ? 2 : 
+              filters.currentPage === totalPages ? totalPages-1 :
+              filters.currentPage )"  
+            >
+              {{ 
+                filters.currentPage === 1 ? 2 : 
+                filters.currentPage === totalPages ? totalPages-1 :
+                filters.currentPage 
+              }}
+            </button>
+          </div>
+        
+
+          <div  *ngIf="
+            (totalPages >= 3) ||
+            (totalPages === 2 && filters.currentPage === 2)
+          ">
+            <button
+              class="join-item btn"
+              [ngClass]="{ 'btn-active': filters.currentPage === totalPages }"
+              (click)="changePage(filters.currentPage === 1 ? 3 : 
+              filters.currentPage === totalPages ? totalPages :
+              filters.currentPage + 1 )"
+            >
+              {{ 
+                filters.currentPage === 1 ? 3 : 
+                filters.currentPage === totalPages ? totalPages :
+                filters.currentPage + 1 
+              }}
+            </button>
+          </div>
+
+
+          <!-- Bottone "Successivo" -->
+          <div  *ngIf="totalPages > 0 && filters.currentPage !== totalPages">
+            <button
+              class="join-item btn"
+              (click)="changePage(filters.currentPage + 1)"
+              [disabled]="filters.currentPage === totalPages"
+            >
+              »
+            </button>
+          </div>
         </div>
       </div>
-    </li>
-    <li class="space-y-1">
-      <label class="input flex items-center gap-3">
-        <fa-icon [icon]="['fas', 'map-marker-alt']" class="text-gray-700"></fa-icon>
-        <input
-          type="text"
-          class="grow"
-          placeholder="Location"
-          (input)="applyFilters()"
-          [(ngModel)]="filters.location"
-        />
-      </label>
-    </li>
-    <li class="space-y-1">
-      <label class="input flex items-center gap-3">
-        <fa-icon [icon]="['fas', 'circle-check']" class="text-gray-700"></fa-icon>
-        <input
-          type="text"
-          class="grow"
-          placeholder="Condition"
-          (input)="applyFilters()"
-          [(ngModel)]="filters.condition"
-        />
-      </label>
-    </li>
-  </ul>
-</div>
 
-<div class="grid grid-cols-1 gap-4 card-container">
-  <app-card *ngFor="let auction of filteredAuctions" [auction]="auction"></app-card>
-</div>
 
+    </div>
+  </div>
+</div>
 
 <app-footer></app-footer>
