@@ -28,6 +28,7 @@ import { createOrGetBook, searchBook } from "../service/book.service";
 import { verifyJwt } from "../utils/jwt.utils";
 import { BookSchema } from "../schema/book.schema";
 import {scanFile} from "../utils/clamAV";
+import { addAuctionEdited } from "../service/statistic.service";
 
 /**
  * Handler to create a new auction.
@@ -310,9 +311,10 @@ export async function editAuctionHandler(
         // Save any new uploaded images and add them to the current list
         if (req.files) {
             const uploadedImages = req.files as Express.Multer.File[];
-            currentUploadedImages = currentUploadedImages.concat(
-                await saveFilesToDisk(uploadedImages, "auctions")
-            );
+
+            const { uploadedFilePaths, uploadedFilename } = await saveFilesToDisk(uploadedImages, "auctions");
+
+            currentUploadedImages = currentUploadedImages.concat(uploadedFilename);
         }
 
         // Construct update object with fields to be updated
@@ -332,6 +334,9 @@ export async function editAuctionHandler(
             res.status(400).send({ message: "No valid fields to update." });
             return;
         }
+
+        await addAuctionEdited();
+
         // Update auction with valid fields
         const updatedAuction = await updateAuction(
             req.params.auctionId,
@@ -349,7 +354,6 @@ export async function editAuctionHandler(
             .send({ message: e.message || "Error updating auction" });
     }
 }
-
 /**
  * Handler to delete an auction.
  *

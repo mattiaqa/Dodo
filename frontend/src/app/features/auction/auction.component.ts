@@ -35,9 +35,11 @@ export class AuctionComponent implements OnInit {
 
   editingTitle: string = '';
   editingDescription: string = '';
-  editingCondition: string = '';
-  editingCountry: string = '';
-  editingProvince: string = '';
+  isImageEditorOpen: boolean = false;
+  tempImagePreviews: string[] = []; // Anteprime temporanee
+  tempImageFiles: File[] = []; // File temporanei
+  imagesToRemove: string[] = [];
+
 
   constructor(
     private storageService: StorageService,
@@ -152,12 +154,16 @@ export class AuctionComponent implements OnInit {
   }
 
   previousSlide() {
+    if(this.isEditing ) return;
+
     this.activeSlide = this.activeSlide === 0
       ? this.data.images.length - 1
       : this.activeSlide - 1;
   }
 
   nextSlide(totalSlides: number) {
+    if(this.isEditing) return;
+
     this.activeSlide = this.activeSlide === totalSlides - 1
       ? 0
       : this.activeSlide + 1;
@@ -167,17 +173,94 @@ export class AuctionComponent implements OnInit {
     this.isEditing = true;
     this.editingTitle = this.data.title;
     this.editingDescription = this.data.description;
-    this.editingCondition = this.data.condition;
-    this.editingCountry = this.data.country;
-    this.editingProvince = this.data.province;
   }
 
+  openImageEditor() {
+    if(this.isEditing)
+      this.isImageEditorOpen = true;
+  }
+   
+  async onFilesSelected(event: any) {
+    const files = event.target.files as FileList;
+    if (!files) return;
+  
+    const remainingSlots = 10 - (this.data.images.length + this.tempImagePreviews.length);
+    const filesArray = Array.from(files).slice(0, remainingSlots);
+  
+    for (const file of filesArray) {
+      if (file.type.startsWith('image/')) {
+        // Aggiungi l'anteprima temporanea
+        this.tempImagePreviews.push(URL.createObjectURL(file));
+        // Aggiungi il file temporaneo
+        this.tempImageFiles.push(file);
+      }
+    }
+  
+    // Resetta l'input per permettere nuova selezione
+    event.target.value = '';
+  }
+  
+  removeImage(index: number) {
+    this.imagesToRemove.push(this.data.images[index]);
+    this.data.images.splice(index, 1);
+  }
+
+  removeTempImage(index: number) {
+    this.tempImagePreviews.splice(index, 1);
+    this.tempImageFiles.splice(index, 1);
+  }
+
+  discardImageChanges() {
+    this.isImageEditorOpen = false;
+    this.data.images = this.data.images.concat(Array.from(this.imagesToRemove));
+    this.imagesToRemove = [];
+    this.tempImagePreviews = [];
+    this.tempImageFiles = [];
+  }
+  
+  saveImageChanges() {
+    this.isImageEditorOpen = false;
+  }
+
+
   saveChanges(): void {
-    this.data.title = this.editingTitle;
-    this.data.description = this.editingDescription;
-    this.data.condition = this.editingCondition;
-    this.data.country = this.editingCountry;
-    this.data.province = this.editingProvince;
+    const formData = new FormData();
+  
+    formData.append('title', this.editingTitle);
+    formData.append('description', this.editingDescription);
+    for(const image of this.imagesToRemove)
+      formData.append('imagesToRemove', image);
+
+    
+    this.tempImageFiles.forEach((file, index) => {
+      formData.append('images', file, file.name); // Usa 'images' come chiave
+    });
+    
+
+    this.auctionService.editAuction(this.auctionId, formData).subscribe({
+      next: (result) => { 
+        this.data.title = this.editingTitle;
+        this.data.description = this.editingDescription;
+        this.data.images = result.result.images;
+
+        this.toastService.showToast({
+          message: 'Auction edited successfully',
+          type: 'success',
+          duration: 3000
+        });
+      },
+      error: (err: any) => {
+        console.error('Error during auction editing:', err);
+        this.toastService.showToast({
+          message: err.error.message,
+          type: 'error',
+          duration: 8000
+        });
+      }
+    });
+
+
+
 
     this.isEditing = false;
   }

@@ -8,9 +8,97 @@
 <div class="container mx-auto z-0">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 bg-base-300 p-6 rounded-lg">
 
+
+
+
+    <!-- Aggiungi questo div per l'editor delle immagini -->
+    <div *ngIf="isImageEditorOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold">Edit Images</h3>
+          <button 
+            class="text-gray-500 hover:text-gray-700"
+            (click)="discardImageChanges()"
+          >
+            &times;
+          </button>
+        </div>
+
+        <!-- Griglia immagini -->
+        <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <!-- Immagini esistenti -->
+          <div *ngFor="let image of data.images; let i = index" class="relative group">
+            <img 
+              [src]="'http://localhost:1338/api/download/image/' + image" 
+              class="w-full h-32 object-cover rounded-lg shadow-sm"
+              alt="Auction image"
+            >
+            <button 
+              class="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-red-100 transition-colors"
+              (click)="removeImage(i)"
+            >
+              &times;
+            </button>
+          </div>
+          <!-- Anteprime temporanee -->
+          <div *ngFor="let preview of tempImagePreviews; let i = index" class="relative group">
+            <img 
+              [src]="preview" 
+              class="w-full h-32 object-cover rounded-lg shadow-sm"
+              alt="Temporary preview"
+            >
+            <button 
+              class="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-red-100 transition-colors"
+              (click)="removeTempImage(i)"
+            >
+              &times;
+            </button>
+          </div>
+
+          <!-- Pulsante aggiungi -->
+          <label 
+            class="flex items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 cursor-pointer"
+            *ngIf="(data.images.length + tempImagePreviews.length) < 10"
+          >
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*"
+              class="hidden"
+              (change)="onFilesSelected($event)"
+            >
+            <div class="text-center">
+              <div class="text-3xl text-gray-400">+</div>
+              <div class="text-sm text-gray-500 mt-1">Add image</div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Pulsanti footer -->
+        <div class="flex justify-end gap-4 mt-8">
+          <button 
+            class="btn btn-ghost hover:bg-gray-100"
+            (click)="discardImageChanges()"
+          >
+            Discard Changes
+          </button>
+          <button 
+            class="btn btn-primary"
+            (click)="saveImageChanges()"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+
+
     <!-- Enlarged Carousel Section -->
-    <div class="relative w-full">
-      <div class="carousel w-full">
+    <div class="relative w-full z-20">
+      <div class="carousel w-full" (click)="openImageEditor()">
         <!-- Carousel items -->
         <div
           *ngFor="let image of data.images; let i = index"
@@ -239,3 +327,4 @@
     </p>
   </div>
 </div>
+<app-toast class="z-20"></app-toast>

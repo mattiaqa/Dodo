@@ -20,7 +20,17 @@ router.post('/', requireUser, (req, res, next) => {
     });
 }, Validator.validateBody(createAuctionSchema), Controller.createAuctionHandler);
 
-router.put('/:auctionId', Validator.validateBody(editAuctionSchema), Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, Controller.editAuctionHandler);
+router.put('/:auctionId', Validator.validateBody(editAuctionSchema), Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, (req, res, next) => {
+    uploadAuctionImages(req, res, (err) => {
+        if (err) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ message: 'File too large. Max size is 3MB.' });
+            }
+            return res.status(500).json({ message: 'File upload error', error: err.message, code: err.code });
+        }
+        next(); // Se non ci sono errori, passa alla validazione e al controller
+    });
+}, Controller.editAuctionHandler);
 
 router.delete('/:auctionId', Validator.validateParams(getAuctionSchema), requireAuctionOwnerOrAdmin, Controller.deleteAuctionHandler);
 

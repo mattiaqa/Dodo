@@ -14,6 +14,10 @@ export class AuctionService {
     return this.http.post(API_URL + '/', body, { withCredentials: true });
   }
 
+  editAuction(auctionId: string, body: any): Observable<any> {
+    return this.http.put(API_URL + '/' + auctionId, body, { withCredentials: true });
+  }
+
   getAllAuction(): Observable<any> {
     return this.http.get(API_URL, { withCredentials: true });
   }
