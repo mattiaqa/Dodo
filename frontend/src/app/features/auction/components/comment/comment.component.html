@@ -22,19 +22,25 @@
       <!-- Profile Picture -->
       <img
         [src]="comment?.avatar ?
-        (comment.avatar.startsWith('https://ui-avatars.com')
-            ? comment.avatar
-            : 'http://localhost:1338/api/download/avatar/' + comment.avatar)
-        : 'http://localhost:1338/api/download/avatar/default-avatar.jpg'"
+      (comment.avatar.startsWith('https://ui-avatars.com')
+          ? comment.avatar
+          : 'http://localhost:1338/api/download/avatar/' + comment.avatar)
+      : 'http://localhost:1338/api/download/avatar/default-avatar.jpg'"
         alt="Profile Picture"
         class="w-10 h-10 rounded-full shadow-md">
 
       <!-- Comment Content -->
-      <div class="bg-gray-100 p-4 rounded-lg shadow-sm w-full">
+      <div class="bg-gray-100 p-4 rounded-lg shadow-sm flex-1 relative">
+        <!-- Delete Button positioned absolutely -->
+        <div *ngIf="isAdmin" class="absolute right-2 top-10 flex items-center h-8 hover:bg-red-100 rounded-full cursor-pointer p-2" (click)="deleteComment(comment._id)">
+          <fa-icon [icon]="['fas', 'trash']" class="text-base"></fa-icon>
+        </div>
+
         <p class="text-gray-700 font-medium">{{ comment?.username }}</p>
         <p class="text-gray-600 mt-1">{{ comment?.comment }}</p>
         <span class="text-sm text-gray-400 mt-2 block">{{ comment?.createdAt | date:'short' }}</span>
       </div>
+
     </div>
   </div>
 </div>

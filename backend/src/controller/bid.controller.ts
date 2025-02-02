@@ -96,7 +96,7 @@ export async function getBidsHandler(req: Request, res: Response) {
 
         // Create a map for quick access to user details
         const buyerMap = buyers?.reduce((result, buyer) => {
-            result[buyer._id!.toString()] = pick(buyer, ["name", "_id"]);
+            result[buyer.id!.toString()] = pick(buyer, ["name", "_id"]);
             return result;
         }, {} as Record<string, any>);
 

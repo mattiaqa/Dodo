@@ -1,25 +1,28 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {DatePipe, NgForOf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {AuctionService} from '../../../../services/auction.service';
 import {ActivatedRoute} from '@angular/router';
-import {UserService} from '../../../../services/user.service';
 import {StorageService} from '../../../../storage/storage.service';
+import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-comment',
   imports: [
     FormsModule,
     NgForOf,
-    DatePipe
+    DatePipe,
+    NgIf,
+    FaIconComponent
   ],
   templateUrl: './comment.component.html',
   standalone: true,
   styleUrl: './comment.component.scss'
 })
 export class CommentComponent implements OnInit {
-  comments: any;
+  comments: any = [];
   auctionId: string = '';
+  isAdmin: boolean = false;
 
   constructor(private auctionModel: AuctionService,
               private serviceStorage: StorageService,
@@ -37,13 +40,26 @@ export class CommentComponent implements OnInit {
     this.auctionModel.getAuctionComments(this.auctionId).subscribe(comments => {
       this.comments = comments;
     });
+    this.isAdmin = this.serviceStorage.isUserAdmin();
   }
 
   submitComment() {
     this.auctionModel.submitComment(this.auctionId, this.commentInputBox).subscribe({
       next: ()=> {
-        //window.location.reload();
+        this.comments.push({
+          comment: this.commentInputBox,
+          username: this.serviceStorage.getUser().name,
+          createdAt: new Date()
+        });
+        this.commentInputBox = ''
+        window.location.reload();
       }
     });
+  }
+
+  deleteComment(commentId: string) {
+    this.auctionModel.deleteComment(commentId).subscribe(data => {
+      this.comments = this.comments.filter((comment: { _id: string; }) => comment._id !== commentId);
+    })
   }
 }

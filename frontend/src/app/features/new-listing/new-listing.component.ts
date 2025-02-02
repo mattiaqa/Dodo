@@ -7,7 +7,7 @@ import { forkJoin } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 @Component({
-  
+
   selector: 'app-new-listing',
   //standalone: true,
   imports: [
@@ -17,16 +17,17 @@ import { ActivatedRoute, Router, RouterLink} from '@angular/router';
   ],
   templateUrl: './new-listing.component.html',
   styleUrls: ['./new-listing.component.scss'],
+  standalone: true
 })
 export class NewListingComponent {
   auctionForm: FormGroup; // Form principale
-  
+
   showSearchBook = false;
   searchCompleted = false;
   localSearchResults: any[] = [];
   onlineSearchResults: any[] = [];
   selectedBook: string | null = null;
-  
+
   images: File[] = [];    // Array di file caricati
 
   constructor(private fb: FormBuilder, private bookService: BookService, private router: Router, private route: ActivatedRoute ) {

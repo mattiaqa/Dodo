@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import logger from "../utils/logger";
 import { getAuctionById } from "../service/auction.service";
 import { getUserById } from "../service/user.service";
-import { addComment, getComments } from "../service/comment.service";
+import {addComment, deleteComment, getComments} from "../service/comment.service";
 import moment from "moment";
 import { omit } from "lodash";
 
@@ -68,7 +68,7 @@ export const getCommentsHandler = async (req: Request, res: Response) => {
         const comments = await getComments({ auction: auctionId });
 
         if (comments.length === 0) {
-            res.status(404).send({ message: "No comments found for this auction" });
+            res.status(200).send([]);
             return;
         }
 
@@ -95,6 +95,29 @@ export const getCommentsHandler = async (req: Request, res: Response) => {
         );
 
         res.status(200).send(commentsWithAvatar);
+        return;
+    } catch (error: any) {
+        logger.error(error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+};
+
+/**
+ * Handler to delete a comment to a specific auction.
+ *
+ * Process:
+ * - Verifies that the auction exists.
+ * - Delete a comment using its _id
+ * - Handles errors and returns an internal server error message if any occur.
+ */
+export const deleteCommentHandler = async (req: Request, res: Response) => {
+    const { commentId } = req.params;
+
+    try {
+        // Delete the comment
+        await deleteComment(commentId);
+
+        res.status(201).send({ message: "Comment deleted successfully" });
         return;
     } catch (error: any) {
         logger.error(error);

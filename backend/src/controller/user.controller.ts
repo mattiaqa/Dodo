@@ -254,7 +254,7 @@ export async function getAllUserHandler(req: Request, res: Response) {
     return;
   }
   const filteredUsers = foundUsers.filter(
-      user => user._id !== currentUser
+      user => user.id != currentUser
   );
 
   res.send(filteredUsers);

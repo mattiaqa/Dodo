@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { config } from '../config/default'
 
-const API_URL = '//localhost:1338/api/notification/';
+const API_URL = `//${config.hostname}/api/notification/`;
 
 @Injectable({
   providedIn: 'root',

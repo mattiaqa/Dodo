@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { config } from '../config/default'
 
-const API_URL = '//localhost:1338/api/auction';
+const API_URL = `//${config.hostname}/api/auction`;
 
 @Injectable({
   providedIn: 'root',
@@ -23,9 +24,9 @@ export class AuctionService {
   }
 
   getAuctions(params: any): Observable<any> {
-    return this.http.get(API_URL, { 
+    return this.http.get(API_URL, {
       params: params,
-      withCredentials: true 
+      withCredentials: true
     });
   }
 
@@ -63,5 +64,9 @@ export class AuctionService {
 
   dislikeAuction(auctionId: string): Observable<any> {
     return this.http.post(API_URL + '/' + auctionId + '/dislike', { withCredentials: true });
+  }
+
+  deleteComment(commentId: string): Observable<any> {
+    return this.http.delete(API_URL + '/' + commentId + '/delete', {withCredentials: true});
   }
 }

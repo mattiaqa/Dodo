@@ -52,7 +52,7 @@ export async function getChatContentHandler(req: Request, res: Response) {
         if(!chatId)
             res.status(404).send({"Error": "No chat found"});
 
-        const messages = await searchMessagesByChatId(chat?.id);
+        const messages = await searchMessagesByChatId(chat?._id);
 
         res.send({
             chat,

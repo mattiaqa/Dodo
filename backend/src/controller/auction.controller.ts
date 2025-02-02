@@ -6,7 +6,7 @@ import {
     searchAuctions,
     incrementInteraction,
     updateAuction,
-    AUCTIONS_PAGE_SIZE,
+    AUCTIONS_PAGE_SIZE, incrementViews,
 } from "../service/auction.service";
 import logger from "../utils/logger";
 import {
@@ -28,7 +28,7 @@ import { createOrGetBook, searchBook } from "../service/book.service";
 import { verifyJwt } from "../utils/jwt.utils";
 import { BookSchema } from "../schema/book.schema";
 import {scanFile} from "../utils/clamAV";
-import { addAuctionEdited } from "../service/statistic.service";
+import {addAuctionEdited, addAuctionRemoved} from "../service/statistic.service";
 
 /**
  * Handler to create a new auction.
@@ -244,6 +244,10 @@ export async function getAllAuctionHandler(
             condition: translateCondition(auction.condition.toString()),
         }));
 
+        filteredAuctions.forEach((auction) => {
+            incrementViews(auction.auctionId);
+        })
+
         // Calculate total matches and pages
         const auctionsAll = await searchAuctions(query);
         const validAuctionsAll = auctionsAll.filter((auction) => {
@@ -293,7 +297,12 @@ export async function editAuctionHandler(
         // Remove images as requested by the user
         let currentUploadedImages = auction.images ?? [];
         if (req.body.imagesToRemove) {
-            for (const image of req.body.imagesToRemove) {
+            let imagesToRemove = req.body.imagesToRemove;
+            if (typeof imagesToRemove === 'string') {
+                imagesToRemove = [imagesToRemove];
+            }
+
+            for (const image of imagesToRemove) {
                 const absolutePath = path.join(
                     __dirname,
                     "../../public/uploads/auctions/",
@@ -301,10 +310,10 @@ export async function editAuctionHandler(
                 );
                 await unlink(absolutePath).catch((err) =>
                     console.error(`Error deleting file ${absolutePath}:`, err)
-                );
+            );
             }
             currentUploadedImages = currentUploadedImages.filter(
-                (img) => !req.body.imagesToRemove?.includes(img)
+                (img) => !imagesToRemove?.includes(img)
             );
         }
 
@@ -354,6 +363,7 @@ export async function editAuctionHandler(
             .send({ message: e.message || "Error updating auction" });
     }
 }
+
 /**
  * Handler to delete an auction.
  *
@@ -387,6 +397,8 @@ export async function deleteAuctionHandler(
             }
         }
         await deleteAuction({ auctionId });
+
+        await addAuctionRemoved();
 
         res.status(200).send({ Message: "Auction deleted successfully" });
         return;

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { config } from '../config/default'
 
-const API_URL = '//localhost:1338/api/chat/';
+const API_URL = `//${config.hostname}/api/chat/`;
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class ChatService {
   }
 
   getChatContent(auctionId: string): Observable<any> {
-    return this.http.get(API_URL + auctionId + 'content', { withCredentials: true });
+    return this.http.get(API_URL + auctionId + '/content', { withCredentials: true });
   }
 
   sendMessage(chatId: string, content: string): Observable<any> {

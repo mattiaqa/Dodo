@@ -6,6 +6,7 @@ import {checkAlreadyInvited, createInvitationLink, sendInviteEmail} from "../ser
 import logger from "../utils/logger";
 import { z } from "zod";
 import { acceptInvitationSchema, invitationSchema } from "../schema/invitation.schema";
+import {notifyUser} from "../service/notification.service";
 
 interface InviteTokenType
 {
@@ -55,6 +56,14 @@ export async function inviteUserHandler(req: Request<{},{}, z.infer<typeof invit
 
         const link = await createInvitationLink(email, token, expireDate);
         await sendInviteEmail(email, link, admin.name, user.name);
+
+        await notifyUser({
+            userId: user.id,
+            title: "📧 Check Your Inbox!",
+            text: `Hello ${user.name}, you've received an email with an invitation to become a moderator! ✉️\n` +
+                "Please check your inbox and follow the instructions to join our amazing moderator team. We look forward to having you on board!"
+        });
+
 
         res.status(201).send({
             message: 'Invitation link successfully generated!',
@@ -115,11 +124,20 @@ export async function acceptInviteHandler(req: Request<z.infer<typeof acceptInvi
             return;
         }
 
-        const updatedUser = await updateUser({ _id: res.locals.user!.id }, { isAdmin: true });
+        const currentUser = res.locals.user!.id
+
+        const updatedUser = await updateUser({ _id: currentUser }, { isAdmin: true });
         if (!updatedUser) {
             res.status(500).send({message: "Internal Server Error"});
             return;
         }
+
+        await notifyUser({
+            userId: currentUser,
+            title: "👏 Thank You, Moderator!",
+            text: `Hello ${updatedUser.name}, congratulations and thank you for becoming a moderator! 🙌\n` +
+                "We appreciate your dedication and trust in helping our community thrive. Let's make Dodo even better together!"
+        });
 
         invitation.used = true;
         await invitation.save();

@@ -130,23 +130,6 @@ export async function getAuctionById(id: string) : Promise<PopulatedAuction | nu
   }
 }
 
-/*export async function searchAuctionByQuery(query: FilterQuery<AuctionDocument>, auth: boolean = false, options: QueryOptions = {lean: true}) {
-  try {
-      const sanitizedQuery = sanitize(query);
-    return await AuctionModel.findOne(sanitizedQuery, {}, options)
-        .populate({
-          path: "book",
-          select: {"_id":0, "__v": 0}
-        })
-        .populate({
-          path: "seller",
-          select: {"email":1, "_id":1}
-        });
-  } catch (e:any) {
-      throw new Error(e.message);
-  }
-}*/
-
 export const AUCTIONS_PAGE_SIZE = 10;
 export async function searchAuctions(query: FilterQuery<AuctionDocument>, page: number = 0, options: QueryOptions = {lean: true}) {
   try {

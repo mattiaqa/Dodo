@@ -32,6 +32,11 @@ export class AdminComponent implements OnInit {
   statistics: any = {};
   totalAuctions: number = 0;
   hostname: string = '';
+  showConfirmModal = false;
+  confirmationTitle = '';
+  confirmationMessage = '';
+  currentAction: 'delete' | 'ban' | 'upgrade' | null = null;
+  selectedUser: any = null;
 
   constructor(
     private userService: UserService,
@@ -42,7 +47,7 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.hostname = config.hostname;
-    
+
     this.statisticService.getAllStatistics().subscribe(data => {
       this.statistics = data;
       this.statisticService.getTotalAuctions().subscribe(data => {
@@ -67,7 +72,7 @@ export class AdminComponent implements OnInit {
         this.chart2.update();
       })
     });
-    
+
 
     this.userService.getAllActiveUser().subscribe(users => {
         this.users = users;
@@ -77,7 +82,7 @@ export class AdminComponent implements OnInit {
 
   filterUsers(): void {
     if (!this.searchTerm) {
-      this.filteredUsers = [];
+      //this.filteredUsers = [];
       return;
     }
 
@@ -166,5 +171,51 @@ export class AdminComponent implements OnInit {
         });
       }
     });
+  }
+
+  openConfirmModal(action: 'delete' | 'ban' | 'upgrade', user: any) {
+    this.selectedUser = user;
+    this.currentAction = action;
+
+    switch(action) {
+      case 'delete':
+        this.confirmationTitle = 'Delete User';
+        this.confirmationMessage = `Are you sure you want to permanently delete ${user.email}? This action cannot be undone.`;
+        break;
+      case 'ban':
+        this.confirmationTitle = user.isBanned ? 'Unban User' : 'Ban User';
+        this.confirmationMessage = `Are you sure you want to ${user.isBanned ? 'unban' : 'ban'} ${user.email}?`;
+        break;
+      case 'upgrade':
+        this.confirmationTitle = 'Upgrade to Moderator';
+        this.confirmationMessage = `Are you sure you want to make ${user.email} a moderator?`;
+        break;
+    }
+
+    this.showConfirmModal = true;
+  }
+
+  cancelAction() {
+    this.showConfirmModal = false;
+    this.selectedUser = null;
+    this.currentAction = null;
+  }
+
+  confirmAction() {
+    if (!this.selectedUser || !this.currentAction) return;
+
+    switch(this.currentAction) {
+      case 'delete':
+        this.deleteUser(this.selectedUser._id);
+        break;
+      case 'ban':
+        this.banUser(this.selectedUser);
+        break;
+      case 'upgrade':
+        this.upgradeToModerator(this.selectedUser.email);
+        break;
+    }
+
+    this.cancelAction();
   }
 }

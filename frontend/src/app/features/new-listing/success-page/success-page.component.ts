@@ -8,7 +8,7 @@ import { ActivatedRoute, Router} from '@angular/router';
   styleUrls: ['./success-page.component.scss']
 })
 export class SuccessPageComponent {
-  message: string = 'Asta pubblicata con successo!';
+  message: string = 'Successfully Published!';
 
   constructor(private route: ActivatedRoute, private router: Router) {
     const state = this.route.snapshot.data['state'];

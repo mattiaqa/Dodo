@@ -2,6 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {CurrencyPipe} from '@angular/common';
+import { config } from '../../../../config/default'
 
 @Component({
   selector: 'app-card',
@@ -44,7 +45,7 @@ export class CardComponent implements OnInit, OnDestroy {
       this.updateTimeLeft();
     }, 1000);
 
-    this.image_url = "http://localhost:1338/api/download/image/"+ this.auction?.images[0];
+    this.image_url = `http://${config.hostname}/api/download/image/`+ this.auction?.images[0];
   }
 
   ngOnDestroy() {

@@ -1,0 +1,46 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USR}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PWD}
+      MONGO_INITDB_DATABASE: Dodò
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+
+  clamav:
+    image: clamav/clamav-debian:1.3.2
+    environment:
+      CLAMD_CONF_MaxFileSize: 50M
+      CLAMD_CONF_MaxScanSize: 50M
+    restart: always
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+      - '7357:7357'
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - "80:80"
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - "1338:1338"
+    depends_on:
+      - redis
+      - clamav
+      - mongo
+    env_file:
+      - .env
+    volumes:
+      - ./backend/public/uploads:/app/public/uploads

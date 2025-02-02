@@ -15,7 +15,7 @@ export async function sendMessage(message: MessageInput) {
     }
 }
 
-export async function searchMessagesByChatId(chatId: mongoose.Types.ObjectId) {
+export async function searchMessagesByChatId(chatId: any) {
     try {
         return await MessageModel.find({chatId: chatId}, {content: 1, sender: 1, _id: 0, createdAt: 1})
             .populate({

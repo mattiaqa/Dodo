@@ -1,12 +1,13 @@
 {
-  "name": "DodoReads",
+  "name": "dodo",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/mattiaqa/DodoReads.git",
+  "repository": "https://github.com/mattiaqa/Dodo.git",
   "author": "Mattia Quagliotto & Albert Alibeaj",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"tsnd --respawn --transpile-only src/app.ts\" \" tsnd src/scheduler/listener.ts \""
+    "dev": "concurrently \"tsnd --respawn --transpile-only src/app.ts\" \"tsnd src/scheduler/listener.ts\"",
+    "prod": "concurrently \"tsnd /app/src/app.ts\" \"tsnd /app/src/scheduler/listener.ts\""
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",

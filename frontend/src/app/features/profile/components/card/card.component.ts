@@ -13,6 +13,7 @@ import {AuctionService} from '../../../../services/auction.service';
 })
 export class CardComponent implements OnInit {
   bookTitle: string = '';
+  image_url: string = '';
 
   @Input() auctionId: string | undefined;
 
@@ -22,6 +23,7 @@ export class CardComponent implements OnInit {
   ngOnInit() {
     const auction = this.auctionService.getAuctionById(this.auctionId!).subscribe(auction => {
       this.bookTitle = auction.book.title;
+      this.image_url = auction.images[0];
     });
   }
 }

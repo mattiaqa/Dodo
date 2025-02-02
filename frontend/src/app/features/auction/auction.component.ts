@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -11,6 +11,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
 import {ChatService} from '../../services/chat.service';
 import {ToastComponent} from '../../layout/toast/toast.component';
+import { config } from '../../config/default'
 
 @Component({
   selector: 'app-auction',
@@ -40,7 +41,10 @@ export class AuctionComponent implements OnInit {
   tempImageFiles: File[] = []; // File temporanei
   imagesToRemove: string[] = [];
   backupImages: string[] = [];
+  showDeleteAuctionModal = false;
+  currentAuctionId: string | null = null;
 
+  hostname: string = ''
 
   constructor(
     private storageService: StorageService,
@@ -54,6 +58,7 @@ export class AuctionComponent implements OnInit {
   ngOnInit() {
     this.isAdmin = this.storageService.isUserAdmin();
     this.isLoggedIn = this.storageService.isLoggedIn();
+    this.hostname = config.hostname;
 
     this.auctionId = this.route.snapshot.paramMap.get('auctionId') || '';
     this.auctionService.getAuctionById(this.auctionId).subscribe(auction => {
@@ -81,6 +86,7 @@ export class AuctionComponent implements OnInit {
     if(this.isEditing) return;
 
     if(!this.storageService.isLoggedIn()) {
+      sessionStorage.setItem('redirectUrl', "auction%2F" + this.auctionId);
       this.router.navigate(['login']);
     } else {
       if (this.bidAmount > this.data.lastBid) {
@@ -190,14 +196,14 @@ export class AuctionComponent implements OnInit {
     if(this.isEditing)
       this.isImageEditorOpen = true;
   }
-   
+
   async onFilesSelected(event: any) {
     const files = event.target.files as FileList;
     if (!files) return;
-  
+
     const remainingSlots = 10 - (this.data.images.length + this.tempImagePreviews.length);
     const filesArray = Array.from(files).slice(0, remainingSlots);
-  
+
     for (const file of filesArray) {
       if (file.type.startsWith('image/')) {
         // Aggiungi l'anteprima temporanea
@@ -206,11 +212,11 @@ export class AuctionComponent implements OnInit {
         this.tempImageFiles.push(file);
       }
     }
-  
+
     // Resetta l'input per permettere nuova selezione
     event.target.value = '';
   }
-  
+
   removeImage(index: number) {
     this.imagesToRemove.push(this.data.images[index]);
     this.data.images.splice(index, 1);
@@ -228,7 +234,7 @@ export class AuctionComponent implements OnInit {
     this.tempImagePreviews = [];
     this.tempImageFiles = [];
   }
-  
+
   saveImageChanges() {
     this.isImageEditorOpen = false;
   }
@@ -244,20 +250,20 @@ export class AuctionComponent implements OnInit {
 
   saveChanges(): void {
     const formData = new FormData();
-  
+
     formData.append('title', this.editingTitle);
     formData.append('description', this.editingDescription);
     for(const image of this.imagesToRemove)
       formData.append('imagesToRemove', image);
 
-    
+
     this.tempImageFiles.forEach((file, index) => {
       formData.append('images', file, file.name); // Usa 'images' come chiave
     });
-    
+
 
     this.auctionService.editAuction(this.auctionId, formData).subscribe({
-      next: (result) => { 
+      next: (result) => {
         this.data.title = this.editingTitle;
         this.data.description = this.editingDescription;
         this.data.images = result.result.images;
@@ -283,5 +289,22 @@ export class AuctionComponent implements OnInit {
     });
 
     this.isEditing = false;
+  }
+
+  openDeleteAuctionModal(auctionId: string) {
+    this.currentAuctionId = auctionId;
+    this.showDeleteAuctionModal = true;
+  }
+
+  cancelDeleteAuction() {
+    this.showDeleteAuctionModal = false;
+    this.currentAuctionId = null;
+  }
+
+  confirmDeleteAuction() {
+    if (this.currentAuctionId) {
+      this.deleteAuction(this.currentAuctionId);
+    }
+    this.cancelDeleteAuction();
   }
 }

@@ -9,7 +9,8 @@ import { UserService } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
 import { ToastComponent } from '../../layout/toast/toast.component';
 import { SharedDataService } from '../../shared/shared-data';
-import { faImage, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; 
+import { faImage, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { config } from '../../config/default'
 
 @Component({
   selector: 'app-profile',
@@ -24,6 +25,7 @@ import { faImage, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
     ToastComponent
   ],
   templateUrl: './profile.component.html',
+  standalone: true,
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
@@ -33,14 +35,14 @@ export class ProfileComponent implements OnInit {
   showMenu = false; // Controlla la visibilità del menu
   faImage = faImage;
   faTrashAlt = faTrashAlt;
-  
+
   constructor(
     protected storageService: StorageService,
     private userService: UserService,
     private toastService: ToastService,
     private sharedDataService: SharedDataService,
   ) {}
-  
+
   ngOnInit(): void {
     this.sharedDataService.dataAvatarUrl$.subscribe(url => {
       this.avatar_url = url;
@@ -49,28 +51,24 @@ export class ProfileComponent implements OnInit {
     this.user = this.storageService.getUser();
     this.savedAuctions = this.user.savedAuctions || [];
     if(this.user.avatar){
-      this.avatar_url = "http://localhost:1338/api/download/avatar/" +  this.user.avatar;
+      this.avatar_url = `http://${config.hostname}/api/download/avatar/` +  this.user.avatar;
     }
     else{
       this.avatar_url = this.user.defaultAvatar;
     }
   }
-  
-  // Metodo per attivare/disattivare il menu
+
   toggleMenu() {
     this.showMenu = !this.showMenu;
   }
 
-// Metodo per aggiungere una nuova immagine
 setNewImage(event: Event) {
   const input = event.target as HTMLInputElement;
-  
-  // Controlla se ci sono file selezionati
+
   if (!input.files || input.files.length === 0) return;
 
   const file = input.files[0];
-  
-  // Verifica che sia un'immagine (controllo più robusto)
+
   if (!file.type.startsWith('image/')) {
       alert('Please select an image file');
       return;
@@ -84,7 +82,7 @@ setNewImage(event: Event) {
       const userId = this.storageService.getUser().id;
       this.userService.getUserInfo(userId).subscribe(user => {
         this.storageService.saveUser(user);
-        this.sharedDataService.updateAvatarUrl("http://localhost:1338/api/download/avatar/" +  user.avatar);
+        this.sharedDataService.updateAvatarUrl(`http://${config.hostname}/api/download/avatar/` +  user.avatar);
       });
     },
     error: (err) => {

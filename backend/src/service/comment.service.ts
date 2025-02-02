@@ -21,3 +21,12 @@ export async function getComments(query: FilterQuery<CommentDocument>, options: 
     throw new Error(e);
   }
 }
+
+export async function deleteComment(commentId: string) {
+  try {
+    const commentIdObj = mongoose.isValidObjectId(commentId) ? new mongoose.Types.ObjectId(commentId) : null;
+    return await CommentModel.deleteOne({_id: commentIdObj});
+  } catch(e: any) {
+    throw new Error(e);
+  }
+}

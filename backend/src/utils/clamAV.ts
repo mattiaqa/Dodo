@@ -8,7 +8,7 @@ export async function scanFile(filePath: string | undefined) {
       debugMode: false,
       scanRecursively: false,
       clamdscan: {
-        host: '127.0.0.1', // If you want to connect locally but not through socket
+        host: 'clamav', // If you want to connect locally but not through socket
         port: 3310, // Because, why not
         timeout: 60000, // 5 minutes
         localFallback: false, // Do no fail over to binary-method of scanning

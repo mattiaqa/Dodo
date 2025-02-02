@@ -19,6 +19,7 @@ import {ToastComponent} from '../../layout/toast/toast.component';
     ToastComponent,
   ],
   templateUrl: './login.component.html',
+  standalone: true,
   styleUrl: './login.component.scss'
 })
 
@@ -53,16 +54,16 @@ export class LoginComponent implements OnInit {
           type: 'success',
           duration: 5000
         });
-        sessionStorage.removeItem('accountConfirmed'); 
+        sessionStorage.removeItem('accountConfirmed');
       }, 500);
-      
-  
+
+
     }
   }
 
   onSubmit() {
     const { email, password } = this.form;
-  
+
     this.authService.login(email, password).subscribe({
       next: data => {
         console.log(data)
@@ -72,7 +73,12 @@ export class LoginComponent implements OnInit {
         this.authService.getCsrfToken().subscribe();
         this.userModel.getUserInfo(data._id).subscribe(user => {
           this.storageService.saveUser(user);
-          const redirectUrl = sessionStorage.getItem('redirectUrl') || '/';
+          let redirectUrl = sessionStorage.getItem('redirectUrl') || '/';
+          if(redirectUrl.includes("%2F")){
+            this.router.navigate(["auction", redirectUrl.split("%2F")[1]]);
+            sessionStorage.removeItem('redirectUrl');
+            return;
+          }
           sessionStorage.removeItem('redirectUrl');
           this.router.navigate([redirectUrl]);
         });

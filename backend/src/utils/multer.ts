@@ -2,6 +2,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import sanitizeFilename from 'sanitize-filename'
 import multer from 'multer';
 import path from 'path';
+import crypto from 'crypto';
 
 const allowedFileTypes = ['image/jpeg', 'image/png', 'image/gif'];
 

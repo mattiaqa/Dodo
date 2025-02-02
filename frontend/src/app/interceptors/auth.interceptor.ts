@@ -26,7 +26,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
       catchError((error) => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
           const token = this.serviceStorage.getToken();
-          
+
           if (token) {
             const clonedReq = req.clone({
               setHeaders: {'x-refresh': token}

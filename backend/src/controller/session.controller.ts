@@ -141,7 +141,7 @@ export async function createSessionHandler(req: Request<{}, {}, z.infer<typeof l
             { expiresIn: config.get('refreshTokenTTL') },
         );
 
-        res.cookie('accessToken', accessToken, { httpOnly: true });
+        res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'lax' });
 
         res.send({"refreshToken": refreshToken, "_id": user._id});
     } catch (e) {
