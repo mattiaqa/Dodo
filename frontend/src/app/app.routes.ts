@@ -14,6 +14,7 @@ import {ChatComponent} from './features/chat/chat.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ConfirmUserComponent } from './features/confirm-user/confirm-user.component';
 import { ConfirmAdminComponent } from './features/confirm-admin/confirm-admin.component';
+import { AdminComponent } from './features/mydodo/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: HomePageComponent},

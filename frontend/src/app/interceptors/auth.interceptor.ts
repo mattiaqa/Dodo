@@ -36,7 +36,6 @@ export class HttpRequestInterceptor implements HttpInterceptor {
               catchError((e) => {
                 if (e instanceof HttpErrorResponse && e.status === 401) {
                   this.serviceStorage.clean();
-                  console.log("Errore catchato di nuovo ancora")
                 }
                 return throwError(() => e);
               })

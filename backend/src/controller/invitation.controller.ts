@@ -30,18 +30,18 @@ export async function inviteUserHandler(req: Request<{},{}, z.infer<typeof invit
 
         const alreadyInvited = await checkAlreadyInvited(email);
         if (alreadyInvited) {
-            res.status(401).send({ "Error": 'You already sent an invite for this user'});
+            res.status(401).send({ message: 'You already sent an invite for this user'});
             return;
         }
 
         const admin = res.locals.user!;
         const user = await getUserByEmail(email);
         if (!user) {
-            res.status(404).send({"Error": 'The email does not exist'});
+            res.status(404).send({message: 'The email does not exist'});
             return;
         }
         if (user.isAdmin) {
-            res.status(401).send({"Error": 'The user is already a moderator'});
+            res.status(401).send({message: 'The user is already a moderator'});
             return;
         }
 
@@ -57,7 +57,7 @@ export async function inviteUserHandler(req: Request<{},{}, z.infer<typeof invit
         await sendInviteEmail(email, link, admin.name, user.name);
 
         res.status(201).send({
-            "Message": 'Invitation link successfully generated!',
+            message: 'Invitation link successfully generated!',
             link,
         });
 
@@ -65,7 +65,7 @@ export async function inviteUserHandler(req: Request<{},{}, z.infer<typeof invit
     } catch (err: any) {
         logger.error(err);
         res.status(500).send({
-            "Error": 'Error while generating the invitation link.',
+            message: 'Error while generating the invitation link.',
         });
         return;
     }
@@ -127,7 +127,7 @@ export async function acceptInviteHandler(req: Request<z.infer<typeof acceptInvi
         res.send({message: 'Invite accepted successfully'});
     } catch (err: any) {
         logger.error(err);
-        res.status(500).send({"Error": "Internal Server Error"});
+        res.status(500).send({message: "Internal Server Error"});
         return;
     }
 }

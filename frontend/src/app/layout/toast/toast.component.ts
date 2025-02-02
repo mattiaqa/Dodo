@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Toast, ToastService } from '../../services/toast.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import {NgClass, NgForOf} from '@angular/common';
 import {FaIconComponent} from '@fortawesome/angular-fontawesome';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-toast',
@@ -26,12 +28,15 @@ import {FaIconComponent} from '@fortawesome/angular-fontawesome';
     ])
   ]
 })
+
 export class ToastComponent implements OnInit {
   toasts: Toast[] = [];
 
   constructor(private toastService: ToastService) {}
 
+  
   ngOnInit(): void {
+    
     this.toastService.toast$.subscribe(toast => {
       this.toasts.push(toast);
       setTimeout(() => {
@@ -39,17 +44,14 @@ export class ToastComponent implements OnInit {
       }, toast.duration || 3000);
     });
   }
-
+  
   getIcon(type: string): [string, string] {
-    switch (type) {
-      case 'success':
-        return ['fas', 'circle-check'];
-      case 'error':
-        return ['fas', 'circle-xmark'];
-      case 'info':
-        return ['fas', 'circle-info'];
-      default:
-        return ['fas', 'circle-exclamation'];
-    }
+    return this.iconMap[type] || ['fas', 'circle-exclamation'];
   }
+
+  private readonly iconMap: { [key: string]: [string, string] } = {
+    'success': ['fas', 'circle-check'],
+    'error': ['fas', 'circle-xmark'],
+    'info': ['fas', 'circle-info']
+  };
 }

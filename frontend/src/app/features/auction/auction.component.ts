@@ -72,7 +72,14 @@ export class AuctionComponent implements OnInit {
     }, 1000);
   }
 
+  openOfferPopup(){
+    if(this.isEditing) return;
+    this.isOfferPopupOpen = true;
+  }
+
   placeBid(): void {
+    if(this.isEditing) return;
+
     if(!this.storageService.isLoggedIn()) {
       this.router.navigate(['login']);
     } else {
@@ -84,7 +91,7 @@ export class AuctionComponent implements OnInit {
             this.toastService.showToast({
               message: `Bid successfully entered.`,
               type: 'success',
-              duration: 8000
+              duration: 5000
             });
         }
         );
@@ -92,7 +99,7 @@ export class AuctionComponent implements OnInit {
         this.toastService.showToast({
           message: `Your bid must be more than ${this.data.lastBid} euros!`,
           type: 'error',
-          duration: 8000
+          duration: 5000
         });
       }
     }
@@ -145,6 +152,8 @@ export class AuctionComponent implements OnInit {
   }
 
   openChat() {
+    if(this.isEditing) return;
+
     if (!this.storageService.isLoggedIn()) {
       this.router.navigate(['login']);
     } else {
@@ -264,12 +273,12 @@ export class AuctionComponent implements OnInit {
         this.tempImageFiles = [];
       },
       error: (err: any) => {
-        console.error('Error during auction editing:', err);
         this.toastService.showToast({
           message: err.error.message,
           type: 'error',
-          duration: 8000
+          duration: 3000
         });
+        setTimeout(() => window.location.reload(), 3000);
       }
     });
 

@@ -13,9 +13,9 @@
         <fa-icon [icon]="['fas', 'exclamation-circle']"></fa-icon> {{ errorMessage }}
       </div>
   
-      <button *ngIf="errorMessage" (click)="router.navigate(['/login'])"
+      <button *ngIf="errorMessage" (click)="router.navigate(['/'])"
         class="mt-4 btn btn-primary text-white px-4 py-2 rounded-lg">
-        Go to Login
+        Go to Home Page
       </button>
     </div>
   </div>

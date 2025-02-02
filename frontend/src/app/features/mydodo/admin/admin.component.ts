@@ -110,8 +110,8 @@ export class AdminComponent implements OnInit {
   }
 
   banUser(user: any) {
-    this.userService.banUser(user._id).subscribe(
-      data => {
+    this.userService.banUser(user._id).subscribe({
+      next: (data) => {
         user.isBanned = true;
         this.toastService.showToast({
           message: 'User Banned Successfully',
@@ -119,48 +119,50 @@ export class AdminComponent implements OnInit {
           duration: 8000
         });
       },
-      error => {
+      error: () => {
         this.toastService.showToast({
           message: 'Error Banning user',
           type: 'error',
           duration: 8000
         });
       }
-    );
+    });
   }
 
   deleteUser(userId: string) {
-    this.userService.deleteUser(userId).subscribe(
-      data => {
+    this.userService.deleteUser(userId).subscribe({
+      next: (data) => {
         this.toastService.showToast({
           message: 'User Deleted Successfully',
           type: 'success',
-          duration: 8000
+          duration: 5000
         });
 
         this.filteredUsers = this.filteredUsers.filter((user: { _id: string; }) => user._id !== userId);
       },
-      error => {
+      error: () => {
         this.toastService.showToast({
           message: 'Error deleting user',
           type: 'error',
-          duration: 8000
+          duration: 5000
         });
       }
-    );
+    });
   }
 
   upgradeToModerator(email: string) {
     this.userService.upgradeToModerator(email).subscribe({
       next: (data) => {
-        this.users.map((user: any) => { if(user.email === email) user.isAdmin = true});
+        this.toastService.showToast({
+          message: 'Invite sent via email to the selected user',
+          type: 'success'
+        });
       },
       error: (error) => {
-        console.log(error);
         this.toastService.showToast({
-          message: 'Error upgrading user to moderator',
+          message: error.error.message,
           type: 'error',
-          duration: 8000
+          duration: 5000
         });
       }
     });
