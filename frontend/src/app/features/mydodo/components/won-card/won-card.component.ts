@@ -3,6 +3,7 @@ import {FaIconComponent} from '@fortawesome/angular-fontawesome';
 import {RouterLink} from '@angular/router';
 import {CurrencyPipe, DatePipe} from '@angular/common';
 import {AuctionService} from '../../../../services/auction.service';
+import { config } from '../../../../config/default'
 
 @Component({
   selector: 'app-won-card',
@@ -13,6 +14,7 @@ import {AuctionService} from '../../../../services/auction.service';
     DatePipe
   ],
   templateUrl: './won-card.component.html',
+  standalone: true,
   styleUrl: './won-card.component.scss'
 })
 export class WonCardComponent implements OnInit {
@@ -38,7 +40,7 @@ export class WonCardComponent implements OnInit {
   constructor(private auctionService: AuctionService,) { }
 
   ngOnInit() {
-    this.image_url = "http://localhost:1338/api/download/image/" + this.auction?.images[0];
+    this.image_url = `http://${config.hostname}/api/download/image/` + this.auction?.images[0];
 
     this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe(bids => {
       this.bids = bids;

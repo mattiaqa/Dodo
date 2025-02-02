@@ -2,7 +2,7 @@
 
 <div
   *ngIf="isEditing"
-  class="fixed inset-0 bg-black opacity-60 z-10 pointer-events-none">
+  class="absolute inset-0 bg-black opacity-60 z-10 pointer-events-none">
 </div>
 
 <div class="container mx-auto z-0">
@@ -35,6 +35,7 @@
               alt="Auction image"
             >
             <button 
+              *ngIf="(data.images.length + tempImagePreviews.length) > 1"
               class="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-red-100 transition-colors"
               (click)="removeImage(i)"
             >
@@ -49,6 +50,7 @@
               alt="Temporary preview"
             >
             <button 
+              *ngIf="(data.images.length + tempImagePreviews.length) > 1"
               class="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-red-100 transition-colors"
               (click)="removeTempImage(i)"
             >
@@ -98,33 +100,47 @@
 
     <!-- Enlarged Carousel Section -->
     <div class="relative w-full z-20">
-      <div class="carousel w-full" (click)="openImageEditor()">
+      <div class="relative carousel w-full" (click)="openImageEditor()">
         <!-- Carousel items -->
+        <div *ngIf="!isEditing">
+          <div
+            *ngFor="let image of data.images; let i = index"
+            class="carousel-item relative w-full"
+            [id]="'slide' + i"
+            [style.display]="activeSlide === i ? 'block' : 'none'"
+          >
+            <img
+              [src]="image ? 'http://localhost:1338/api/download/image/' + image : 'https://picsum.photos/600/600'"
+              alt="Book Image"
+              class="w-full h-[500px] object-cover rounded-lg shadow-lg"
+            />
+
+            <!-- Navigation arrows -->
+            <button
+              *ngIf="data.images.length > 1 && !isEditing" 
+              class="btn btn-circle absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-primary hover:bg-white"
+              (click)="previousSlide()"
+            >
+              ❮
+            </button>
+            <button
+              *ngIf="data.images.length > 1 && !isEditing" 
+              class="btn btn-circle absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-primary hover:bg-white"
+              (click)="nextSlide(data.images.length)"
+            >
+              ❯
+            </button>
+          </div>
+        </div>
         <div
-          *ngFor="let image of data.images; let i = index"
+          *ngIf="isEditing"
           class="carousel-item relative w-full"
-          [id]="'slide' + i"
-          [style.display]="activeSlide === i ? 'block' : 'none'"
         >
           <img
-            [src]="image ? 'http://localhost:1338/api/download/image/' + image : 'https://picsum.photos/600/600'"
-            alt="Book Image"
+            src="assets/images/editImage.jpg"
+            alt="Edit Image"
             class="w-full h-[500px] object-cover rounded-lg shadow-lg"
           />
-
-          <!-- Navigation arrows -->
-          <button
-            class="btn btn-circle absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-primary hover:bg-white"
-            (click)="previousSlide()"
-          >
-            ❮
-          </button>
-          <button
-            class="btn btn-circle absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-primary hover:bg-white"
-            (click)="nextSlide(data.images.length)"
-          >
-            ❯
-          </button>
         </div>
 
         <!-- Like button -->
@@ -132,7 +148,7 @@
           class="btn btn-circle absolute top-2 right-2 text-xl"
           [ngClass]="userLike ? 'text-primary bg-white' : 'text-white'"
           (click)="handleLike(data?.auctionId)"
-          *ngIf="isLoggedIn"
+          *ngIf="isLoggedIn && !isEditing"
         >
           <fa-icon [icon]="['fas', 'heart']"></fa-icon>
         </button>
@@ -171,9 +187,16 @@
             ></fa-icon>
 
             <fa-icon
+              *ngIf="!isEditing"
               [icon]="['fas', 'trash']"
               class="text-black opacity-60 text-xl ml-5 cursor-pointer"
               (click)="deleteAuction(data?.auctionId)"
+            ></fa-icon>
+            <fa-icon
+              *ngIf="isEditing"
+              [icon]="['fas', 'rotate-left']"
+              class="text-primary opacity-60 text-xl ml-5 cursor-pointer z-20"
+              (click)="undoChanges()"
             ></fa-icon>
           </div>
         </div>
@@ -327,4 +350,4 @@
     </p>
   </div>
 </div>
-<app-toast class="z-20"></app-toast>
+<app-toast></app-toast>

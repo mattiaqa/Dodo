@@ -199,18 +199,19 @@
           <div class="grid grid-cols-4 gap-4">
             <!-- Immagini Caricate -->
             <div *ngFor="let image of imagePreviews; let i = index" class="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <img 
-                  [src]="image" 
-                  alt="Anteprima" 
-                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform"
-                />
-                <!-- Icona rimozione -->
-                <button 
+              <img 
+                [src]="image" 
+                alt="Anteprima" 
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform"
+              />
+              <!-- Icona rimozione -->
+              <button 
+                type="button"
                 (click)="removeImage(i)"
                 class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full shadow-sm hover:bg-white transition-colors flex items-center justify-center w-7 h-7 border border-black"
-            >
+              >
                 <span class="text-red-600 hover:text-red-800 font-bold text-lg leading-none -mt-0.5">×</span>
-            </button>
+              </button>
             </div>
   
             <!-- Pulsante Aggiungi -->

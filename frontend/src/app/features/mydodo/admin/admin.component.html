@@ -1,3 +1,4 @@
+
 <div class="container mx-auto p-4">
   <!-- Charts Section -->
   <div class="flex grid-cols-2 gap-4 mb-8">
@@ -5,10 +6,10 @@
     <div class="card bg-base-200 md:w-1/2 p-4">
       <div class="card-body">
         <h2 class="card-title">Auction Statistics</h2>
-        <div *ngIf="statistics.successullyClosed" class="chart-container">
+        <div *ngIf="statistics.successfullyClosed || statistics.unsuccessfullyClosed" class="chart-container">
           <canvas id="chart1">{{ chart1 }}</canvas>
         </div>
-        <div *ngIf="!statistics.successullyClosed" class="chart-container">
+        <div *ngIf="!statistics.successfullyClosed && !statistics.unsuccessfullyClosed" class="chart-container">
           <p class="italic text-gray-600">No data</p>
         </div>
       </div>
@@ -26,14 +27,14 @@
   </div>
 
   <div class="flex justify-between items-center mt-4">
-    <h3 class="text-xl font-bold text-primary-600 primary-color">Active Users</h3>
+    <h3 class="text-xl font-bold text-primary-600 primary-color">Manage Users</h3>
     <div class="flex items-center gap-2">
       <div class="relative">
         <input
           (input)="filterUsers()"
           [(ngModel)]="searchTerm"
           class="input input-bordered input-sm pl-10 w-48 md:w-64"
-          placeholder="Search users..."
+          placeholder="Search users by email..."
           type="text"
         >
         <span class="absolute left-3 top-1/2 -translate-y-1/2">
@@ -54,7 +55,7 @@
             <div class="w-12 rounded-full">
               <img
                 [src]="user.avatar
-                  ? 'http://localhost:1338/api/download/avatar/' + user.avatar
+                  ? 'http://' + hostname + '/api/download/avatar/' + user.avatar
                   : user.defaultAvatar"
                 alt="Profile Picture"
                 class="w-10 h-10 rounded-full shadow-md">

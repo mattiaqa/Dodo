@@ -39,6 +39,7 @@ export class UserService {
   }
 
   upgradeToModerator(email: string): Observable<any> {
+    //return this.http.get(API_URL + 'auctions', { withCredentials: true });
     return this.http.post(API_URL + 'invitation/invite', {email: email}, { withCredentials: true });
   }
 

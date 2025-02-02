@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   if (!storageService.isLoggedIn()) {
     // Salva l'URL a cui l'utente voleva accedere
-    localStorage.setItem('redirectUrl', state.url);
+    sessionStorage.setItem('redirectUrl', state.url);
 
     // Reindirizza al login
     router.navigate(['/login']);

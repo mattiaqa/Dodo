@@ -89,17 +89,17 @@ export async function acceptInviteHandler(req: Request<z.infer<typeof acceptInvi
 
         const invitation = await Invitation.findOne({ token });
         if (!invitation) {
-            res.status(404).send({"Error": "No invitation found"});
+            res.status(404).send({message: "No invitation found"});
             return;
         }
 
         if (invitation.used) {
-            res.status(400).send({"Error": "This link has already been used"});
+            res.status(400).send({message: "This link has already been used"});
             return;
         }
 
         if (new Date() > invitation.expiresAt) {
-            res.status(400).send({"Error": 'Expired link'});
+            res.status(400).send({message: 'Expired link'});
             return;
         }
 
@@ -111,20 +111,20 @@ export async function acceptInviteHandler(req: Request<z.infer<typeof acceptInvi
 
         const { email } = decoded;
         if (email !== res.locals.user!.email) {
-            res.status(403).send({"Error": "You do not have access to this invitation"});
+            res.status(403).send({message: "You do not have access to this invitation"});
             return;
         }
 
         const updatedUser = await updateUser({ _id: res.locals.user!.id }, { isAdmin: true });
         if (!updatedUser) {
-            res.status(500).send({"Error": "Internal Server Error"});
+            res.status(500).send({message: "Internal Server Error"});
             return;
         }
 
         invitation.used = true;
         await invitation.save();
 
-        res.send({"Message": 'Invite accepted successfully'});
+        res.send({message: 'Invite accepted successfully'});
     } catch (err: any) {
         logger.error(err);
         res.status(500).send({"Error": "Internal Server Error"});

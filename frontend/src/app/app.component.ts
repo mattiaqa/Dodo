@@ -7,6 +7,7 @@ import {
 import {RouterOutlet} from '@angular/router';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { ToastComponent } from './layout/toast/toast.component';
 
 @Component({
   selector: 'app-root',

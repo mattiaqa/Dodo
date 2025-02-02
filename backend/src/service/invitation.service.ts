@@ -26,7 +26,7 @@ export async function createInvitationLink(email: string, token: string, expireD
     // Genera il link di invito
     const port = config.get<number>('port');
     const hostname = config.get('hostname');
-    const invitationLink = `http://${hostname}:${port}/invitation/accept/${token}`;
+    const invitationLink = `http://${hostname}/confirmAdmin/${token}`;
 
     return invitationLink;
 }

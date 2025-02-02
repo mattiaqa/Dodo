@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export interface Toast {
   message: string;
@@ -10,6 +10,8 @@ export interface Toast {
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class ToastService {
   private toastSubject = new Subject<Toast>();
   toast$ = this.toastSubject.asObservable();

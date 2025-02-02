@@ -39,6 +39,7 @@ export class AuctionComponent implements OnInit {
   tempImagePreviews: string[] = []; // Anteprime temporanee
   tempImageFiles: File[] = []; // File temporanei
   imagesToRemove: string[] = [];
+  backupImages: string[] = [];
 
 
   constructor(
@@ -173,6 +174,7 @@ export class AuctionComponent implements OnInit {
     this.isEditing = true;
     this.editingTitle = this.data.title;
     this.editingDescription = this.data.description;
+    this.backupImages = Array.from(this.data.images);
   }
 
   openImageEditor() {
@@ -212,7 +214,7 @@ export class AuctionComponent implements OnInit {
 
   discardImageChanges() {
     this.isImageEditorOpen = false;
-    this.data.images = this.data.images.concat(Array.from(this.imagesToRemove));
+    this.data.images = this.backupImages;
     this.imagesToRemove = [];
     this.tempImagePreviews = [];
     this.tempImageFiles = [];
@@ -222,6 +224,14 @@ export class AuctionComponent implements OnInit {
     this.isImageEditorOpen = false;
   }
 
+  undoChanges(){
+    this.data.images = this.backupImages;
+    this.imagesToRemove = [];
+    this.tempImagePreviews = [];
+    this.tempImageFiles = [];
+
+    this.isEditing = false;
+  }
 
   saveChanges(): void {
     const formData = new FormData();
@@ -248,6 +258,10 @@ export class AuctionComponent implements OnInit {
           type: 'success',
           duration: 3000
         });
+
+        this.imagesToRemove = [];
+        this.tempImagePreviews = [];
+        this.tempImageFiles = [];
       },
       error: (err: any) => {
         console.error('Error during auction editing:', err);
@@ -258,9 +272,6 @@ export class AuctionComponent implements OnInit {
         });
       }
     });
-
-
-
 
     this.isEditing = false;
   }

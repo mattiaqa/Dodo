@@ -72,8 +72,8 @@ export class LoginComponent implements OnInit {
         this.authService.getCsrfToken().subscribe();
         this.userModel.getUserInfo(data._id).subscribe(user => {
           this.storageService.saveUser(user);
-          const redirectUrl = localStorage.getItem('redirectUrl') || '/';
-          localStorage.removeItem('redirectUrl');
+          const redirectUrl = sessionStorage.getItem('redirectUrl') || '/';
+          sessionStorage.removeItem('redirectUrl');
           this.router.navigate([redirectUrl]);
         });
       },

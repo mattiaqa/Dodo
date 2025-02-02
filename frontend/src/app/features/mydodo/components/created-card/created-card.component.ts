@@ -4,6 +4,7 @@ import {RouterLink} from '@angular/router';
 import Chart from 'chart.js/auto';
 import {AuctionService} from '../../../../services/auction.service';
 import {CurrencyPipe, DatePipe} from '@angular/common';
+import { config } from '../../../../config/default'
 
 @Component({
   selector: 'app-created-card',
@@ -54,7 +55,7 @@ export class CreatedCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.image_url = "http://localhost:1338/api/download/image/" + this.auction?.images[0];
+    this.image_url = `http://${config.hostname}/api/download/image/` + this.auction?.images[0];
 
     this.auctionService.getBidsByAuctionId(this.auction!.auctionId).subscribe({
       next: (bids) => {

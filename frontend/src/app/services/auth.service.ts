@@ -39,6 +39,10 @@ export class AuthService {
     return this.http.get(AUTH_API + 'register/' + token + '/confirm', {withCredentials: true});
   }
 
+  confirmInvitation(token: string) : Observable<any>{
+    return this.http.get(AUTH_API + 'invitation/accept/' + token, {withCredentials: true}); 
+  }
+
   getCsrfToken(): Observable<any> {
     return this.http.get('http://localhost:1338/api/csrf');
   }

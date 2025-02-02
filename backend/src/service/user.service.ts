@@ -70,7 +70,27 @@ export async function getUserByEmail(email: string): Promise<SafeUser | null> {
 
 export async function findUsers(query: FilterQuery<UserDocument>): Promise<SafeUser[] | null> {
   try {
-    return await UserModel.find(query);
+    const result = await UserModel.aggregate([
+      { $match: query }, // Filtra per ID
+      { 
+        $project: { 
+          id: "$_id", // Rinomina _id in id
+          email: 1,
+          isAdmin: 1,
+          name: 1,
+          avatar: 1,
+          defaultAvatar:1,
+          savedAuctions: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          verified: 1,
+  
+          _id: 0
+        }
+      }
+    ]);
+  
+    return result || null;
   } catch(e: any) {
     throw new Error(e);
   }
@@ -127,7 +147,7 @@ export async function createConfirmationLink(email: string)
   const hostname = config.get('hostname');
   const token = signJwt({email},{expiresIn: '3h'});
 
-  const link = `http://${hostname}:4200/confirmUser/${token}`;
+  const link = `http://${hostname}/confirmUser/${token}`;
   return link;
 }
 

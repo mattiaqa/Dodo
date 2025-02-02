@@ -21,7 +21,7 @@ import {getBidsDistinct} from "../service/bid.service";
 export async function uploadAvatarHandler(req: Request, res: Response) {
 
   if (req.files) {
-    res.status(400).send({ "Error": 'Only one file is allowed' });
+    res.status(400).send({ message: 'Only one file is allowed' });
     return;
   }
 
@@ -47,19 +47,19 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
       const { isInfected, viruses } = await scanFile(uploadedFilePaths[0]);
       if (isInfected) {
         await unlink(uploadedFilePaths[0]);
-        res.status(400).send({ "Error" : 'File is infected and was removed.' });
+        res.status(400).send({ message : 'File is infected and was removed.' });
         return;
       }
     }
 
     const updatedUser = await updateUser({ _id: userId }, file ? { $set: { avatar: filename } } : { $unset: { avatar: '' } });
     if (!updatedUser) {
-      res.status(500).send({ "Error" : 'Failed to update user profile with avatar.' });
+      res.status(500).send({ message : 'Failed to update user profile with avatar.' });
       return;
     }
 
     res.send({
-      "Message" : 'Avatar uploaded successfully',
+      message : 'Avatar uploaded successfully',
       "avatar" : updatedUser.avatar,
     });
   } catch (err) {
@@ -79,7 +79,7 @@ export async function uploadAvatarHandler(req: Request, res: Response) {
 /**
  * Retrieves all auctions that the current user has won.
  * - Queries auctions where the current user is the winner.
- * - If no auctions are found, returns a 404 error.
+ * - If no auctions are found, returns ane empty array.
  * - Otherwise, returns the user's winning auctions.
  */
 export async function getCurrentUserWinningHandler(req: Request, res: Response) {
@@ -89,11 +89,11 @@ export async function getCurrentUserWinningHandler(req: Request, res: Response) 
     const auctions = await getUserAuctions({ winner: userId });
 
     if(!auctions) {
-      res.status(404).send({"Error": "The user has not yet won any auctions"});
+      res.status(200).send([]);
       return;
     }
 
-    res.send(auctions);
+    res.send(auctions.reverse());
   } catch (e: any) {
     logger.error(e);
     res.status(500).send({"Error": "Internal Server Error"});
@@ -127,7 +127,7 @@ export async function getCurrentUserPartecipationHandler(req: Request, res: Resp
       return expirationDate <= now;
     });
 
-    res.send(validAuctions);
+    res.send(validAuctions.reverse());
   } catch (e: any) {
     logger.error(e);
     res.status(500).send({"Error": "Internal Server Error"});
@@ -161,17 +161,17 @@ export async function getCurrentOngoingAuctionsHandler(req: Request, res: Respon
       return expirationDate > now;
     });
 
-    res.send(validAuctions);
+    res.send(validAuctions.reverse());
   } catch (e: any) {
     logger.error(e);
-    res.status(500).send({"Error": "Internal Server Error"});
+    res.status(500).send({message: "Internal Server Error"});
   }
 }
 
 /**
  * Retrieves all auctions that the user has created.
  * - Queries auctions where the current user is the seller.
- * - Returns the user's created auctions or a 404 if no auctions are found.
+ * - Returns the user's created auctions or an empty array if no auctions are found.
  */
 export async function getCurrentUserAuctionsHandler(req: Request, res: Response) {
   const seller = res.locals.user!.id;
@@ -180,14 +180,14 @@ export async function getCurrentUserAuctionsHandler(req: Request, res: Response)
     const auctions = await getUserAuctions({ seller });
 
     if(!auctions) {
-      res.status(404).send({"Error": "The user has not yet created any auctions"});
+      res.status(404).send([]);
       return;
     }
 
-    res.send(auctions);
+    res.send(auctions.reverse());
   } catch (e: any) {
     logger.error(e);
-    res.status(500).send({"Error": "Internal Server Error"});
+    res.status(500).send({message: "Internal Server Error"});
   }
 }
 
@@ -229,14 +229,14 @@ export async function banUser(req: Request, res: Response) {
     );
 
     if (!updatedUser) {
-      res.status(500).send({ "Error" : 'Failed to ban user ' });
+      res.status(500).send({ message : 'Failed to ban user ' });
       return;
     }
 
-    res.send({"Message": "User Banned Successfully"})
+    res.send({message: "User Banned Successfully"})
   } catch (e: any) {
     logger.error(e);
-    res.status(500).send({"Error": "Internal Server Error"});
+    res.status(500).send({message: "Internal Server Error"});
   }
 }
 
@@ -250,7 +250,7 @@ export async function getAllUserHandler(req: Request, res: Response) {
   const foundUsers = await findUsers({});
 
   if (!foundUsers) {
-    res.status(404).send({"Error" : "User not found"});
+    res.status(404).send({message : "User not found"});
     return;
   }
   const filteredUsers = foundUsers.filter(

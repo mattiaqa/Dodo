@@ -65,6 +65,12 @@ export class StorageService {
     return this.getUser().isAdmin;
   }
 
+  public setAdmin(): any {
+    let user = this.getUser();
+    user.isAdmin = true;
+    return this.saveUser(user);
+  }
+
   public saveAuction(auctionId: string): void {
     if (this.isBrowser()) {
       let user = this.getUser();

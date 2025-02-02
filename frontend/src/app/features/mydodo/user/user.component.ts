@@ -8,15 +8,16 @@ import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-user',
-    imports: [
-        CreatedCardComponent,
-        FaIconComponent,
-        NgForOf,
-        NgIf,
-        PartecipatedCardComponent,
-        WonCardComponent
-    ],
+  imports: [
+    CreatedCardComponent,
+    FaIconComponent,
+    NgForOf,
+    NgIf,
+    PartecipatedCardComponent,
+    WonCardComponent
+  ],
   templateUrl: './user.component.html',
+  standalone: true,
   styleUrl: './user.component.scss'
 })
 export class UserComponent implements OnInit{

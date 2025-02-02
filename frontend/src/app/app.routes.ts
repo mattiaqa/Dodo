@@ -13,6 +13,7 @@ import { SuccessPageComponent } from './features/new-listing/success-page/succes
 import {ChatComponent} from './features/chat/chat.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { ConfirmUserComponent } from './features/confirm-user/confirm-user.component';
+import { ConfirmAdminComponent } from './features/confirm-admin/confirm-admin.component';
 
 export const routes: Routes = [
   { path: '', component: HomePageComponent},
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [loginGuard] },
   { path: 'confirmUser/:token', component: ConfirmUserComponent, canActivate: [loginGuard] },
+  { path: 'confirmAdmin/:token', component: ConfirmAdminComponent, canActivate: [authGuard] },
 
   { path: 'mydodo', component: MyDodoComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },

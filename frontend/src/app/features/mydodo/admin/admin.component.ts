@@ -6,7 +6,8 @@ import {FormsModule} from '@angular/forms';
 import {UserService} from '../../../services/user.service';
 import {ToastService} from '../../../services/toast.service';
 import {StatisticService} from '../../../services/statistic.service';
-import {ToastComponent} from '../../../layout/toast/toast.component';
+import { config } from '../../../config/default'
+import { ToastComponent } from '../../../layout/toast/toast.component';
 
 @Component({
   selector: 'app-admin',
@@ -16,7 +17,7 @@ import {ToastComponent} from '../../../layout/toast/toast.component';
     FaIconComponent,
     FormsModule,
     NgIf,
-    ToastComponent
+    ToastComponent,
   ],
   templateUrl: './admin.component.html',
   standalone: true,
@@ -30,15 +31,18 @@ export class AdminComponent implements OnInit {
   users: any;
   statistics: any = {};
   totalAuctions: number = 0;
+  hostname: string = '';
 
   constructor(
     private userService: UserService,
+    private statisticService: StatisticService,
     private toastService: ToastService,
-    private statisticService: StatisticService
   ) {
   }
 
   ngOnInit(): void {
+    this.hostname = config.hostname;
+    
     this.statisticService.getAllStatistics().subscribe(data => {
       this.statistics = data;
       this.statisticService.getTotalAuctions().subscribe(data => {
@@ -63,23 +67,23 @@ export class AdminComponent implements OnInit {
         this.chart2.update();
       })
     });
+    
 
     this.userService.getAllActiveUser().subscribe(users => {
         this.users = users;
-        this.filteredUsers = users;
       }
     )
   }
 
   filterUsers(): void {
     if (!this.searchTerm) {
-      this.filteredUsers = [...this.users];
+      this.filteredUsers = [];
       return;
     }
 
     const searchTermLower = this.searchTerm.toLowerCase();
-    this.filteredUsers = this.users.filter((user: { name: string }) =>
-      user.name.toLowerCase().includes(searchTermLower)
+    this.filteredUsers = this.users.filter((user: { email: string }) =>
+      user.email.toLowerCase().includes(searchTermLower)
     );
   }
 
@@ -147,21 +151,18 @@ export class AdminComponent implements OnInit {
   }
 
   upgradeToModerator(email: string) {
-    this.userService.upgradeToModerator(email).subscribe(
-      data => {
-        this.toastService.showToast({
-          message: 'User Invited Successfully',
-          type: 'success',
-          duration: 8000
-        });
+    this.userService.upgradeToModerator(email).subscribe({
+      next: (data) => {
+        this.users.map((user: any) => { if(user.email === email) user.isAdmin = true});
       },
-      error => {
+      error: (error) => {
+        console.log(error);
         this.toastService.showToast({
           message: 'Error upgrading user to moderator',
           type: 'error',
           duration: 8000
         });
       }
-    );
+    });
   }
 }

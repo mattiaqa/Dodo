@@ -35,7 +35,8 @@ import {
   faBolt,
   faFilter,
   faBan,
-  faPersonArrowUpFromLine, faSave
+  faPersonArrowUpFromLine, faSave,
+  faRotateLeft
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faFacebook,
@@ -86,5 +87,6 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faFilter,
   faBan,
   faPersonArrowUpFromLine,
-  faSave
+  faSave,
+  faRotateLeft,
 ];

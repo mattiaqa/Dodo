@@ -142,6 +142,8 @@ export class CreateAuctionComponent implements OnInit {
     this.auctionForm.patchValue({
       images: this.selectedImages
     });
+
+    event.target.value = '';
   }
 
   // Modifica il metodo removeImage

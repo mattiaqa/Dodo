@@ -20,7 +20,7 @@ const corsOptions: CorsOptions = {
     origin: 'http://localhost:4200',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-xsrf-token']
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-xsrf-token', 'x-refresh']
 }
 
 app.use(cors(corsOptions));
